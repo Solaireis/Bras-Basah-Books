@@ -2,3 +2,8 @@
 # All the best guys
 # I'm very tired
 bless us all!
+
+test test
+hello there
+
+(lambda n:n)(0)
