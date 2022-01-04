@@ -1,4 +1,6 @@
-*{
+
+body{
+  background-color: #FCEEE0;
   font-family: 'Playfair Display', serif;
 }
 
@@ -104,17 +106,9 @@ footer{
   margin-left: 20px;
 }
 
-.fa-facebook{
-  /*background: #3B5998;*/
-
-}
-
-.fa-twitter{
-  /*background: #55ACEE;*/
-
-}
-
-.fa-instagram{
-  /*background-color: red;
-  background-image: linear-gradient(to bottom right, #4c68d7, #8a3ab9, #bc2a8d, #cd486b, #e95950, #fbad50, #fccc63);*/
+/* breagdcrumb */
+.breadcrumb-item a, .breadcrumb-item{
+  color:#4b8282;
+  text-decoration: none;
+  font-weight: normal;
 }
