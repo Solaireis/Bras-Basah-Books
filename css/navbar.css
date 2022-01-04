@@ -2,21 +2,6 @@
   font-family: 'Playfair Display', serif;
 }
 
-/*font */
-
-@font-face{
-  font-family:quicksand;
-  src: url('../../multimedia/fonts/Quicksand/static/Quicksand-Bold.ttf');
-  font-weight:bold;
-  font-style:normal;
-}
-
-@font-face{
-  font-family:quicksand;
-  src: url('../../Multimedia/Fonts/Quicksand/static/Quicksand-Light.ttf');
-  font-weight:normal;
-  font-style:normal;
-}
 /* Nav Bar */
 
 .brand-nav{
@@ -69,10 +54,67 @@
   background: white;
   color: #4b8282;
   border-radius: 3px;
-  padding: 10px;
+  padding: 8px;
 }
 
 .nav-icon{
-  font-size: 1.3em;
+  font-size: 1.2em;
   margin-top: 8px;
+}
+
+/* Footer */
+footer{
+  background: #4b8282;
+}
+
+.fa-facebook, .fa-twitter, .fa-instagram{
+  text-decoration: none;
+  float: left;
+  padding: 8px;
+  font-size: 25px;
+  width: 45px;
+  text-align: center;
+  margin-top: 15px;
+  margin-left: 30px;
+  margin-bottom: 20px;
+  border-radius: 50%;
+  color: white;
+  border: 2px solid white;
+}
+
+.fa:hover{
+    opacity: 0.8;
+    text-decoration: none;
+    color: white;
+}
+
+#copyright, .footer-link2{
+  color: darkgray;
+}
+
+.footer-link{
+  color: white;
+  text-decoration: none;
+  margin-left: 22px;
+}
+
+.footer-link2{
+  margin-top: 10px;
+  text-decoration: none;
+  margin-left: 20px;
+}
+
+.fa-facebook{
+  /*background: #3B5998;*/
+
+}
+
+.fa-twitter{
+  /*background: #55ACEE;*/
+
+}
+
+.fa-instagram{
+  /*background-color: red;
+  background-image: linear-gradient(to bottom right, #4c68d7, #8a3ab9, #bc2a8d, #cd486b, #e95950, #fbad50, #fccc63);*/
 }
