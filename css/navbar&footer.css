@@ -82,12 +82,18 @@ footer{
   border-radius: 50%;
   color: white;
   border: 2px solid white;
+  margin-left: 65px;
 }
 
-.fa:hover{
-    opacity: 0.8;
-    text-decoration: none;
-    color: white;
+.fa:hover, .footer-link:hover, .footer-link2:hover{
+  opacity: 0.8;
+  text-decoration: none;
+  color: white;
+}
+
+#copyright{
+  text-align: right;
+  margin-right: 20px;
 }
 
 #copyright, .footer-link2{
@@ -97,18 +103,33 @@ footer{
 .footer-link{
   color: white;
   text-decoration: none;
-  margin-left: 22px;
+  margin-left: 58px;
 }
 
 .footer-link2{
-  margin-top: 10px;
+  margin-right: 28px;
   text-decoration: none;
-  margin-left: 20px;
 }
 
 /* breagdcrumb */
 .breadcrumb-item a, .breadcrumb-item{
+  margin-top: 20px;
   color:#4b8282;
   text-decoration: none;
   font-weight: normal;
+}
+
+/* Page Name */
+.page-name{
+   width: 100%;
+   text-align: center;
+   border-bottom: 1px solid #4b8282;;
+   line-height: 0.1em;
+   margin: 10px 0 20px;
+   color:#4b8282;
+}
+
+.page-name span{
+  background-color: #FCEEE0;
+  padding:0 50px;
 }
