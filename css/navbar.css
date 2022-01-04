@@ -2,6 +2,21 @@
   font-family: 'Playfair Display', serif;
 }
 
+/*font */
+
+@font-face{
+  font-family:quicksand;
+  src: url('../../multimedia/fonts/Quicksand/static/Quicksand-Bold.ttf');
+  font-weight:bold;
+  font-style:normal;
+}
+
+@font-face{
+  font-family:quicksand;
+  src: url('../../Multimedia/Fonts/Quicksand/static/Quicksand-Light.ttf');
+  font-weight:normal;
+  font-style:normal;
+}
 /* Nav Bar */
 
 .brand-nav{
