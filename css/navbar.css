@@ -1,0 +1,63 @@
+*{
+  font-family: 'Playfair Display', serif;
+}
+
+/* Nav Bar */
+
+.brand-nav{
+  padding-bottom: 0px;
+}
+
+.navbar{
+  background-color: #4b8282;
+}
+
+#logo{
+  width: 45px;
+  height: 45px;
+  margin-left: 5%;
+}
+
+#store_name{
+  color: white;
+  font-size: 1.2em;
+  margin-left: 10px;
+}
+
+.navbar-expand-lg{
+  padding-top: 0;
+}
+
+#first-nav-item{
+  margin-left: 60px;
+}
+
+.active{
+  font-weight: bold;
+}
+
+.nav-link{
+  font-size: 1.1em;
+  color: white;
+}
+
+.nav-item :hover{
+  opacity: 0.9;
+  color: white;
+}
+
+#search-field{
+  margin-top: 8px;
+}
+
+.fa-search{
+  background: white;
+  color: #4b8282;
+  border-radius: 3px;
+  padding: 10px;
+}
+
+.nav-icon{
+  font-size: 1.3em;
+  margin-top: 8px;
+}
