@@ -9,12 +9,11 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-    # return render_template("home.html")
-    return "We really need another meeting this week"
+    return render_template("home.html")
 
-# @app.route("/test")
-# def test():
-#     return render_template("navbar&footer.html")
+@app.route("/test")  # To go to test page 127.0.0.1:5000/test
+def test():
+    return render_template("test.html")
 
 if __name__ == "__main__":
     app.run()

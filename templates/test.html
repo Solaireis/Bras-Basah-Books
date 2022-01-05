@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}<!-- insert title here-->{% endblock %}
+
+{% block stylesheets %}
+<!-- put css here-->
+<link rel="stylesheet" href="static/css/navbar&footer.css">
+<link rel="stylesheet" href="static/css/standard.css">
+{% endblock %}
+
+{% block content %}
+<!-- breadcrumb -->
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="#">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Shopping Cart</li>
+  </ol>
+</nav>
+<!-- Page Name -->
+<h2 class="page-name"><span>Shopping Cart</span></h2>
+{% endblock %}
+
+{% block scripts %}
+<!-- put js here -->
+{% endblock %}

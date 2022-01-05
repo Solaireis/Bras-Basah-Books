@@ -1,10 +1,32 @@
+/* To test if CSS works */
+
+
+/*
+  Welcome to the Standard CSS used for Bras Basah Books Web Application
+  Here will be every CSS used for all Bras Basah Books Web Application
+  I. Structure of Footer and Navbar.css
+  |
+  ├─ 1.Global
+  ├─ 2.NavBar
+  ├─ 3.Footer
+  | Colour Palette for web pages (for us to self reference the colour choices)
+  ├─ #000 , #10113f , #db3a49 , #FFF , #555 , #FFC07F ,#071013 (to be updated)
+*/
+
+/* --------------------------------------------------------------------------
+    1. Body
+-------------------------------------------------------------------------- */
 
 body{
   background-color: #FCEEE0;
   font-family: 'Playfair Display', serif;
 }
 
-/* Nav Bar */
+
+/* --------------------------------------------------------------------------
+    2. Nav Bar
+-------------------------------------------------------------------------- */
+
 
 .brand-nav{
   padding-bottom: 0px;
@@ -64,7 +86,10 @@ body{
   margin-top: 8px;
 }
 
-/* Footer */
+/* --------------------------------------------------------------------------
+    3. Footer
+-------------------------------------------------------------------------- */
+
 footer{
   background: #4b8282;
 }
