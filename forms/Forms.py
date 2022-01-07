@@ -6,11 +6,13 @@ from wtforms import Form, validators, StringField, RadioField, SelectField,\
 from .Validations import ContainsLower, ContainsUpper, ContainsNumSymbol
 
 
-class SignUpForm:
+class SignUpForm(Form):
     email = EmailField("Email", [validators.Email(), validators.DataRequired()])
 
 
-class SetPasswordForm:
-    password = PasswordField("Password", [validators.InputRequired(),
-                                          validators.Length(min=8, max=80),
-                                          ContainsLower(), ContainsUpper(), ContainsNumSymbol()])
+class SetPasswordForm(Form):
+    password = PasswordField("Set Password", [validators.InputRequired(),
+                                              validators.Length(min=8, max=80),
+                                              ContainsLower(), ContainsUpper(),
+                                              ContainsNumSymbol()])
+    confirm = PasswordField("Confirm Password", [validators.EqualTo("password")])
