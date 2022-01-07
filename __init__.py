@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, redirect, url_for, session
 import shelve
 
 # Import classes
-from Users import User, Customer, Admin, Master
+from users import User, Customer, Admin, Master
 
 app = Flask(__name__)
 
