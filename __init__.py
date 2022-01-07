@@ -11,6 +11,12 @@ app = Flask(__name__)
 def home():
     return render_template("home.html")
 
+@app.route("/login")
+def login():
+    return render_template("login.html")
+
+# Only during production
+# To be removed when published
 @app.route("/test")  # To go to test page 127.0.0.1:5000/test
 def test():
     return render_template("test.html")
