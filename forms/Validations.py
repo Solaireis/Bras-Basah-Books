@@ -19,15 +19,15 @@ class Check:
     """
 
     def __init__(self, function, message):
-        self.function = function
-        self.message = message
+        self.__function = function
+        self.__message = message
 
     def __call__(self, form, field):
         for c in field.data:
-            if self.function(c):
+            if self.__function(c):
                 return
 
-        raise ValidationError(self.message)
+        raise ValidationError(self.__message)
 
 
 class ContainsLower(Check):
