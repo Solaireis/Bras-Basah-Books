@@ -1,5 +1,5 @@
 """
-Forms classs used by BrasBasahBooks web app
+Validation classs used by Forms.py
 
 P.S. Teacher I read through the source code for wtforms.validators
 to figure out how does the validators class worked to create
@@ -24,7 +24,7 @@ class Check:
 
     def __call__(self, form, field):
         for c in field.data:
-            if function(c):
+            if self.function(c):
                 return
 
         raise ValidationError(self.message)
