@@ -1,3 +1,7 @@
+"""
+Form classes used by BrasBasahBooks web app
+"""
+
 # Import WTForms
 from wtforms import Form, validators, StringField, RadioField, SelectField,\
                     TextAreaField, EmailField, PasswordField, DateField
