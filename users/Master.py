@@ -17,6 +17,6 @@ class Master(Admin):
     """
 
     def __init__(self):
-        super().__init__("Enter email here!", "VerySecurePassword")
+        super().__init__("helpbbb01@gmail.com", "3wy-bkJFG!v4pcu;8B")
         self.set_name("Master Admin")
         self.set_profile_pic("") #Path to profile pic of master admin
