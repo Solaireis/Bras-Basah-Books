@@ -1,7 +1,7 @@
 # Import modules
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_mail import Mail, Message
-from itsdangerous import URLSafeTimedSerializer, SignatureExpired
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadTimeSignature, BadSignature
 import shelve
 
 # Import classes
@@ -55,10 +55,14 @@ def sign_up():
 
 @app.route("/sign-up/verify/<token>")
 def sign_up_verify(token):
-    try:
+    try:  # Get email from token
         email = url_serialiser.loads(token, salt="sign-up", max_age=900)
-    except SignatureExpired:
+    except SignatureExpired:  # Token expired
         return "The token expired!"
+    except (BadTimeSignature, BadSignature):  # Invalid token
+        return ("<h1>Unable to verify email address</h1>"
+                "Your email address could not be verified, "
+                "this link may be expired or malformed.")
     return "Token works!"
 
 
