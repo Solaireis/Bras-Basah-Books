@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}BrasBasahBooks Book Info{% endblock %}
+
+{% block stylesheets %}
+
+<link rel="stylesheet" href="/static/css/books.css">
+
+{% endblock %}
+
+{% block content %}
+<!-- put contents here-->
+<!-- breadcrumb -->
+    <div aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="http://127.0.0.1:5000/ ">Home</a></li>
+        <li class="breadcrumb-item"><a href="#">All Books</a></li>
+        <li class="breadcrumb-item"><a href="#">English Books</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Book Title</li>
+      </ol>
+    </div>
+
+    <div class="row justify-content-center book-info">
+      <div class="col-4">
+        <img src="{{ url_for('static',filename='img/cover2.png') }}" alt="">
+      </div>
+      <div class="col-6">
+        <h2>The Chronicles of Narnia</h2>
+        <p>By Author name here</p>
+        <p>Language: <span></span></p>
+        <p>Category: <span></span></p>
+        <p>Age: <span></span></p>
+
+        <h4><span>$39.99</span></h4>
+
+        <form method="POST" action="/add_cart">
+            <input type="number" class="quantity-selector" name="quantity" min="1" value="1">
+            <input type="submit" onclick="add_book()" class="btn add-cart-button" value="ADD TO CART">
+            <p>Alternatively, you may want to <a href="#">rent</a> this.</p>
+        </form>
+
+        <h5>Description</h5>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent tristique tincidunt erat, ac eleifend purus bibendum nec. Suspendisse id semper dolor. Praesent sagittis efficitur quam at venenatis. Integer eros lacus, volutpat sit amet sem sed, volutpat aliquet sem. Suspendisse id ipsum dui. Vestibulum convallis magna ac nulla vehicula maximus.
+          <br>Etiam feugiat vestibulum dapibus. Donec nisl mauris, consectetur eu semper et, commodo quis urna. Aenean tempor ante at suscipit vulputate. Phasellus rutrum eros in turpis aliquet, nec eleifend lacus lobortis. Cras efficitur nunc et sem ornare, sit amet tristique quam faucibus. Morbi vel tortor vitae leo malesuada hendrerit.</p>
+      </div>
+    </div>
+
+    <div class="row justify-content-center book-info">
+      <div class="col-10">
+        <h4>You might also like...</h4>
+        <div class="row row-cols-2 row-cols-md-4 g-4">
+          <div class="col">
+            <div class="card h-100">
+              <img src="{{ url_for('static',filename='img/cover2.png') }}" class="card-img-top" alt="...">
+              <div class="card-body">
+                <h5 class="card-title">Book Title</h5>
+                <p class="card-text">$99.99</p>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card h-100">
+              <img src="{{ url_for('static',filename='img/cover2.png') }}" class="card-img-top" alt="...">
+              <div class="card-body">
+                <h5 class="card-title">Book Title</h5>
+                <p class="card-text">$99.99</p>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card h-100">
+              <img src="{{ url_for('static',filename='img/cover2.png') }}" class="card-img-top" alt="...">
+              <div class="card-body">
+                <h5 class="card-title">Book Title</h5>
+                <p class="card-text">$99.99</p>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card h-100">
+              <img src="{{ url_for('static',filename='img/cover2.png') }}" class="card-img-top" alt="...">
+              <div class="card-body">
+                <h5 class="card-title">Book Title</h5>
+                <p class="card-text">$99.99</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+<!-- put js here -->
+{% endblock %}

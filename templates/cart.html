@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}BrasBasahBooks Cart{% endblock %}
+
+{% block stylesheets %}
+
+<link rel="stylesheet" href="/static/css/cart.css">
+
+{% endblock %}
+
+{% block content %}
+    <div aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Shopping Cart</li>
+      </ol>
+    </div>
+    <!-- Page Name -->
+    <h2 class="page-name"><span>Shopping Cart</span></h2>
+    <p class="cart-label">For buying</p>
+    <div class="row">
+      {% if book_count == 0 %}
+      <div class="col-9 empty-cart">
+        <h5>Your cart is empty. <a href="#">Browse more</a>.</h5>
+      </div>
+      {% elif book_count > 0 %}
+      <div class="col-9 buying-cart">
+        {% for book in cart %}
+        <img src="{{ url_for('static',filename='img/cover2.png') }}" alt="book cover">
+        <div class="">
+          <form method="POST" action="/delete_cart">
+            <button type="submit" onclick="delete_book()" class="btn"><i class="fa fa-close"></i></button>
+            <input type="submit" onclick="delete_book()" value="close">
+            <h4>{{ book_name }}</h4>
+            <h5>{{ book_price }}</h5>
+            <input type="number" class="quantity-selector" name="quantity" min="1" value="1">
+          </form>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+      <div class="col-3 order-summary">
+        <div class="card">
+          <div class="card-header">
+            <p>Order Summary
+            <span>0 item(s)</span></p>
+          </div>
+          <div class="card-body">
+            <p class="card-text">Subtotal</p>
+            <p class="card-text">Shipping</p>
+            <p class="card-text">Estimated Total</p>
+          </div>
+        </div>
+        <button type="button" class="check-out-button btn" name="button">Check Out</button>
+        <div class="show-payment">
+          <p>Accepted Payment Method</p>
+          <i class="fa fa-cc-visa"></i>
+          <i class="fa fa-cc-mastercard"></i>
+          <i class="fa fa-cc-amex"></i>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="cart-label">For renting</p>
+    <div class="row">
+      {% if book_count == 0 %}
+      <div class="col-9 empty-cart">
+        <h5>Nothing to rent. <a href="#">Browse more</a>.</h5>
+      </div>
+      {% elif book_count > 0 %}
+      <div class="col-9 renting-cart">
+        <img src="{{ url_for('static',filename='img/cover2.png') }}" alt="book cover">
+        <div class="">
+          <button type="button" name="button" class="btn"><i class="fa fa-close"></i></button>
+          <h4><span>Book Title</span></h4>
+          <h5><span>$100.00</span></h5>
+          <input type="number" class="quantity-selector" name="quantity" min="1" value="1">
+        </div>
+      </div>
+      {% endif %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<!-- put js here -->
+{% endblock %}
