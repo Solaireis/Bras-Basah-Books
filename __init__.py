@@ -105,6 +105,23 @@ def sign_up_verify(token):
     # Render page
     return render_template("sign_up_verify.html", form=set_password_form)
 
+# Book Info page
+@app.route("/book_info")
+def book_info():
+    return render_template("book_info.html")
+
+# Shopping Cart
+@app.route('/go_cart')
+def go_cart():
+    return render_template('cart.html', book_count=0)
+    # if len(cart.cart) > 0:
+    #     for i in range(len(cart.cart)):
+    #         book_name = list(cart.cart.keys())[i]
+    #         book_price = cart.cart[book_name]['book_price']
+    #         print(book_name, 'and', book_price)
+    #     return render_template('cart.html', cart=cart.cart, book_count=len(cart.cart), book_name=book_name, book_price=book_price)
+    # else:
+    #     return render_template('cart.html', book_count=len(cart.cart))
 
 # Only during production. To be removed when published.
 @app.route("/test")  # To go to test page: http://127.0.0.1:5000/test
