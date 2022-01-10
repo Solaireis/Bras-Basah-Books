@@ -1,0 +1,87 @@
+/* Cart */
+.buying-cart, .renting-cart{
+ /* display: none; */
+}
+
+.buying-cart, .buying-cart a, .renting-cart, .renting-cart a, .empty-cart, .empty-cart a{
+  background-color: white;
+  color: #4b8282;
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.buying-cart, .renting-cart, .empty-cart{
+  padding: 15px;
+}
+
+.buying-cart img, .renting-cart img{
+  width: 15%;
+  float: left;
+  margin-right: 20px;
+}
+
+.buying-cart div, .renting-cart div{
+  text-align: left;
+
+}
+
+.buying-cart input, .renting-cart input{
+  width: 5%;
+}
+
+.buying-cart button, .renting-cart button{
+  float: right;
+  font-size: 1.3em;
+  color: #4b8282;
+}
+
+.buying-cart button:hover{
+  color: #4b8282 !important;
+  opacity: 0.8;
+}
+
+.order-summary .card, .order-summary .card-header{
+  border: none;
+  width: 100%;
+}
+
+.card-header{
+  background: #d3e6e6;
+}
+
+.order-summary .card-header p{
+  font-size: 1.3em;
+  font-weight: bold;
+  margin: 5px;
+}
+
+.order-summary span{
+  float: right;
+  font-size: 0.7em;
+  margin: 5px;
+  font-weight: lighter;
+}
+
+.check-out-button{
+  background: #4b8282;
+  color: white;
+  font-size: 1.3em;
+  width: 100%;
+  padding: 8px;
+  margin-top: 10px;
+}
+
+.check-out-button:hover{
+  color: white;
+  opacity: 0.8;
+}
+
+.show-payment p{
+  margin-top: 20px;
+  margin-bottom: 2px;
+}
+
+.show-payment i{
+  font-size: 30px;
+  margin-right: 8px;
+}
