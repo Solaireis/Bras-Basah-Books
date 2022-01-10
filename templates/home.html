@@ -1,13 +1,62 @@
 {% extends "base.html" %}
 
-{% block title %}BrasBasahBooks{% endblock %}
+{% block title %}BrasBasahBooks Home{% endblock %}
 
 {% block stylesheets %}
-<link rel="stylesheet" href="static/css/navbar&footer.css">
+<!-- put css here-->
+
 {% endblock %}
 
 {% block content %}
 <!-- put contents here-->
 <h1 class="display-4">Home</h1>
 <p>We really need another app dev meeting this week...</p>
+<div class="row justify-content-center book-info">
+      <div class="col-12">
+        <div class="row row-cols-2 row-cols-md-4 g-4">
+          <div class="col">
+            <a href="/book_info">
+                <div class="card h-100">
+                  <img src="{{ url_for('static',filename='img/cover2.png') }}" class="card-img-top" alt="...">
+                  <div class="card-body">
+                    <h5 class="card-title">Book Title</h5>
+                    <p class="card-text">$99.99</p>
+                  </div>
+                </div>
+            </a>
+          </div>
+          <div class="col">
+            <div class="card h-100">
+              <img src="{{ url_for('static',filename='img/cover2.png') }}" class="card-img-top" alt="...">
+              <div class="card-body">
+                <h5 class="card-title">Book Title</h5>
+                <p class="card-text">$99.99</p>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card h-100">
+              <img src="{{ url_for('static',filename='img/cover2.png') }}" class="card-img-top" alt="...">
+              <div class="card-body">
+                <h5 class="card-title">Book Title</h5>
+                <p class="card-text">$99.99</p>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card h-100">
+              <img src="{{ url_for('static',filename='img/cover2.png') }}" class="card-img-top" alt="...">
+              <div class="card-body">
+                <h5 class="card-title">Book Title</h5>
+                <p class="card-text">$99.99</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<!-- put js here -->
 {% endblock %}
