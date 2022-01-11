@@ -194,9 +194,20 @@ def test():
                 f"Customer({g.user.get_username()}, {g.user.get_email()}, {g.user.get_user_id()}")
     return render_template("test.html")
 
+#enquiry page
+@app.route("/enquiry")
+def enquiry():
+    return render_template("enquiry_customer.html")
 
+@app.route("/enquiry-adm")
+def enquiry():
+    return render_template("enquiry_admin.html")
+
+
+#the function to allow the app to run
 if __name__ == "__main__":
     app.run()
+
 
 
 
