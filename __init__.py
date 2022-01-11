@@ -196,11 +196,11 @@ def test():
 
 #enquiry page
 @app.route("/enquiry")
-def enquiry():
+def enquiry_cust():
     return render_template("enquiry_customer.html")
 
 @app.route("/enquiry-adm")
-def enquiry():
+def enquiry_adm():
     return render_template("enquiry_admin.html")
 
 
