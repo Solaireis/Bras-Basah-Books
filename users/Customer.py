@@ -1,4 +1,3 @@
-import uuid
 from .User import User
 # from ShoppingCart import ShoppingCart
 
@@ -10,7 +9,7 @@ class Customer(User):
         __user_id (str): unique ID identifier of customer
         __email (str): email of customer
         __password (str): hashed password of customer
-        __name (str): name of customer
+        __username (str): username of customer
         __profile_pic (str): path of profile pic of customer
         __gender (str): gender of customer - "M" for male, "F" for female, "O" for other
         __coupons (list): list of the coupons owned by customer
@@ -18,14 +17,13 @@ class Customer(User):
         shopping_cart (ShoppingCart): shopping cart of customer
     """
 
-    def __init__(self, email, password, shopping_cart=None,
-                 name=None, profile_pic=None, gender=None):
-        self.__user_id = uuid.uuid4()
+    def __init__(self, email, password, username="", shopping_cart=None):
+        super().__init__()
         self.__email = email
         self.__password = self.hash_password(password)
-        self.__name = name
-        self.__profile_pic = profile_pic
-        self.__gender = gender
+        self.__username = username
+        self.__profile_pic = ""
+        self.__gender = ""
         self.__coupons = []
         self.__orders = []
         if shopping_cart is None:
@@ -40,10 +38,10 @@ class Customer(User):
     def get_email(self):
         return self.__email
         
-    def set_name(self, name):
-        self.__name = name
-    def get_name(self):
-        return self.__name
+    def set_username(self, username):
+        self.__username = username
+    def get_username(self):
+        return self.__username
         
     def set_profile_pic(self, profile_pic):
         self.__profile_pic = profile_pic
@@ -65,9 +63,6 @@ class Customer(User):
     def get_orders(self):
         return self.__orders
 
-    def get_user_id(self):
-        return self.__user_id
-
     def set_password(self, password):
         self.__password = self.hash_password(password)
 
@@ -76,6 +71,6 @@ class Customer(User):
 
 
     @staticmethod
-    def hash_password(password):  # Currently using hash() to just return something
+    def hash_password(password):  # Currently using weird things to just return something
         """ Hash function of the password """
-        return hash(password)
+        return "lol"+password.replace("a","b")
