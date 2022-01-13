@@ -21,7 +21,6 @@ body{
   background-color: #FCEEE0;
   font-family: 'Playfair Display', serif;
   color: #4b8282;
-  overflow-x: hidden;
 }
 
 
@@ -100,11 +99,11 @@ footer{
   text-decoration: none;
   float: left;
   padding: 8px;
-  font-size: 30px !important;
-  width: 50px;
+  font-size: 25px;
+  width: 40px;
   text-align: center;
   margin-top: 15px;
-  margin-left: 40px !important;
+  margin-left: 30px;
   margin-bottom: 20px;
   border-radius: 50%;
   color: white;
@@ -130,7 +129,7 @@ footer{
 .footer-link{
   color: white;
   text-decoration: none;
-  margin-left: 35px;
+  margin-left: 58px;
 }
 
 .footer-link2{

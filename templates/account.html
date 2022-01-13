@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+{% from "includes/_form.html" import render_field %}
+
+<h1 class="display-4">Account view</h1>
+
+<form method="POST" action="">
+  <div class="form-group">
+    {{ render_field(form.username, class="form-control") }}
+  </div>
+  <div>Email: {{ email }} <a href=""></a><a href="/verify">Verify Email</a></div>
+  <div>Password: ******</div>
+  <div class="form-group">
+    {{ render_field(form.gender, class="form-control") }}
+  </div>
+  <input type="submit" value="Save changes" class="btn btn-primary"/>
+</form>
+<a href="/logout">Logout here</a>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
