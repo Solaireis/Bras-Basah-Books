@@ -9,6 +9,7 @@ class Master(Admin):
         __email (str): email of master admin
         __password (str): hashed password of master admin
         __username (str): username of master admin
+        __verified (bool): True when master admin's email is verified
         __profile_pic (str): path of profile pic of master admin
         __gender (str): not used by master admin
         __coupons (list): not used by master admin

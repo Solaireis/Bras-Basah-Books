@@ -9,6 +9,7 @@ class Admin(Customer):
         __email (str): email of admin
         __password (str): hashed password of admin
         __username (str): username of admin
+        __verified (bool): True when admin's email is verified
         __profile_pic (str): path of profile pic of admin
         __gender (str): gender of admin - "M" for male, "F" for female, "O" for other
         __coupons (list): not used by admin
@@ -18,3 +19,4 @@ class Admin(Customer):
 
     def __init__(self, email, password, username=""):
         super().__init__(email, password, username)
+        self.set_verified(True)  # Admins are created with verified emails

@@ -10,6 +10,7 @@ class Customer(User):
         __email (str): email of customer
         __password (str): hashed password of customer
         __username (str): username of customer
+        __verified (bool): True when customer's email is verified
         __profile_pic (str): path of profile pic of customer
         __gender (str): gender of customer - "M" for male, "F" for female, "O" for other
         __coupons (list): list of the coupons owned by customer
@@ -22,6 +23,7 @@ class Customer(User):
         self.__email = email
         self.__password = self.hash_password(password)
         self.__username = username
+        self.__verified = False
         self.__profile_pic = ""
         self.__gender = ""
         self.__coupons = []
@@ -63,9 +65,15 @@ class Customer(User):
     def get_orders(self):
         return self.__orders
 
+    # Verify account and return verify
+    def set_verified(self, verified):
+        self.__verified = verified
+    def get_verified(self):
+        return self.__verified
+
+    # Set password, and check password
     def set_password(self, password):
         self.__password = self.hash_password(password)
-
     def check_password(self, password):
         return self.__password == self.hash_password(password)
 

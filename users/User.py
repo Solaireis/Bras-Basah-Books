@@ -3,7 +3,7 @@ import uuid
 
 class User:
     """
-    User account for guests (anonymous users)
+    User account
 
     Attributes:
         __user_id (str): unique ID identifier of user
