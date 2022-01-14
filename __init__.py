@@ -17,33 +17,14 @@ url_serialiser = URLSafeTimedSerializer(app.config["SECRET_KEY"])
 
 mail = Mail()  # Mail object for sending emails 
 
-# Create database keys if not created yet
-# With this, no further checks are needed when retrieving from database using keys
-with shelve.open("database") as db:
+
+def retrieve_db(key, db, value={}):
+    """ Retrieves object from database using key """
     try:
-        x = db["EmailToUserID"]
-    except KeyError:
-        db["EmailToUserID"] = {}
-with shelve.open("database") as db:
-    try:
-        x = db["Guests"]
-    except KeyError:
-        db["Guests"] = GuestDB()
-with shelve.open("database") as db:
-    try:
-        x = db["Customers"]
-    except KeyError:
-        db["Customers"] = {}
-with shelve.open("database") as db:
-    try:
-        x = db["Admins"]
-    except KeyError:
-        db["Admins"] = {}
-with shelve.open("database") as db:
-    try:
-        x = db["Orders"]
-    except KeyError:
-        db["Orders"] = {}
+        value = db[key]  # Retrieve object
+    except KeyError:     # If key not created yet
+        db[key] = value  # Assign value to key
+    return value
 
 
 def get_user():
@@ -58,7 +39,8 @@ def get_user():
         # Retrieve user
         try:
             with shelve.open("database") as db:
-                user = db[user_db_key][session["UserID"]]
+                user_db = retrieve_db(user_db_key, db)
+                user = user_db[session["UserID"]]
         except KeyError as err:  # If unexpected error (might occur when changes are made)
             print(repr(err))  # Output error for debugging
             # Move on to create guest account
@@ -80,7 +62,7 @@ def create_guest():
 
     with shelve.open("database") as db:
         # Get Guests
-        guests_db = db["Guests"]
+        guests_db = retrieve_db("Guests", db, GuestDB())
 
         # Add guest and clean guest database
         guests_db.add(user_id, guest)
@@ -134,9 +116,9 @@ def sign_up():
         with shelve.open("database") as db:
 
             # Get Customers, EmailToUserID, Guests
-            customers_db = db["Customers"]
-            email_to_user_id = db["EmailToUserID"]
-            guests_db = db["Guests"]
+            customers_db = retrieve_db("Customers", db)
+            email_to_user_id = retrieve_db("EmailToUserID", db)
+            guests_db = retrieve_db("Guests", db)
 
 
             # Ensure that email is not registered yet
@@ -191,7 +173,7 @@ def login():
 
             # Retrieve user id
             try:
-                user_id = db["EmailToUserID"][email]
+                user_id = retrieve_db("EmailToUserID", db)[email]
             except KeyError:
                 # Create loginFailed session
                 session["LoginFailed"] = True
@@ -199,12 +181,11 @@ def login():
 
             # Retrieve user
             try:
-                user = db["Customers"][user_id]
+                user = retrieve_db("Customers", db)[user_id]
                 user_type = "Customer"
             except KeyError:
-                user = db["Admins"][user_id]
+                user = retrieve_db("Admins", db)[user_id]
                 user_type = "Admin"
-
 
         # Check password
         if user.check_password(password):
@@ -242,7 +223,7 @@ def account():
 
         with shelve.open("database") as db:
             # Get Customers
-            customers_db = db["Customers"]
+            customers_db = retrieve_db("Customers", db)
             user.set_username(username)
             user.set_gender(gender)
             customers_db[session["UserID"]] = user
@@ -303,8 +284,8 @@ def verify(token):
         return redirect(url_for("verify_fail"))
     
     with shelve.open("database") as db:
-        email_to_user_id = db["EmailToUserID"]
-        customers_db = db["Customers"]
+        email_to_user_id = retrieve_db("EmailToUserID", db)
+        customers_db = retrieve_db("Customers", db)
 
         # Get user and verify email
         user = customers_db[email_to_user_id[email]]
@@ -324,7 +305,7 @@ def verify_fail():
 
 # Book Info page
 @app.route("/book_info")
-def book_info():
+def book_info():        
     return render_template("book_info.html")
 
 
