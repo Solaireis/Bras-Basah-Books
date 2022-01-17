@@ -1,6 +1,6 @@
 /* Cart */
-.buying-cart, .renting-cart{
- /* display: none; */
+.renting-cart{
+  display: none;
 }
 
 .buying-cart, .buying-cart a, .renting-cart, .renting-cart a, .empty-cart, .empty-cart a{
@@ -27,17 +27,29 @@
 
 .buying-cart input, .renting-cart input{
   width: 5%;
+  color: #4b8282;
 }
 
-.buying-cart button, .renting-cart button{
+.remove_button{
   float: right;
   font-size: 1.3em;
   color: #4b8282;
 }
 
-.buying-cart button:hover{
-  color: #4b8282 !important;
+.remove_button:hover{
+  color: #4b8282;
   opacity: 0.8;
+}
+
+.update_button{
+    text-align: left;
+    color: #4b8282;
+    font-size: 0.8em;
+}
+
+.update_button:hover{
+    color: #4b8282;
+    opacity: 0.8;
 }
 
 .order-summary .card, .order-summary .card-header{
@@ -84,4 +96,8 @@
 .show-payment i{
   font-size: 30px;
   margin-right: 8px;
+}
+
+.show-payment i:hover{
+    color: #4b8282;
 }
