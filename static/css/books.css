@@ -24,6 +24,11 @@
   font-size: 1.1em;
 }
 
+.add-cart-button:hover{
+    color: white;
+    opacity: 0.9;
+}
+
 .book-info p a{
   color: #4b8282;
 }
