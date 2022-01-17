@@ -22,7 +22,7 @@
 
     <div class="row justify-content-center book-info">
       <div class="col-4">
-        <img src="{{ url_for('static',filename='img/cover2.png') }}" alt="">
+        <img src="/static/img/The_Chronicles_of_Narnia.png" alt="The Chronicles of Narnia">
       </div>
       <div class="col-6">
         <h2>The Chronicles of Narnia</h2>
@@ -31,7 +31,7 @@
         <p>Category: <span></span></p>
         <p>Age: <span></span></p>
 
-        <h4><span>$39.99</span></h4>
+        <h4>$<span>39.99</span></h4>
 
         <form method="POST" action="/add_cart">
             <input type="number" class="quantity-selector" name="quantity" min="1" value="1">
