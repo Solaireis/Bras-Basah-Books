@@ -1,0 +1,25 @@
+a{
+    text-decoration: none;
+    color: #4b8282;
+}
+
+a:hover{
+    color: #4b8282;
+}
+
+img:hover{
+    opacity: 0.9;
+}
+
+.home_quote{
+  margin-top: 40px;
+  text-align: center;
+}
+
+.home_quote a{
+  color: #4b8282;
+}
+
+.home_quote a p:hover{
+  opacity: 0.8;
+}
