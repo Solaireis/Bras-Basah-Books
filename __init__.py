@@ -182,6 +182,67 @@ def go_cart():
     # else:
     #     return render_template('cart.html', book_count=len(cart.cart))
 
+#enquiry page
+@app.route("/enquiry", methods=['GET', 'POST'])
+def enquiry_cust():
+    create_enquiry_form = Enquiry(request.form)
+    if request.method == 'POST' and create_enquiry_form.validate():
+        enquiry_dict = {}
+        db = shelve.open('database', 'c')
+
+        try:
+            enquiry_dict = db['Enquiry']
+        except:
+            print("Error in retrieving enquiries from enquiry.db.")
+
+        enquiry = UserEnquiry(create_enquiry_form.name.data, create_enquiry_form.email.data, create_enquiry_form.enquiry_type.data, create_enquiry_form.comments.data)
+        enquiry_dict[enquiry.get_enquiry_id()] = enquiry
+        db['Enquiry'] = enquiry_dict
+
+        db.close()
+
+        return redirect(url_for('home'))
+
+    return render_template("enquiry_customer.html", form=create_enquiry_form)
+
+#retrieve customers
+@app.route("/enquiry-adm")
+def enquiry_retrieve_adm():
+    enquiry_dict={}
+    db = shelve.open('database','r')
+    enquiry_dict = db['Enquiry']
+    db.close()
+
+    enquiry_list = []
+    for key in enquiry_dict:
+        enquiry = enquiry_dict.get(key)
+        enquiry_list.append(enquiry)
+        print(enquiry_list)
+
+    return render_template("enquiry_admin.html", count=len(enquiry_list), enquiry_list=enquiry_list)
+
+@app.route("/faq-adm", methods=['GET', 'POST'])
+def faq_adm():
+    create_faq_form = Faq(request.form)
+    if request.method == 'POST' and create_faq_form.validate():
+        faq_dict = {}
+        db = shelve.open('faq','c')
+
+        try:
+            faq_dict = db['Faq']
+        except:
+            print("Error in retrieving faq queries from faq.db")
+
+        faq = FaqEntry(create_faq_form.title.data, create_faq_form.desc.data)
+        faq_dict[faq.get_faq_id()] = faq
+        db['Faq'] = faq_dict
+
+        db.close()
+
+        return redirect(url_for('home'))
+    return render_template("faq_adm.html", form=create_faq_form)
+
+
 
 # Only during production. To be removed when published.
 @app.route("/test")  # To go to test page: http://127.0.0.1:5000/test
@@ -194,14 +255,6 @@ def test():
                 f"Customer({g.user.get_username()}, {g.user.get_email()}, {g.user.get_user_id()}")
     return render_template("test.html")
 
-#enquiry page
-@app.route("/enquiry")
-def enquiry_cust():
-    return render_template("enquiry_customer.html")
-
-@app.route("/enquiry-adm")
-def enquiry_adm():
-    return render_template("enquiry_admin.html")
 
 
 #the function to allow the app to run
