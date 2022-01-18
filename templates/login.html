@@ -17,7 +17,9 @@
 
 <form method="POST" action="">
   {% if "LoginFailed" in session %}
-  <div class="alert alert-danger">Wrong email or password</div>
+    {# Remove "LoginFailed" from session #}
+    {{ session.pop("LoginFailed", "") }}
+    <div class="alert alert-danger">Wrong email or password</div>
   {% endif %}
   <div class="form-group">
     {{ render_field(form.email, class="form-control") }}

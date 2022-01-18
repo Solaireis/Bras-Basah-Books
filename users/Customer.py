@@ -1,5 +1,4 @@
 from .User import User
-# from ShoppingCart import ShoppingCart
 
 class Customer(User):
     """
@@ -18,7 +17,7 @@ class Customer(User):
         shopping_cart (ShoppingCart): shopping cart of customer
     """
 
-    def __init__(self, email, password, username="", shopping_cart=None):
+    def __init__(self, email, password, username=""):
         super().__init__()
         self.__email = email
         self.__password = self.hash_password(password)
@@ -28,10 +27,9 @@ class Customer(User):
         self.__gender = ""
         self.__coupons = []
         self.__orders = []
-        if shopping_cart is None:
-            self.shopping_cart = None  # ShoppingCart()
-        else:
-            self.shopping_cart = shopping_cart
+
+    def __repr__(self):
+        return super().__repr__(email=self.__email, username=self.__username)
 
 
     # Mutator and accessor methods
@@ -39,36 +37,38 @@ class Customer(User):
         self.__email = email
     def get_email(self):
         return self.__email
-        
+
     def set_username(self, username):
         self.__username = username
     def get_username(self):
         return self.__username
-        
+
     def set_profile_pic(self, profile_pic):
         self.__profile_pic = profile_pic
     def get_profile_pic(self):
         return self.__profile_pic
-        
+
     def set_gender(self, gender):
         self.__gender = gender
     def get_gender(self):
         return self.__gender
-        
+
     def set_coupons(self, coupons):
         self.__coupons = coupons
     def get_coupons(self):
         return self.__coupons
-        
+
     def set_orders(self, orders):
         self.__orders = orders
     def get_orders(self):
         return self.__orders
 
     # Verify account and return verify
-    def set_verified(self, verified):
-        self.__verified = verified
-    def get_verified(self):
+    def verify(self):
+        self.__verified = True
+    def unverify(self):
+        self.__verified = False
+    def is_verified(self):
         return self.__verified
 
     # Set password, and check password
