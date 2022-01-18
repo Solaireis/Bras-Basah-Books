@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}FAQ{% endblock %}
+
+{% block content %}
+{% from "includes/_form.html" import render_field %}
+
+<h1 class="display-4">FAQ Creation of Form</h1>
+
+<form method="POST" action="">
+  <div class="form-group">
+    {{ render_field(form.title, class="form-control") }}
+  </div>
+  <div id="prof">
+    <div class="form-group">
+      {{ render_field(form.desc, class="form-control") }}
+    </div>
+  </div>
+  <input type="submit" value="Submit" class="btn btn-primary"/>
+  <input type="reset" value="Delete" class="btn btn-danger"/>
+</form>
+
+{% endblock %}

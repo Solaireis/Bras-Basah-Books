@@ -1,14 +1,15 @@
 # Import modules
-from flask import Flask, render_template, request, redirect, url_for, session, g
+from flask import Flask, render_template, request, redirect, url_for, session
 from flask_mail import Mail, Message
-from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadTimeSignature, BadSignature
-from datetime import timedelta
+from itsdangerous import URLSafeTimedSerializer, BadData
 import shelve
 
 # Import classes
-from users import User, Customer, Admin, Master
-from forms import SignUpForm, LoginForm
+from users import GuestDB, Guest, Customer, Admin
+from forms import SignUpForm, LoginForm, AccountPageForm
 
+# Debug flag (constant) (True when debuggin)
+DEBUG = True
 
 app = Flask(__name__)
 app.config.from_pyfile("config/app.cfg")  # Load config file
@@ -18,51 +19,82 @@ url_serialiser = URLSafeTimedSerializer(app.config["SECRET_KEY"])
 
 mail = Mail()  # Mail object for sending emails 
 
+with shelve.open("database") as db:
+    for key in ("EmailToUserID", "Customers", "Admins", "Orders"):
+        if key not in db:
+            db[key] = {}
+    if "Guests" not in db:
+        db["Guests"] = GuestDB()
+
+
+def retrieve_db(key, db, value={}):
+    """ Retrieves object from database using key """
+    try:
+        value = db[key]  # Retrieve object
+        if DEBUG: print(f'retrieved db["{key}"] = {value}')
+    except KeyError as err:
+        if DEBUG: print("retrieve_db():", repr(err), f'db["{key}"] = {value}')
+        db[key] = value  # Assign value to key
+    return value
+
+
+def get_user():
+    """ Returns user by checking session key """
+
+    # If session contains user_id
+    if "UserID" in session:
+
+        # Set database key according to user
+        key = session["UserType"] + "s"
+
+        # Retrieve user
+        try:
+            with shelve.open("database") as db:
+                user = db[key][session["UserID"]]
+        except KeyError as err:  # If unexpected error (might occur when changes are made)
+            if DEBUG: print("get_user():", repr(err), "creating guest...")
+            # Move on to create guest account
+        else:
+            if DEBUG: print("get user:", user)
+            return user
+
+    # If not UserID in session, create and return guest account
+    return create_guest()
+
+
+def create_guest():
+    """ Create and return new guest account """
+    guest = Guest()
+    user_id = guest.get_user_id()
+
+    # Create sessions
+    session["UserType"] = "Guest"
+    session["UserID"] = user_id
+
+    with shelve.open("database") as db:
+        # Get Guests
+        guests_db = retrieve_db("Guests", db, GuestDB())
+
+        # Add guest and clean guest database
+        guests_db.add(user_id, guest)
+        guests_db.clean()
+
+        # Save changes to database
+        db["Guests"] = guests_db
+    if DEBUG: print("Guest created:", guest)
+    return guest
+
 
 # Before request
 @app.before_request
 def before_request():
     # Make session permanent and set session lifetime
     session.permanent = True
-    app.permanent_session_lifetime = timedelta(minutes=3)#days=3)
+    app.permanent_session_lifetime = Guest.MAX_DAYS
 
-    # If session contains user_id
-    if "UserID" in session:
-
-        # Set database key according to user
-        if session["Guest"]:
-            user_db_key = "Guests"
-        else:
-            user_db_key = "Customers"
-
-        # Retrieve user
-        try:
-            with shelve.open("database") as db:
-                g.user = db[user_db_key][session["UserID"]]
-        except KeyError as err:  # If unexpected error (might occur when changes are made)
-            print(repr(err))  # Output error for debugging
-        else:
-            return  # Terminate before_request()
-
-    # Create new guest user
-    guest = User()
-    user_id = guest.get_user_id()
-
-    # Create sessions
-    session["Guest"] = True
-    session["UserID"] = user_id
-
-    # Store guest user object
-    with shelve.open("database") as db:
-        try:
-            user_db = db["Guests"]
-        except KeyError:  # Guests not created yet
-            user_db = {}
-        user_db[user_id] = guest
-        db["Guests"] = user_db
-    
-    # Set g.user variable
-    g.user = guest
+    # Run get user if user_id not in session
+    if "UserID" not in session:
+        create_guest()
 
 
 # Home page
@@ -74,9 +106,12 @@ def home():
 # Sign up page
 @app.route("/sign-up", methods=["GET", "POST"])
 def sign_up():
+    # Get current (guest) user
+    user = get_user()
+
     # If user is already logged in
-    if not session["Guest"]:
-        return redirect(url_for("home"))
+    if session["UserType"] != "Guest":
+        return redirect(url_for("account"))
 
     # Get sign up form
     sign_up_form = SignUpForm(request.form)
@@ -85,35 +120,47 @@ def sign_up():
     if request.method == "POST" and sign_up_form.validate():
 
         # Extract email and password from sign up form
-        email = sign_up_form.email.data
+        email = sign_up_form.email.data.lower()
         password = sign_up_form.password.data
         username = sign_up_form.username.data
 
         # Create new user
         with shelve.open("database") as db:
 
-            # Get Customers and EmailToUserID
-            try:
-                user_db = db["Customers"]
-            except KeyError:  # Customers not created yet
-                user_db = {}
-            try:
-                email_to_user_id = db["EmailToUserID"]
-            except KeyError:  # EmailToUserID not created yet
-                email_to_user_id = {}
+            # Get Customers, EmailToUserID, Guests
+            customers_db = retrieve_db("Customers", db)
+            email_to_user_id = retrieve_db("EmailToUserID", db)
+            guests_db = retrieve_db("Guests", db)
 
+
+            # Ensure that email is not registered yet
+            if email in email_to_user_id:
+                return render_template("sign_up.html", form=sign_up_form)
+
+            # Create customer
             customer = Customer(email, password, username)
+            if DEBUG: print(f"Created: {customer}")
+
+            # Delete guest account
+            if DEBUG: print(f"Deleted: {user}")
+            guests_db.remove(user.get_user_id())
 
             # Store customer into database
             user_id = customer.get_user_id()
-
-            user_db[user_id] = customer
-            db["Customers"] = user_db
-
+            customers_db[user_id] = customer
             email_to_user_id[email] = user_id
+
+            # Create session to login
+            session["UserID"] = user_id
+            session["UserType"] = "Customer"
+            if DEBUG: print(f"Logged in: {customer}")
+
+            # Save changes to database
             db["EmailToUserID"] = email_to_user_id
-        
-        return redirect(url_for("home"))
+            db["Customers"] = customers_db
+            db["Guests"] = guests_db
+
+        return redirect(url_for("verify_link"))
 
     # Render page
     return render_template("sign_up.html", form=sign_up_form)
@@ -123,8 +170,8 @@ def sign_up():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     # If user is already logged in
-    if not session["Guest"]:
-        return redirect(url_for("home"))
+    if session["UserType"] != "Guest":
+        return redirect(url_for("account"))
 
     login_form = LoginForm(request.form)
     if request.method == "POST" and login_form.validate():
@@ -138,34 +185,151 @@ def login():
 
             # Retrieve user id
             try:
-                user_id = db["EmailToUserID"][email]
+                user_id = retrieve_db("EmailToUserID", db)[email]
             except KeyError:
-                return "wrong email/password"  # wrong email
+                # Create loginFailed session
+                session["LoginFailed"] = ""
+                return render_template("login.html", form=login_form)
 
             # Retrieve user
             try:
-                customer = db["Customers"][user_id]
-            except KeyError as err:  # If unexpected error occurs
-                # (If code works correctly, this should not happen)
-                print("An unexpected error occured:\n" # For debugging
-                      f"{err}\nuser_id: {user_id}, email: {email}")
-                return "Error: please contact our administrators"
+                user = retrieve_db("Customers", db)[user_id]
+                user_type = "Customer"
+            except KeyError:
+                user = retrieve_db("Admins", db)[user_id]
+                user_type = "Admin"
 
         # Check password
-        if customer.check_password(password):
+        if user.check_password(password):
             session["UserID"] = user_id
-            session["Guest"] = False
+            session["UserType"] = user_type
+            if DEBUG: print("Logged in:", user)
             return redirect(url_for("home"))
         else:
-            return "wrong email/password"  # wrong password
+            # Create loginFailed session
+            session["LoginFailed"] = ""
+            return render_template("login.html", form=login_form)
 
     # Render page
     return render_template("login.html", form=login_form)
 
 
+# View account page
+@app.route("/account", methods=["GET", "POST"])
+def account():
+    # Get current user
+    user = get_user()
+
+    # If user is not logged in
+    if session["UserType"] == "Guest":
+        return redirect(url_for("login"))
+
+    # Get account page form
+    account_page_form = AccountPageForm(request.form)
+
+    # Validate account page form if request is post
+    if request.method == "POST" and account_page_form.validate():
+
+        # Extract email and password from sign up form
+        username = account_page_form.username.data
+        gender = account_page_form.gender.data
+
+        with shelve.open("database") as db:
+            # Get Customers
+            customers_db = retrieve_db("Customers", db)
+            user.set_username(username)
+            user.set_gender(gender)
+            customers_db[session["UserID"]] = user
+
+            # Save changes to database
+            db["Customers"] = customers_db
+
+    # Set username and gender to display
+    account_page_form.username.data = user.get_username()
+    account_page_form.gender.data = user.get_gender()
+    return render_template("account.html", form=account_page_form, email=user.get_email())
+
+
+# Logout
+@app.route("/logout")
+def logout():
+    if session["UserType"] != "Guest":
+        create_guest()
+    return redirect(url_for("home"))
+
+
+# Send verification link page
+@app.route("/verify")
+def verify_link():
+
+    # Get user
+    user = get_user()
+
+    # If not customer or email is verified
+    if not isinstance(user, Customer) or user.is_verified():
+        return redirect(url_for("home"))
+
+    # Configure noreplybbb02@gmail.com
+    app.config.from_pyfile("config/noreply_email.cfg")
+    mail.init_app(app)
+
+    # Get email
+    email = user.get_email()
+
+    # Generate token
+    token = url_serialiser.dumps(email, salt=app.config["VERIFY_EMAIL_SALT"])
+
+    # Send message to email entered
+    msg = Message(subject="Verify Email",
+                sender=("BrasBasahBooks", "noreplybbb02@gmail.com"),
+                recipients=[email])
+    link = url_for("verify", token=token, _external=True)
+    msg.html = f"Click <a href='{link}'>here</a> to verify your email.<br />(Link expires after 15 minutes)"
+    mail.send(msg)
+
+    return render_template("sent_verify.html", email=email)
+
+
+# Verify email page
+@app.route("/verify/<token>")
+def verify(token):
+    # Get user
+    user = get_user()
+
+    # Get email from token
+    try:
+        email = url_serialiser.loads(token, salt=app.config["VERIFY_EMAIL_SALT"], max_age=900)
+    except BadData as err:  # Token expired or Bad Signature
+        if DEBUG: print("Invalid Token:", repr(err))  # print captured error (for debugging)
+        return render_template("verify_fail.html")
+
+    with shelve.open("database") as db:
+        email_to_user_id = retrieve_db("EmailToUserID", db)
+        customers_db = retrieve_db("Customers", db)
+
+        # Get user
+        try:
+            user = customers_db[email_to_user_id[email]]
+        except KeyError:
+            if DEBUG: print("No user with email:", email)  # Account was deleted
+            return render_template("verify_fail.html")
+        
+        # Verify email
+        if not user.is_verified():
+            user.verify()
+        else:  # Email was alreadyt verified
+            if DEBUG: print(email, "is already verified")
+            return render_template("verify_fail.html")
+
+        # Safe changes to database
+        db["Customers"] = customers_db
+
+    return render_template("verify_email.html", email=email)
+
+
 # Book Info page
 @app.route("/book_info")
-def book_info():
+def book_info():        
     return render_template("book_info.html")
 
 
@@ -186,44 +350,15 @@ def go_cart():
 # Only during production. To be removed when published.
 @app.route("/test")  # To go to test page: http://127.0.0.1:5000/test
 def test():
+    # Get user
+    user = get_user()
     # If user is already logged in
-    if session["Guest"]:
-        return "You are a guest"
+    if session["UserType"] == "Guest":
+        return f"You are a guest<br/>{user}"
     else:
-        return ("You are logged in<br/>"
-                f"Customer({g.user.get_username()}, {g.user.get_email()}, {g.user.get_user_id()}")
+        return f"You are logged in<br/>{user}"
     return render_template("test.html")
 
 
 if __name__ == "__main__":
-    app.run()
-
-
-
-""" Unused by useful code (don't delete) """
-
-# # Configure noreplybbb02@gmail.com
-# app.config.from_pyfile("config/noreply_email.cfg")
-# mail.init_app(app)
-
-# # Generate token
-# token = url_serialiser.dumps(email, salt=app.config["SIGN_UP_SALT"])
-
-# # Send message to email entered
-# msg = Message(subject="Verify Email",
-#               sender=("BrasBasahBooks", "noreplybbb02@gmail.com"),
-#               recipients=[email])
-# link = url_for("sign_up_verify", token=token, _external=True)
-# msg.body = f"Your link is {link}"
-# mail.send(msg)
-
-# return f"email: {email}, token: {token}"
-
-# # Get email from token
-# try:
-#     email = url_serialiser.loads(token, salt=app.config["SIGN_UP_SALT"], max_age=900)
-# except SignatureExpired:  # Token expired
-#     return "The token expired!"
-# except (BadTimeSignature, BadSignature) as err:  # Invalid token
-#     print(repr(err))  # print captured error
-#     return "Oops - This link is invalid or expired."
+    app.run(debug=DEBUG)
