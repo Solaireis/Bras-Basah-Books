@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}ADMIN Query Dashboard{% endblock %}
+
+{% block content %}
+
+<h1 class="display-4">Retrieve Users</h1>
+<div>
+  {% if count == 0 %}
+  <h2>There are no enquiry.</h2>
+  {% elif count == 1 %}
+  <h2>There is 1 enquiry.</h2>
+  {% else %}
+  <h2>There are {{ count }} enquiries.</h2>
+  {% endif %}
+</div>
+
+<div>
+    <table class="table table-light" >
+        <thead>
+            <tr>
+                <th> Enquiry ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Account Type</th>
+                <th>Enquiry Type</th>
+                <th>Comments</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for enquiry in enquiry_list %}
+            <tr>
+                <td></td>
+                <td>{{enquiry.get_enquiry_type()}}</td>
+                <td>{{enquiry.get_name()}}</td>
+                <td>{{enquiry.get_email()}}</td>
+                <td>{{enquiry.get_comments()}}</td>
+                <td></td>
+                <td>
+                    <a href ="#" class="btn btn-warning">Update</a>
+                </td>
+                <td>
+                    <form action="" method="POST">
+                        <input type="submit" value="Delete" class="btn btn-danger">
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+
+
+    </table>
+</div>
+{% endblock %}
