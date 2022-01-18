@@ -1,6 +1,3 @@
-import uuid
-
-
 class Book:
 
     """
@@ -20,8 +17,11 @@ class Book:
         __img (str): path of book cover image
     """
 
+    count_id = 0
+
     def __init__(self, language, category, age, action, title, author, price, qty, desc, img):
-        self.__book_id = uuid.uuid4()
+        Book.count_id += 1
+        self.__book_id = Book.count_id
         self.__language = language
         self.__category = category
         self.__age = age

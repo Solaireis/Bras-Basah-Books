@@ -1,0 +1,5 @@
+'EmailToUserID', (0, 6)
+'Customers', (512, 6)
+'Admins', (1024, 6)
+'Orders', (1536, 6)
+'Guests', (2048, 275)

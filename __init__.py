@@ -6,7 +6,7 @@ import shelve
 
 # Import classes
 from users import GuestDB, Guest, Customer, Admin
-from forms import SignUpForm, LoginForm, AccountPageForm
+from forms import SignUpForm, LoginForm, AccountPageForm, AddBookForm
 
 # Debug flag (constant) (True when debuggin)
 DEBUG = True
@@ -358,6 +358,92 @@ def test():
     else:
         return f"You are logged in<br/>{user}"
     return render_template("test.html")
+
+
+@app.route('/addBook', methods=['GET', 'POST'])
+def add_book():
+    add_book_form = AddBookForm(request.form)
+    if request.method == "POST" and add_book_form.validate():
+        books_dict = {}
+        db = shelve.open('book.db', 'c')
+
+        try:
+            books_dict = db['Books']
+        except:
+            print("Error in retrieving Books from book.db")
+
+        book = Book.Book(add_book_form.language.data, add_book_form.category.data, add_book_form.age.data, add_book_form.action.data, add_book_form.title.data, add_book_form.author.data, add_book_form.price.data, add_book_form.qty.data, add_book_form.desc.data, add_book_form.img.data)
+        books_dict[book.get_book_id()] = book
+        db['Books'] = books_dict
+
+        # Test codes
+        books_dict = db['Books']
+        book = books_dict[book.get_book_id()]
+        print(book.get_title(), book.get_price(), "was stored in book.db successfully with book_id==", book.get_book_id())
+        db.close()
+        return "Book successfully added"
+    return render_template('add_book.html', form=add_book_form)
+
+
+@app.route('/inventory')
+def inventory():
+    books_dict = {}
+    db = shelve.open('book.db', 'r')
+    books_dict = db['Books']
+    db.close()
+
+    books_list = []
+    for key in books_dict:
+        book = books_dict.get(key)
+        books_list.append(book)
+
+    return render_template('inventory.html', count=len(books_list), books_list=books_list)
+
+
+@app.route('/updateBook/<int:id>/', methods=['GET', 'POST'])
+def update_book(id):
+    update_book_form = AddBookForm(request.form)
+    if request.method == 'POST' and update_book_form.validate():
+        books_dict = {}
+        db = shelve.open('book.db', 'w')
+        books_dict = db['Books']
+
+        book = books_dict.get(id)
+        book.set_language(update_book_form.language.data)
+        book.set_category(update_book_form.category.data)
+        book.set_age(update_book_form.age.data)
+        book.set_action(update_book_form.action.data)
+        book.set_title(update_book_form.title.data)
+        book.set_author(update_book_form.author.data)
+        book.set_price(update_book_form.price.data)
+        book.set_qty(update_book_form.qty.data)
+        book.set_desc(update_book_form.desc.data)
+        book.set_img(update_book_form.img.data)
+
+        db['Books'] = books_dict
+        db.close()
+
+        return redirect(url_for('inventory'))
+
+    else:
+        books_dict = {}
+        db = shelve.open('book.db', 'r')
+        books_dict = db['Books']
+        db.close()
+
+        book = books_dict.get(id)
+        update_book_form.language.data = book.get_language()
+        update_book_form.category.data = book.get_category()
+        update_book_form.age.data = book.get_age()
+        update_book_form.action.data = book.get_action()
+        update_book_form.title.data = book.get_title()
+        update_book_form.author.data = book.get_author()
+        update_book_form.price.data = book.get_price()
+        update_book_form.qty.data = book.get_qty()
+        update_book_form.desc.data = book.get_desc()
+        update_book_form.img.data = book.get_img()
+
+        return render_template('update_book.html', form=update_book_form)
 
 
 if __name__ == "__main__":

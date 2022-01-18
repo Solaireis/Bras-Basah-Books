@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Inventory{% endblock %}
+
+{% block content %}
+<h1 class="display-4">Inventory</h1>
+<div>
+  {% if count == 0 %}
+  <p>There are no books.</p>
+  {% elif count == 1 %}
+  <p>There is 1 book.</p>
+  {% else %}
+  <p>There are {{ count }} books.</p>
+  {% endif %}
+</div>
+
+<div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Book ID</th>
+        <th>Language</th>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Price ($)</th>
+        <th>Quantity</th>
+        <th>Action</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for book in books_list %}
+      <tr>
+        <td>{{ book.get_book_id() }}</td>
+        {% if book.get_language() == "E" %}
+        <td>English</td>
+        {% elif book.get_language() == "C" %}
+        <td>Chinese</td>
+        {% elif book.get_language() == "M" %}
+        <td>Malay</td>
+        {% elif book.get_language() == "T" %}
+        <td>Tamil</td>
+        {% endif %}
+        <td>{{ book.get_title() }}</td>
+        <td>{{ book.get_author() }}</td>
+        <td>{{ book.get_price() }}</td>
+        <td>{{ book.get_qty() }}</td>
+        {% if book.get_action() == "B" %}
+        <td>Buy</td>
+        {% elif book.get_action() == "R" %}
+        <td>Rent</td>
+        {% elif book.get_action() == "BR" %}
+        <td>Buy and Rent</td>
+        {% endif %}
+        <td><a href="/updateBook/{{book.get_book_id()}}" class="btn btn-warning">Update</a></td>
+        <td>
+          <form action="" method="POST">
+            <input type="submit" value="Delete" class="btn btn-danger">
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
