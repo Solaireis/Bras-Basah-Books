@@ -7,18 +7,13 @@
 import uuid  # imports the module for universally unique identifiers
 from users.User import User
 from users.Customer import Customer
-from wtforms import Form, StringField, RadioField, SelectField, TextAreaField, validators, EmailField, DateField
 
 
-class Enquiry(Form):
-    name = StringField('Username', [validators.Length(min=1, max=100), validators.DataRequired()])
-    email = EmailField('Email', [validators.Email(), validators.DataRequired()])
-    enquiry_type = SelectField('Enquiry Type', [validators.DataRequired()], choices=[('', 'Select'), ('B', 'Question about Books'), ('F', 'Feedback')], default='')
-    comments = TextAreaField('Comments', [validators.Optional()])
 
+class Enquiry:
 
-class UserEnquiry:
-    def __init__(self, name, email, enquiry_type, comments):
+    def __init__(self, user_id, name, email, comments):
+        enquiry_type = ["others", "a", "b", "c"]  # pre defined enquiries
         # Args: for the self
         #
         #     user_id: the id of the user taken from the account
@@ -29,13 +24,12 @@ class UserEnquiry:
         # Notes:
         #     realised that i need user class and also guest accounts, therefore it has to obtained from them
 
-        self.__enquiry_id = str(uuid.uuid4())  # enquiry_id: unique id of the enquiry which is needed for matching ids together
-        self.__user_id = None  # to link with the user
+        self.__enquiry_id = uuid.uuid4() # enquiry_id: unique id of the enquiry which is needed for matching ids together
+        self.__user_id = user_id
         self.__name = name
         self.__email = email
-        self.__enquiry_type = enquiry_type
+        self.__enquiry_type = enquiry_type[0]  # note to self to create the options for the type of enquiry needed
         self.__comments = comments
-
 
     # setting mutators and assessor methods
 
@@ -43,8 +37,8 @@ class UserEnquiry:
     def get_enquiry_id(self):
         return self.__enquiry_id
 
-    #def set_enquiry_id(self, enquiry_id):
-        #self.__enquiry_id = enquiry_id
+    def set_enquiry_id(self, enquiry_id):
+        self.__enquiry_id = enquiry_id
 
     # user id of customer / if guest auto generate one
     def get_user_id(self):  # create the auto generate function if its a guest

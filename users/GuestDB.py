@@ -13,11 +13,14 @@ class GuestDB(dict):
         self.__head = None
         self.__tail = None
 
+    def __repr__(self):
+        return f"GuestDB({super().__repr__()})"
+
 
     def clean(self):
         """ Clean all expired guests from list and Guests database """
         while self.__head and self[self.__head].is_expired():
-            self.remove()
+            self.remove(self.__head)
 
 
     def add(self, user_id, guest=None):
@@ -32,24 +35,24 @@ class GuestDB(dict):
         self.__tail = user_id
 
 
-    def remove(self, user_id=None):
+    def remove(self, user_id, _pop=True):
         """ Removes guest from database and/or list """
-        # Default, remove guest at head
-        if user_id is None:
-            user_id = self.__head
-            self.__head = self[user_id]._next
-            if self.__head:  # If self.__head is not None
-                self[self.__head]._prev = None
-            self.pop(user_id, None)  # Deletes guest account from database
 
-        # Remove the guest provided
-        else:
-            guest = self[user_id]
-            if guest._prev:  # If user_id._prev is not None
-                self[guest._prev]._next = guest._next
-            if guest._next:  # If user_id._next is not None
-                self[guest._next]._prev = guest._prev
+        # Get guest
+        guest = self[user_id]
 
+        if guest._prev:  # If guest is not head
+            self[guest._prev]._next = guest._next
+        else:  # If guest is head
+            self.__head = guest._next
+
+        if guest._next:  # If guest is not tail
+            self[guest._next]._prev = guest._prev
+        else:  # If guest is tail
+            self.__tail = guest._prev
+
+        # Remove from database if _pop is True
+        if _pop: self.pop(user_id, None)
 
 
     def renew_active(self, user_id):
@@ -59,7 +62,7 @@ class GuestDB(dict):
         self[user_id].renew_active()
 
         # Remove guest from database
-        self.remove(self, user_id)
+        self.remove(self, user_id, _pop=False)
 
         # Adds guest to end of list
         self.add(self, user_id)

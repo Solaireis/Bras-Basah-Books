@@ -5,9 +5,11 @@ from itsdangerous import URLSafeTimedSerializer, BadData
 import shelve
 
 # Import classes
-from users import GuestDB, Guest, Customer, Admin, Master
+from users import GuestDB, Guest, Customer, Admin
 from forms import SignUpForm, LoginForm, AccountPageForm
 
+# Debug flag (constant) (True when debuggin)
+DEBUG = True
 
 app = Flask(__name__)
 app.config.from_pyfile("config/app.cfg")  # Load config file
@@ -17,12 +19,21 @@ url_serialiser = URLSafeTimedSerializer(app.config["SECRET_KEY"])
 
 mail = Mail()  # Mail object for sending emails 
 
+with shelve.open("database") as db:
+    for key in ("EmailToUserID", "Customers", "Admins", "Orders"):
+        if key not in db:
+            db[key] = {}
+    if "Guests" not in db:
+        db["Guests"] = GuestDB()
+
 
 def retrieve_db(key, db, value={}):
     """ Retrieves object from database using key """
     try:
         value = db[key]  # Retrieve object
-    except KeyError:     # If key not created yet
+        if DEBUG: print(f'retrieved db["{key}"] = {value}')
+    except KeyError as err:
+        if DEBUG: print("retrieve_db():", repr(err), f'db["{key}"] = {value}')
         db[key] = value  # Assign value to key
     return value
 
@@ -34,17 +45,17 @@ def get_user():
     if "UserID" in session:
 
         # Set database key according to user
-        user_db_key = session["UserType"] + "s"
+        key = session["UserType"] + "s"
 
         # Retrieve user
         try:
             with shelve.open("database") as db:
-                user_db = retrieve_db(user_db_key, db)
-                user = user_db[session["UserID"]]
+                user = db[key][session["UserID"]]
         except KeyError as err:  # If unexpected error (might occur when changes are made)
-            print(repr(err))  # Output error for debugging
+            if DEBUG: print("get_user():", repr(err), "creating guest...")
             # Move on to create guest account
         else:
+            if DEBUG: print("get user:", user)
             return user
 
     # If not UserID in session, create and return guest account
@@ -70,6 +81,7 @@ def create_guest():
 
         # Save changes to database
         db["Guests"] = guests_db
+    if DEBUG: print("Guest created:", guest)
     return guest
 
 
@@ -81,7 +93,7 @@ def before_request():
     app.permanent_session_lifetime = Guest.MAX_DAYS
 
     # Run get user if user_id not in session
-    if "UserId" not in session:
+    if "UserID" not in session:
         create_guest()
 
 
@@ -94,9 +106,12 @@ def home():
 # Sign up page
 @app.route("/sign-up", methods=["GET", "POST"])
 def sign_up():
+    # Get current (guest) user
+    user = get_user()
+
     # If user is already logged in
     if session["UserType"] != "Guest":
-        return redirect(url_for("home"))
+        return redirect(url_for("account"))
 
     # Get sign up form
     sign_up_form = SignUpForm(request.form)
@@ -104,11 +119,8 @@ def sign_up():
     # Validate sign up form if request is post
     if request.method == "POST" and sign_up_form.validate():
 
-        # Get current (guest) user
-        user = get_user()
-
         # Extract email and password from sign up form
-        email = sign_up_form.email.data
+        email = sign_up_form.email.data.lower()
         password = sign_up_form.password.data
         username = sign_up_form.username.data
 
@@ -126,9 +138,11 @@ def sign_up():
                 return render_template("sign_up.html", form=sign_up_form)
 
             # Create customer
-            customer = Customer(email, password, username, user.shopping_cart)
+            customer = Customer(email, password, username)
+            if DEBUG: print(f"Created: {customer}")
 
             # Delete guest account
+            if DEBUG: print(f"Deleted: {user}")
             guests_db.remove(user.get_user_id())
 
             # Store customer into database
@@ -139,13 +153,14 @@ def sign_up():
             # Create session to login
             session["UserID"] = user_id
             session["UserType"] = "Customer"
+            if DEBUG: print(f"Logged in: {customer}")
 
             # Save changes to database
             db["EmailToUserID"] = email_to_user_id
             db["Customers"] = customers_db
             db["Guests"] = guests_db
 
-        return redirect(url_for("home"))
+        return redirect(url_for("verify_link"))
 
     # Render page
     return render_template("sign_up.html", form=sign_up_form)
@@ -156,13 +171,10 @@ def sign_up():
 def login():
     # If user is already logged in
     if session["UserType"] != "Guest":
-        return redirect(url_for("home"))
+        return redirect(url_for("account"))
 
     login_form = LoginForm(request.form)
     if request.method == "POST" and login_form.validate():
-
-        # Remove LoginFailed session
-        session.pop("LoginFailed", None)
 
         # Extract email and password from login form
         email = login_form.email.data
@@ -176,7 +188,7 @@ def login():
                 user_id = retrieve_db("EmailToUserID", db)[email]
             except KeyError:
                 # Create loginFailed session
-                session["LoginFailed"] = True
+                session["LoginFailed"] = ""
                 return render_template("login.html", form=login_form)
 
             # Retrieve user
@@ -191,10 +203,11 @@ def login():
         if user.check_password(password):
             session["UserID"] = user_id
             session["UserType"] = user_type
+            if DEBUG: print("Logged in:", user)
             return redirect(url_for("home"))
         else:
             # Create loginFailed session
-            session["LoginFailed"] = True
+            session["LoginFailed"] = ""
             return render_template("login.html", form=login_form)
 
     # Render page
@@ -204,12 +217,12 @@ def login():
 # View account page
 @app.route("/account", methods=["GET", "POST"])
 def account():
+    # Get current user
+    user = get_user()
+
     # If user is not logged in
     if session["UserType"] == "Guest":
         return redirect(url_for("login"))
-
-    # Get current (customer) user
-    user = get_user()
 
     # Get account page form
     account_page_form = AccountPageForm(request.form)
@@ -240,7 +253,7 @@ def account():
 # Logout
 @app.route("/logout")
 def logout():
-    if "UserType" != "Guest":
+    if session["UserType"] != "Guest":
         create_guest()
     return redirect(url_for("home"))
 
@@ -251,6 +264,10 @@ def verify_link():
 
     # Get user
     user = get_user()
+
+    # If not customer or email is verified
+    if not isinstance(user, Customer) or user.is_verified():
+        return redirect(url_for("home"))
 
     # Configure noreplybbb02@gmail.com
     app.config.from_pyfile("config/noreply_email.cfg")
@@ -267,7 +284,7 @@ def verify_link():
                 sender=("BrasBasahBooks", "noreplybbb02@gmail.com"),
                 recipients=[email])
     link = url_for("verify", token=token, _external=True)
-    msg.html = f"Your link is {link}<br />(Link expires after 15 minutes)"
+    msg.html = f"Click <a href='{link}'>here</a> to verify your email.<br />(Link expires after 15 minutes)"
     mail.send(msg)
 
     return render_template("sent_verify.html", email=email)
@@ -276,31 +293,38 @@ def verify_link():
 # Verify email page
 @app.route("/verify/<token>")
 def verify(token):
+    # Get user
+    user = get_user()
+
     # Get email from token
     try:
         email = url_serialiser.loads(token, salt=app.config["VERIFY_EMAIL_SALT"], max_age=900)
     except BadData as err:  # Token expired or Bad Signature
-        print(repr(err))  # print captured error (for debugging)
-        return redirect(url_for("verify_fail"))
-    
+        if DEBUG: print("Invalid Token:", repr(err))  # print captured error (for debugging)
+        return render_template("verify_fail.html")
+
     with shelve.open("database") as db:
         email_to_user_id = retrieve_db("EmailToUserID", db)
         customers_db = retrieve_db("Customers", db)
 
-        # Get user and verify email
-        user = customers_db[email_to_user_id[email]]
-        user.set_verified(True)
+        # Get user
+        try:
+            user = customers_db[email_to_user_id[email]]
+        except KeyError:
+            if DEBUG: print("No user with email:", email)  # Account was deleted
+            return render_template("verify_fail.html")
+        
+        # Verify email
+        if not user.is_verified():
+            user.verify()
+        else:  # Email was alreadyt verified
+            if DEBUG: print(email, "is already verified")
+            return render_template("verify_fail.html")
 
+        # Safe changes to database
         db["Customers"] = customers_db
 
     return render_template("verify_email.html", email=email)
-
-
-# Verify failed page
-@app.route("/verify/fail")
-def verify_fail():
-    return render_template("verify_fail.html")
-
 
 
 # Book Info page
@@ -322,83 +346,19 @@ def go_cart():
     # else:
     #     return render_template('cart.html', book_count=len(cart.cart))
 
-    #enquiry page
-@app.route("/enquiry", methods=['GET', 'POST'])
-def enquiry_cust():
-    create_enquiry_form = Enquiry(request.form)
-    if request.method == 'POST' and create_enquiry_form.validate():
-        enquiry_dict = {}
-        db = shelve.open('database', 'c')
-
-        try:
-            enquiry_dict = db['Enquiry']
-        except:
-            print("Error in retrieving enquiries from enquiry.db.")
-
-        enquiry = UserEnquiry(create_enquiry_form.name.data, create_enquiry_form.email.data, create_enquiry_form.enquiry_type.data, create_enquiry_form.comments.data)
-        enquiry_dict[enquiry.get_enquiry_id()] = enquiry
-        db['Enquiry'] = enquiry_dict
-
-        db.close()
-
-        return redirect(url_for('home'))
-
-    return render_template("enquiry_customer.html", form=create_enquiry_form)
-
-#retrieve customers
-@app.route("/enquiry-adm")
-def enquiry_retrieve_adm():
-    enquiry_dict={}
-    db = shelve.open('database','r')
-    enquiry_dict = db['Enquiry']
-    db.close()
-
-    enquiry_list = []
-    for key in enquiry_dict:
-        enquiry = enquiry_dict.get(key)
-        enquiry_list.append(enquiry)
-        print(enquiry_list)
-
-    return render_template("enquiry_admin.html", count=len(enquiry_list), enquiry_list=enquiry_list)
-
-@app.route("/faq-adm", methods=['GET', 'POST'])
-def faq_adm():
-    create_faq_form = Faq(request.form)
-    if request.method == 'POST' and create_faq_form.validate():
-        faq_dict = {}
-        db = shelve.open('faq','c')
-
-        try:
-            faq_dict = db['Faq']
-        except:
-            print("Error in retrieving faq queries from faq.db")
-
-        faq = FaqEntry(create_faq_form.title.data, create_faq_form.desc.data)
-        faq_dict[faq.get_faq_id()] = faq
-        db['Faq'] = faq_dict
-
-        db.close()
-
-        return redirect(url_for('home'))
-    return render_template("faq_adm.html", form=create_faq_form)
-
 
 # Only during production. To be removed when published.
 @app.route("/test")  # To go to test page: http://127.0.0.1:5000/test
 def test():
-
     # Get user
     user = get_user()
-
     # If user is already logged in
     if session["UserType"] == "Guest":
-        return ("You are a guest<br/>"
-                f"Guest({user.get_user_id()})")
+        return f"You are a guest<br/>{user}"
     else:
-        return (f"You are logged in<br/>{session['UserType']}"
-                f"({user.get_username()}, {user.get_email()}, {user.get_user_id()})")
+        return f"You are logged in<br/>{user}"
     return render_template("test.html")
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=DEBUG)

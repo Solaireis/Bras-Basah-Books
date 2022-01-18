@@ -11,7 +11,6 @@ class Guest(User):
         __last_active (datetime): time that guest account was last active
         _prev (str): UserID of previous guest account created
         _next (str): UserID of next guest account to be created
-        shopping_cart (ShoppingCart): shopping cart of guest
     """
 
     MAX_DAYS = timedelta(days=3)
