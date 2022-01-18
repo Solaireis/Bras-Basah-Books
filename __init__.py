@@ -5,6 +5,7 @@ from itsdangerous import URLSafeTimedSerializer, BadData
 import shelve
 
 # Import classes
+import Book
 from users import GuestDB, Guest, Customer, Admin
 from forms import SignUpForm, LoginForm, AccountPageForm, AddBookForm
 
