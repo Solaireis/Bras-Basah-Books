@@ -209,3 +209,11 @@ footer{
   background-color: #FCEEE0;
   padding:0 50px;
 }
+
+/* --------------------------------------------------------------------------
+    4. Misc
+-------------------------------------------------------------------------- */
+.btn-warning {
+    background-color: #588B8B !important;
+    color: #fff !important;
+}
