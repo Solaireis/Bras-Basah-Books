@@ -1,0 +1,9 @@
+# directories
+__pycache__/
+.venv/
+.vscode/
+
+# database files
+database.bak
+database.dat
+database.dir
