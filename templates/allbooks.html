@@ -1,0 +1,243 @@
+{% extends "base.html" %}
+
+{% block title %}BrasBasahBooks Cart{% endblock %}
+
+{% block stylesheets %}
+
+<link rel="stylesheet" href="/static/css/allbooks.css">
+
+{% endblock %}
+
+{% block content %}
+
+<!-- breadcrumb -->
+    <div aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">All Books</li>
+      </ol>
+    </div>
+
+    <!-- Filter -->
+    <div class="row">
+      <div class="col-3 left-filter">
+        <!-- Language Filter -->
+        <h5 onclick="language_filter()">Language<i class="fa fa-angle-down"></i><i class="fa fa-angle-up"></i></h5>
+        <hr>
+        <div class="dropdown-filter" id="select_language">
+          <input type="checkbox" id="English" name="English" value="English">
+          <label for="English">English</label><br>
+          <input type="checkbox" id="Chinese" name="" value="Chinese">
+          <label for="Chinese">Chinese</label><br>
+          <input type="checkbox" id="Malay" name="" value="Malay">
+          <label for="Malay">Malay</label><br>
+          <input type="checkbox" id="Tamil" name="" value="Tamil">
+          <label for="Tamil">Tamil</label><br><br>
+        </div>
+        <!-- Action Filter -->
+        <h5 onclick="action_filter()">Action<i class="fa fa-angle-down"></i><i class="fa fa-angle-up"></i></h5>
+        <hr>
+        <div class="dropdown-filter" id="select_action">
+          <input type="checkbox" id="" name="" value="Buy Only">
+          <label for="">Buy Only</label><br>
+          <input type="checkbox" id="" name="" value="Rent Only">
+          <label for="vehicle2">Rent Only</label><br><br>
+        </div>
+        <!-- Categories Filter -->
+        <h5 onclick="categories_filter()">Categories<i class="fa fa-angle-down"></i><i class="fa fa-angle-up"></i></h5>
+        <hr>
+        <div class="dropdown-filter" id="select_categories">
+          <input type="checkbox" id="" name="" value="Action & Adventure">
+          <label for="">Action & Adventure</label><br>
+          <input type="checkbox" id="" name="" value="Classic">
+          <label for="vehicle2">Classic</label><br>
+          <input type="checkbox" id="" name="" value="Comic">
+          <label for="">Comic</label><br>
+          <input type="checkbox" id="" name="" value="Detective & Mystery">
+          <label for="vehicle2">Detective & Mystery</label><br>
+          <input type="checkbox" id="" name="" value="Fantasy">
+          <label for="">Fantasy</label><br>
+          <input type="checkbox" id="" name="" value="Historical Fiction">
+          <label for="vehicle2">Historical Fiction</label><br>
+          <input type="checkbox" id="" name="" value="Horror">
+          <label for="">Horror</label><br>
+          <input type="checkbox" id="" name="" value="Literary Fiction">
+          <label for="vehicle2">Literary Fiction</label><br>
+          <input type="checkbox" id="" name="" value="Romance">
+          <label for="">Romance</label><br>
+          <input type="checkbox" id="" name="" value="Sci-Fi">
+          <label for="">Sci-Fi</label><br>
+          <input type="checkbox" id="" name="" value="Suspense & Thrillers">
+          <label for="vehicle2">Suspense & Thrillers</label><br>
+          <input type="checkbox" id="" name="" value="Biographies">
+          <label for="">Biographies</label><br>
+          <input type="checkbox" id="" name="" value="Cookbooks">
+          <label for="vehicle2">Cookbooks</label><br>
+          <input type="checkbox" id="" name="" value="Essays">
+          <label for="">Essays</label><br>
+          <input type="checkbox" id="" name="" value="History">
+          <label for="vehicle2">History</label><br>
+          <input type="checkbox" id="" name="" value="Poetry">
+          <label for="">Poetry</label><br>
+          <input type="checkbox" id="" name="" value="Self-Help">
+          <label for="vehicle2">Self-Help</label><br>
+          <input type="checkbox" id="" name="" value="Art & Photography">
+          <label for="">Art & Photography</label><br>
+          <input type="checkbox" id="" name="" value="Travel">
+          <label for="">Travel</label><br>
+          <input type="checkbox" id="" name="" value="Religion & Spirituality">
+          <label for="">Religion & Spirituality</label><br>
+          <input type="checkbox" id="" name="" value="Guide / How-to">
+          <label for="">Guide / How-to</label><br>
+          <input type="checkbox" id="" name="" value="Humanities & SS">
+          <label for="">Humanities & SS</label><br>
+          <input type="checkbox" id="" name="" value="Parenting & Families">
+          <label for="">Parenting & Families</label><br>
+          <input type="checkbox" id="" name="" value="Science & Technology">
+          <label for="">Science & Technology</label><br>
+          <input type="checkbox" id="" name="" value="Others">
+          <label for="vehicle2">Others</label><br><br>
+        </div>
+        <!-- Age Filter -->
+        <h5 onclick="age_filter()">Age<i class="fa fa-angle-down"></i><i class="fa fa-angle-up"></i></h5>
+        <hr>
+        <div class="dropdown-filter" id="select_age">
+          <input type="checkbox" id="" name="" value="Adults">
+          <label for="">Adults</label><br>
+          <input type="checkbox" id="" name="" value="Teenagers">
+          <label for="vehicle2">Teenagers</label><br>
+          <input type="checkbox" id="" name="" value="Children">
+          <label for="vehicle2">Children</label><br><br>
+        </div>
+      </div>
+
+      <!-- Hide filters and sort by button -->
+      <div class="col-9">
+        <div class="right-filter">
+          <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">Sort By</button>
+          <ul class="dropdown-menu dropdown-menu" aria-labelledby="dropdownMenuButton2">
+            <li><a class="dropdown-item active" href="#">Popularity</a></li>
+            <li><a class="dropdown-item" href="#">Latest</a></li>
+            <li><a class="dropdown-item" href="#">Name (A to Z)</a></li>
+            <li><a class="dropdown-item" href="#">Name (Z to A)</a></li>
+            <li><a class="dropdown-item" href="#">Price (Low to High)</a></li>
+            <li><a class="dropdown-item" href="#">Price (High to Low)</a></li>
+          </ul>
+          <button class="btn" type="button" name="button">Hide Filters <i class="fa fa-filter"></i></button>
+        </div>
+
+        <br><br>
+
+        <!-- All products -->
+        <div class="row book-info">
+          <div class="col-12">
+            <div class="row row-cols-2 row-cols-md-4 g-4">
+              <div class="col">
+                <a href="cart"><div class="card h-100">
+                  <img src="/static/img/The_Chronicles_of_Narnia.png" class="card-img-top" alt="...">
+                  <div class="card-body">
+                    <h5 class="card-title">Book Title</h5>
+                    <p class="card-text">$99.99</p>
+                  </div>
+                </div></a>
+              </div>
+              <div class="col">
+                <div class="card h-100">
+                  <img src="/static/img/The_Chronicles_of_Narnia.png" class="card-img-top" alt="...">
+                  <div class="card-body">
+                    <h5 class="card-title">Book Title</h5>
+                    <p class="card-text">$99.99</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="card h-100">
+                  <img src="/static/img/The_Chronicles_of_Narnia.png" class="card-img-top" alt="...">
+                  <div class="card-body">
+                    <h5 class="card-title">Book Title</h5>
+                    <p class="card-text">$99.99</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="card h-100">
+                  <img src="/static/img/The_Chronicles_of_Narnia.png" class="card-img-top" alt="...">
+                  <div class="card-body">
+                    <h5 class="card-title">Book Title</h5>
+                    <p class="card-text">$99.99</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+  <script type="text/javascript">
+    var select_language = document.getElementById('select_language');
+    var select_action = document.getElementById('select_action');
+    var select_categories = document.getElementById('select_categories');
+    var select_age = document.getElementById('select_age');
+
+    var down_arrow = document.getElementsByClassName('fa-angle-down');
+    var up_arrow = document.getElementsByClassName('fa-angle-up');
+    up_arrow[0].style.display = 'none';
+    up_arrow[1].style.display = 'none';
+    up_arrow[2].style.display = 'none';
+    up_arrow[3].style.display = 'none';
+
+    // Show and hide language filter
+    function language_filter(){
+      if (select_language.style.display == 'none'){
+        select_language.style.display = "block";
+        up_arrow[0].style.display = 'block';
+        down_arrow[0].style.display = 'none';
+      }else{
+        select_language.style.display = 'none';
+        down_arrow[0].style.display = 'block';
+        up_arrow[0].style.display = 'none';
+      }
+    }
+
+    function action_filter(){
+      if (select_action.style.display == 'none'){
+        select_action.style.display = "block";
+        up_arrow[1].style.display = 'block';
+        down_arrow[1].style.display = 'none';
+      }else{
+        select_action.style.display = 'none';
+        down_arrow[1].style.display = 'block';
+        up_arrow[1].style.display = 'none';
+      }
+    }
+
+    function categories_filter(){
+      if (select_categories.style.display == 'none'){
+        select_categories.style.display = "block";
+        up_arrow[2].style.display = 'block';
+        down_arrow[2].style.display = 'none';
+      }else{
+        select_categories.style.display = 'none';
+        down_arrow[2].style.display = 'block';
+        up_arrow[2].style.display = 'none';
+      }
+    }
+
+    function age_filter(){
+      if (select_age.style.display == 'none'){
+        select_age.style.display = "block";
+        up_arrow[3].style.display = 'block';
+        down_arrow[3].style.display = 'none';
+      }else{
+        select_age.style.display = 'none';
+        down_arrow[3].style.display = 'block';
+        up_arrow[3].style.display = 'none';
+      }
+    }
+   </script>
+
+{% endblock %}

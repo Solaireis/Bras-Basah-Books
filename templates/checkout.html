@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}BrasBasahBooks Cart{% endblock %}
+
+{% block stylesheets %}
+
+<link rel="stylesheet" href="/static/css/cart.css">
+<link rel="stylesheet" href="/static/css/checkout.css">
+
+{% endblock %}
+
+{% block content %}
+
+<h2 class="page-name"><span>Check Out</span></h2>
+    <div class="row">
+      <div class="col-9">
+        <h3>Shipping Information</h3>
+
+        <h5>Shipping Option</h5>
+        <button type="button" name="button" class="btn shipping-option">
+          <h5>Standard Delivery<span>$5.00</span></h5>
+          <p>SingPost (3 - 5 business days)</p>
+        </button>
+        <button type="button" name="button" class="btn shipping-option">
+          <h5>Self-collection<span>Free</span></h5>
+          <p>Reserve online, collect at <a href="#">our store</a>.</p>
+        </button>
+        <h5>Shipping Address</h5>
+        <form class="row g-3 checkout-form">
+          <div class="col-md-6 form-floating">
+            <input type="text" class="form-control" id="floatingfirstname" placeholder="first name" required>
+            <label for="floatingfirstname">&nbsp;&nbsp; First Name</label>
+          </div>
+          <div class="col-md-6 form-floating">
+            <input type="text" class="form-control" id="lastname" placeholder="Last Name" required>
+            <label for="lastname">&nbsp;&nbsp; Last Name</label>
+          </div>
+          <div class="col-md-6 form-floating">
+            <input type="number" class="form-control" id="floatingcontact" placeholder="Contact Number" required>
+            <label for="floatingcontact">&nbsp;&nbsp; Contact Number</label>
+          </div>
+          <div class="col-md-6 form-floating">
+            <input type="email" class="form-control" id="floatingemail" placeholder="Email" required>
+            <label for="floatingemail">&nbsp;&nbsp; Email</label>
+          </div>
+          <div class="col-12 form-floating">
+            <input type="text" class="form-control" id="floatingaddress" placeholder="Address" required>
+            <label for="floatingaddress">&nbsp;&nbsp; Address</label>
+          </div>
+          <div class="col-12">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="gridCheck" checked>
+              <label class="form-check-label" for="gridCheck">
+                My billing address is same as my shipping address
+              </label>
+            </div>
+          </div>
+          <div class="col-12">
+            <button type="submit" class="btn submit-btn">Continue</button>
+          </div>
+          </form>
+
+        <h3>Payment Method</h3>
+        <h5>Credit / Debit Card</h5>
+          <form class="row g-3 checkout-form" action="#" method="post">
+            <div class="col-12 form-floating">
+              <input type="number" class="form-control" id="floatingcardnum" placeholder="Card Number" required>
+              <label for="floatingcardnum">&nbsp;&nbsp; Card Number</label>
+            </div>
+            <div class="col-12 form-floating">
+              <input type="text" class="form-control" id="floatingcardname" placeholder="Name on Card" required>
+              <label for="floatingcardname">&nbsp;&nbsp; Name on Card</label>
+            </div>
+            <div class="col-md-6 form-floating">
+              <input type="month" class="form-control" min="2022-02" id="floatingdate" placeholder="Card Expiry Date" required>
+              <label for="floatingdate">&nbsp;&nbsp; Card Expiry Date</label>
+            </div>
+            <div class="col-md-6 form-floating">
+              <input type="number" class="form-control" id="cvv" placeholder="CVV" required>
+              <label for="cvv">&nbsp;&nbsp; CVV</label>
+            </div>
+            <h5>Discount</h5>
+            <div class="col-10 form-floating">
+              <input type="text" class="form-control" id="promocode" placeholder="Promote Code">
+              <label for="promocode">&nbsp;&nbsp; Promote Code</label>
+            </div>
+            <div class="col-2">
+              <button class="btn promocode-btn" type="button" name="button">Apply</button>
+            </div>
+            <p class="text-muted">By clicking Order, I hereby agree to and accept the <a href="#">Terms of Use</a> and <a href="#">Privacy Policy</a>.</p>
+            <div class="col-12">
+              <button type="submit" class="btn submit-btn">Order</button>
+            </div>
+          </form>
+      </div>
+
+      <div class="col-3">
+        <div class="card">
+          <div class="card-header">
+            <h4>In Your Cart
+            <span>(2)</span></h4>
+            <button class="btn" type="button" name="button">Edit</button>
+          </div>
+          <div class="card-body">
+            <p class="card-text">Subtotal</p>
+            <p class="card-text">Shipping</p>
+            <p class="card-text">Estimated Total</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+<!-- put js here -->
+{% endblock %}
