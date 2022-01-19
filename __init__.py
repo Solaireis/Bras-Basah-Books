@@ -7,7 +7,7 @@ import shelve
 # Import classes
 import Book
 from users import GuestDB, Guest, Customer, Admin
-from forms import SignUpForm, LoginForm, AccountPageForm, AddBookForm
+from forms import SignUpForm, LoginForm, AccountPageForm, Enquiry,UserEnquiry,Faq,FaqEntry,Reply, AddBookForm
 
 # Debug flag (constant) (True when debuggin)
 DEBUG = True
@@ -328,6 +328,18 @@ def verify(token):
     return render_template("verify_email.html", email=email)
 
 
+# allbooks
+@app.route("/allbooks")
+def allbooks():
+    return render_template("allbooks.html")
+
+
+# Checkout
+@app.route("/checkout")
+def checkout():
+    return render_template("checkout.html")
+
+
 # Book Info page
 @app.route("/book_info")
 def book_info():        
@@ -346,6 +358,74 @@ def go_cart():
     #     return render_template('cart.html', cart=cart.cart, book_count=len(cart.cart), book_name=book_name, book_price=book_price)
     # else:
     #     return render_template('cart.html', book_count=len(cart.cart))
+
+#
+# enquiry page
+#
+@app.route("/enquiry", methods=['GET', 'POST'])
+def enquiry_cust():
+    create_enquiry_form = Enquiry(request.form)
+    if request.method == 'POST' and create_enquiry_form.validate():
+        enquiry_dict = {}
+        db = shelve.open('database', 'c')
+
+        try:
+            enquiry_dict = db['Enquiry']
+        except:
+            print("Error in retrieving enquiries from enquiry.db.")
+
+        enquiry = UserEnquiry(create_enquiry_form.name.data, create_enquiry_form.email.data, create_enquiry_form.enquiry_type.data, create_enquiry_form.comments.data)
+        enquiry_dict[enquiry.get_enquiry_id()] = enquiry
+        db['Enquiry'] = enquiry_dict
+
+        db.close()
+
+        return redirect(url_for('home'))
+
+    return render_template("enquiry_customer.html", form=create_enquiry_form)
+
+#
+# retrieve customers
+#
+
+@app.route("/enquiry-adm")
+def enquiry_retrieve_adm():
+    enquiry_dict={}
+    db = shelve.open('database','r')
+    enquiry_dict = db['Enquiry']
+    db.close()
+
+    enquiry_list = []
+    for key in enquiry_dict:
+        enquiry = enquiry_dict.get(key)
+        enquiry_list.append(enquiry)
+        print(enquiry_list)
+
+    return render_template("enquiry_admin.html", count=len(enquiry_list), enquiry_list=enquiry_list)
+
+#
+# faq Admin create
+#
+@app.route("/faq-adm", methods=['GET', 'POST'])
+def faq_adm():
+    create_faq_form = Faq(request.form)
+    if request.method == 'POST' and create_faq_form.validate():
+        faq_dict = {}
+        db = shelve.open('faq','c')
+
+        try:
+            faq_dict = db['Faq']
+        except:
+            print("Error in retrieving faq queries from faq.db")
+
+        faq = FaqEntry(create_faq_form.title.data, create_faq_form.desc.data)
+        faq_dict[faq.get_faq_id()] = faq
+        db['Faq'] = faq_dict
+
+        db.close()
+
+        return redirect(url_for('home'))
+    return render_template("faq_adm.html", form=create_faq_form)
 
 
 # Only during production. To be removed when published.
@@ -448,4 +528,4 @@ def update_book(id):
 
 
 if __name__ == "__main__":
-    app.run(debug=DEBUG)
+    app.run(debug=DEBUG, host="127.0.0.1", port="5001")
