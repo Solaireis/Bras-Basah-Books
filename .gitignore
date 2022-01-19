@@ -1,5 +1,6 @@
 # directories
 __pycache__/
+.old/
 .venv/
 .vscode/
 
