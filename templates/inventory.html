@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 {% block title %}Inventory{% endblock %}
 
+{% block stylesheets %}
+
+<link rel="stylesheet" href="/static/css/standard.css">
+
+{% endblock %}
+
 {% block content %}
 <h1 class="display-4">Inventory</h1>
 <div>
@@ -54,8 +60,39 @@
         {% endif %}
         <td><a href="/updateBook/{{book.get_book_id()}}" class="btn btn-warning">Update</a></td>
         <td>
-          <form action="" method="POST">
-            <input type="submit" value="Delete" class="btn btn-danger">
+          <form action="{{url_for('delete_book', id=book.get_book_id())}}" method="POST">
+<!--            <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{book.get_title()}} by {{book.get_author()}}?');">-->
+            <!-- Button to Open the Modal -->
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#myModal_{{book.get_book_id()}}">
+              Delete
+            </button>
+
+            <!-- The Modal -->
+            <div class="modal" id="myModal_{{book.get_book_id()}}">
+              <div class="modal-dialog">
+                <div class="modal-content">
+
+                  <!-- Modal Header -->
+                  <div class="modal-header">
+                    <h4 class="modal-title">Delete Confirmation</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                  </div>
+
+                  <!-- Modal body -->
+                  <div class="modal-body">
+                    Are you sure you want to delete {{book.get_title()}} by {{book.get_author()}} priced at ${{book.get_price()}}?
+                  </div>
+
+                  <!-- Modal footer -->
+                  <div class="modal-footer">
+                    <input type="submit" value="Delete" class="btn btn-danger">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
           </form>
         </td>
       </tr>
