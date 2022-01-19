@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Verify Email{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="/static/css/login.css">
+{% endblock %}
+
+{% block navbar %}
+  {% include 'includes/_login_navbar.html' %}
+{% endblock %}
+
+{% block content %}
+
+<h1 class="display-4">Verify Email</h1>
+<p>A verification link has been sent to this email</p>
+<h2>{{ email }}</h2>
+<p>Go to the link to verify email (link expires in 15 minutes)</p>
+{% endblock %}
+
+{% block footer %}
+  {% include 'includes/_login_footer.html' %}
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

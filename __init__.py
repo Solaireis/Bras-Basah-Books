@@ -9,8 +9,9 @@ import Book
 from users import GuestDB, Guest, Customer, Admin
 from forms import SignUpForm, LoginForm, AccountPageForm, Enquiry,UserEnquiry,Faq,FaqEntry,Reply, AddBookForm
 
-# Debug flag (constant) (True when debuggin)
-DEBUG = True
+# CONSTANTS
+DEBUG = True         # Debug flag (True when debugging)
+TOKEN_MAX_AGE = 900  # Max age of token (15 mins)
 
 app = Flask(__name__)
 app.config.from_pyfile("config/app.cfg")  # Load config file
@@ -178,7 +179,7 @@ def login():
     if request.method == "POST" and login_form.validate():
 
         # Extract email and password from login form
-        email = login_form.email.data
+        email = login_form.email.data.lower()
         password = login_form.password.data
 
         # Check email
@@ -288,7 +289,7 @@ def verify_link():
     msg.html = f"Click <a href='{link}'>here</a> to verify your email.<br />(Link expires after 15 minutes)"
     mail.send(msg)
 
-    return render_template("sent_verify.html", email=email)
+    return render_template("verify/send.html", email=email)
 
 
 # Verify email page
@@ -299,10 +300,10 @@ def verify(token):
 
     # Get email from token
     try:
-        email = url_serialiser.loads(token, salt=app.config["VERIFY_EMAIL_SALT"], max_age=900)
+        email = url_serialiser.loads(token, salt=app.config["VERIFY_EMAIL_SALT"], max_age=TOKEN_MAX_AGE)
     except BadData as err:  # Token expired or Bad Signature
         if DEBUG: print("Invalid Token:", repr(err))  # print captured error (for debugging)
-        return render_template("verify_fail.html")
+        return redirect(url_for("verify_fail"))
 
     with shelve.open("database") as db:
         email_to_user_id = retrieve_db("EmailToUserID", db)
@@ -313,19 +314,25 @@ def verify(token):
             user = customers_db[email_to_user_id[email]]
         except KeyError:
             if DEBUG: print("No user with email:", email)  # Account was deleted
-            return render_template("verify_fail.html")
+            return redirect(url_for("verify_fail"))
         
         # Verify email
         if not user.is_verified():
             user.verify()
         else:  # Email was alreadyt verified
             if DEBUG: print(email, "is already verified")
-            return render_template("verify_fail.html")
+            return redirect(url_for("verify_fail"))
 
         # Safe changes to database
         db["Customers"] = customers_db
 
-    return render_template("verify_email.html", email=email)
+    return render_template("verify/verify.html", email=email)
+
+
+# Verify fail page
+@app.route("/verify/fail")
+def verify_fail():
+    render_template("verify/fail.html")
 
 
 # allbooks

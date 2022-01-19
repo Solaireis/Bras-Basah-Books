@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Verification Failed{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="/static/css/login.css">
+{% endblock %}
+
+{% block navbar %}
+  {% include 'includes/_login_navbar.html' %}
+{% endblock %}
+
+{% block content %}
+<h1 class="display-4">Verification Failed</h1>
+<div>This link is either expired or invalid.</div>
+{% endblock %}
+
+{% block footer %}
+  {% include 'includes/_login_footer.html' %}
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
