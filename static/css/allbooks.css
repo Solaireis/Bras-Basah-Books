@@ -1,0 +1,36 @@
+.dropdown-filter, .fa-angle-up{
+  display: none;
+}
+
+h5{
+  cursor: pointer;
+}
+
+h5:hover{
+  opacity: 0.9;
+}
+
+hr{
+  margin-top: 0;
+}
+
+.left-filter h5 i{
+  float: right;
+}
+
+h5 i:hover{
+  color: #4b8282 !important;
+}
+
+.right-filter button{
+  color: #4b8282;
+  float: right;
+  font-size: 1.1em;
+  padding: 0;
+  margin-left: 20px;
+}
+
+.dropdown-menu .active{
+  background-color: #4b8282;
+  color: white;
+}

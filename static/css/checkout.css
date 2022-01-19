@@ -1,0 +1,49 @@
+/* Check out Shipping Option */
+.shipping-option{
+  width: 100%;
+  text-align: left;
+  border: 1px #d3e6e6 solid;
+  margin-bottom: 20px;
+  padding: 10px;
+  background: white;
+  color: #4b8282;
+}
+
+.shipping-option:hover{
+  color: #4b8282;
+  border-color: #4b8282;
+  opacity: 0.9;
+}
+
+.shipping-option span{
+  float: right;
+}
+
+a{
+  color: #4b8282;
+}
+
+a:hover{
+  color: #4b8282;
+  opacity: 0.8;
+}
+
+/* Button in check out form */
+.checkout-form button{
+  float: right;
+  width: 20%;
+  background-color: #4b8282;
+  border-color: #4b8282;
+  color: white;
+}
+
+.checkout-form .submit-btn:hover, .checkout-form .promocode-btn:hover{
+  background-color: #4b8282;
+  border-color: #4b8282;
+  color: white;
+  opacity: 0.9;
+}
+
+.checkout-form .promocode-btn{
+  width: 100%;
+}
