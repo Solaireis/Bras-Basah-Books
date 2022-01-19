@@ -327,6 +327,18 @@ def verify(token):
     return render_template("verify_email.html", email=email)
 
 
+# allbooks
+@app.route("/allbooks")
+def allbooks():
+    return render_template("allbooks.html")
+
+
+# Checkout
+@app.route("/checkout")
+def checkout():
+    return render_template("checkout.html")
+
+
 # Book Info page
 @app.route("/book_info")
 def book_info():        
