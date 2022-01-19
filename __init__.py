@@ -441,6 +441,7 @@ def test():
     return render_template("test.html")
 
 
+# Add Book
 @app.route('/addBook', methods=['GET', 'POST'])
 def add_book():
     add_book_form = AddBookForm(request.form)
@@ -466,6 +467,7 @@ def add_book():
     return render_template('add_book.html', form=add_book_form)
 
 
+# Inventory system for admin
 @app.route('/inventory')
 def inventory():
     books_dict = {}
@@ -481,6 +483,7 @@ def inventory():
     return render_template('inventory.html', count=len(books_list), books_list=books_list)
 
 
+# Update Book
 @app.route('/updateBook/<int:id>/', methods=['GET', 'POST'])
 def update_book(id):
     update_book_form = AddBookForm(request.form)
@@ -525,6 +528,21 @@ def update_book(id):
         update_book_form.img.data = book.get_img()
 
         return render_template('update_book.html', form=update_book_form)
+
+
+# Delete Book
+@app.route('/deleteBook/<int:id>', methods=['POST'])
+def delete_book(id):
+    books_dict = {}
+    db = shelve.open('book.db', 'w')
+    books_dict = db['Books']
+
+    books_dict.pop(id)
+
+    db['Books'] = books_dict
+    db.close()
+
+    return redirect(url_for('inventory'))
 
 
 if __name__ == "__main__":
