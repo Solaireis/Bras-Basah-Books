@@ -3,9 +3,12 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, BadData
 import shelve
+import requests
+from bs4 import BeautifulSoup
 
 # Import classes
 import Book
+import cart as c
 from users import GuestDB, Guest, Customer, Admin
 from forms import SignUpForm, LoginForm, AccountPageForm, Enquiry,UserEnquiry,Faq,FaqEntry,Reply, AddBookForm
 
@@ -19,7 +22,7 @@ app.config.from_pyfile("config/app.cfg")  # Load config file
 # Serialiser for generating tokens
 url_serialiser = URLSafeTimedSerializer(app.config["SECRET_KEY"])
 
-mail = Mail()  # Mail object for sending emails 
+mail = Mail()  # Mail object for sending emails
 
 with shelve.open("database") as db:
     for key in ("EmailToUserID", "Customers", "Admins", "Orders"):
@@ -341,7 +344,7 @@ def verify(token):
         except KeyError:
             if DEBUG: print("No user with email:", email)  # Account was deleted
             return redirect(url_for("verify_fail"))
-        
+
         # Verify email
         if not user.is_verified():
             user.verify()
@@ -367,6 +370,69 @@ def allbooks():
     return render_template("allbooks.html")
 
 
+# add to cart
+@app.route("/addtocart", methods=['GET', 'POST'])
+def add_to_cart():
+    cart_list = []
+    cart_user = []
+    user_id = get_user().get_user_id()
+    source = requests.get("http://127.0.0.1:5000/book_info").content
+    soup = BeautifulSoup(source, 'lxml')
+    try:
+        book_id = soup.find_all('span')[1].get_text()
+        book_id = int(book_id)
+        for key, quantity in request.form.items():
+            book_quantity = quantity
+            book_quantity = int(book_quantity)
+        cart_db = shelve.open('cart', 'c')
+
+        try:
+            cart_list = cart_db['Cart']
+            print(cart_list, "original database")
+        except:
+            cart_db['Cart'] = []
+            print("Error in retrieving Cart Item from cart.db but it is manageable")
+
+        added_book = c.Cart(book_id, book_quantity)
+        if len(cart_list) == 0:
+            print("New cart created")
+            new_cart = [user_id, [added_book.get_book_id(), added_book.get_book_quantity()]]
+            cart_list.append(new_cart)
+            cart_db['Cart'] = cart_list
+            print(cart_db["Cart"])
+        else:
+            for i in range(len(cart_list)):
+                if user_id in cart_list[i]:
+                    for j in range(len((cart_list)[i])-1):
+                        if j == 0:
+                            j += 1
+                        if book_id == cart_list[i][j][0]:
+                            cart_list[i][j][1] += book_quantity
+                            print(cart_list, "before changing database")
+                            cart_db['Cart'] = cart_list
+                        else:
+                            print("Oops book is not in this user's cart")
+                            print("Not done yet")
+                    break
+                elif i == (len(cart_list)-1) and user_id not in cart_user:
+                    print("Cannot find user id in cart")
+                    new_cart = [user_id, [added_book.get_book_id(), added_book.get_book_quantity()]]
+                    cart_list.append(new_cart)
+                    cart_db['Cart'] = cart_list
+                    print(cart_list)
+                # for line in cart_db:
+                #     cart_list.append(line)
+                #print(cart_list,'current database')
+
+                elif user_id not in cart_list[i]:
+                    cart_user.append(cart_list[i][0])
+                    print(cart_user)
+    except IndexError:
+        pass
+    cart_db.close()
+    return render_template("book_info.html")
+
+
 # Checkout
 @app.route("/checkout")
 def checkout():
@@ -375,7 +441,7 @@ def checkout():
 
 # Book Info page
 @app.route("/book_info")
-def book_info():        
+def book_info():
     return render_template("book_info.html")
 
 
