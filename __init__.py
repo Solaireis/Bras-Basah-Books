@@ -176,41 +176,43 @@ def login():
         return redirect(url_for("account"))
 
     login_form = LoginForm(request.form)
-    if request.method == "POST" and login_form.validate():
+    if request.method == "POST":
+        if not login_form.validate():
+            session["FormErrors"] = []
+        else:
+            # Extract email and password from login form
+            email = login_form.email.data.lower()
+            password = login_form.password.data
 
-        # Extract email and password from login form
-        email = login_form.email.data.lower()
-        password = login_form.password.data
+            # Check email
+            with shelve.open("database") as db:
 
-        # Check email
-        with shelve.open("database") as db:
+                # Retrieve user id
+                try:
+                    user_id = retrieve_db("EmailToUserID", db)[email]
+                except KeyError:
+                    # Create loginFailed session
+                    session["LoginFailed"] = ""
+                    return render_template("login.html", form=login_form)
 
-            # Retrieve user id
-            try:
-                user_id = retrieve_db("EmailToUserID", db)[email]
-            except KeyError:
+                # Retrieve user
+                try:
+                    user = retrieve_db("Customers", db)[user_id]
+                    user_type = "Customer"
+                except KeyError:
+                    user = retrieve_db("Admins", db)[user_id]
+                    user_type = "Admin"
+
+            # Check password
+            if user.check_password(password):
+                session["UserID"] = user_id
+                session["UserType"] = user_type
+                if DEBUG: print("Logged in:", user)
+                return redirect(url_for("home"))
+            else:
                 # Create loginFailed session
                 session["LoginFailed"] = ""
                 return render_template("login.html", form=login_form)
-
-            # Retrieve user
-            try:
-                user = retrieve_db("Customers", db)[user_id]
-                user_type = "Customer"
-            except KeyError:
-                user = retrieve_db("Admins", db)[user_id]
-                user_type = "Admin"
-
-        # Check password
-        if user.check_password(password):
-            session["UserID"] = user_id
-            session["UserType"] = user_type
-            if DEBUG: print("Logged in:", user)
-            return redirect(url_for("home"))
-        else:
-            # Create loginFailed session
-            session["LoginFailed"] = ""
-            return render_template("login.html", form=login_form)
 
     # Render page
     return render_template("login.html", form=login_form)
@@ -435,19 +437,6 @@ def faq_adm():
     return render_template("faq_adm.html", form=create_faq_form)
 
 
-# Only during production. To be removed when published.
-@app.route("/test")  # To go to test page: http://127.0.0.1:5000/test
-def test():
-    # Get user
-    user = get_user()
-    # If user is already logged in
-    if session["UserType"] == "Guest":
-        return f"You are a guest<br/>{user}"
-    else:
-        return f"You are logged in<br/>{user}"
-    return render_template("test.html")
-
-
 # Add Book
 @app.route('/addBook', methods=['GET', 'POST'])
 def add_book():
@@ -552,5 +541,18 @@ def delete_book(id):
     return redirect(url_for('inventory'))
 
 
+# Only during production. To be removed when published.
+@app.route("/test")  # To go to test page: http://127.0.0.1:5000/test
+def test():
+    # # Get user
+    # user = get_user()
+    # # If user is already logged in
+    # if session["UserType"] == "Guest":
+    #     return f"You are a guest<br/>{user}"
+    # else:
+    #     return f"You are logged in<br/>{user}"
+    return render_template("test.html")
+
+
 if __name__ == "__main__":
-    app.run(debug=DEBUG, host="127.0.0.1", port="5001")
+    app.run(debug=DEBUG)

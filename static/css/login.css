@@ -1,11 +1,3 @@
-#logo {
-    width: 70px;
-    height: 70px;
-    /*margin-left: 5%;*/
-}
-
-.navbar-brand{
-    color: white;
-    font-size: 2em;
-    /*margin-left: 10px;*/
+.navbar {
+    height: 80px;
 }
