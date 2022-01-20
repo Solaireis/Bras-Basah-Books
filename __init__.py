@@ -87,6 +87,30 @@ def create_guest():
     return guest
 
 
+def get_last_book_id():
+    """ Return the ID of the last book """
+
+    books_dict = {}
+    db = shelve.open('book.db', 'r')
+    books_dict = db['Books']
+    db.close()
+
+    id_list = list(books_dict.keys())
+    last_id = max(id_list)
+    return int(last_id)
+
+    # count_dict = {}
+    # db = shelve.open('database.db', 'c')
+    #
+    # try:
+    #     count_dict = db['Count']
+    # except:
+    #     print("Error in retrieving count from database.db")
+    #
+    # count_dict[last_id] = last_id
+    # db['Count'] = count_dict
+
+
 # Before request
 @app.before_request
 def before_request():
@@ -450,6 +474,7 @@ def add_book():
         except:
             print("Error in retrieving Books from book.db")
 
+        Book.Book.count_id = get_last_book_id()
         book = Book.Book(add_book_form.language.data, add_book_form.category.data, add_book_form.age.data, add_book_form.action.data, add_book_form.title.data, add_book_form.author.data, add_book_form.price.data, add_book_form.qty.data, add_book_form.desc.data, add_book_form.img.data)
         books_dict[book.get_book_id()] = book
         db['Books'] = books_dict

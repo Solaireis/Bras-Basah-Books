@@ -34,6 +34,10 @@ class Book:
         self.__img = img
 
     # Mutator methods
+
+    def set_book_id(self, book_id):
+        self.__book_id = book_id
+
     def set_language(self, language):
         self.__language = language
 
