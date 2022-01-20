@@ -3,53 +3,46 @@
   display: none;
 }
 
-.buying-cart, .buying-cart a, .renting-cart, .renting-cart a, .empty-cart, .empty-cart a{
-  background-color: white;
-  color: #4b8282;
-  text-align: center;
-  margin-bottom: 25px;
+table{
+  background: white;
 }
 
-.buying-cart, .renting-cart, .empty-cart{
-  padding: 15px;
-}
-
-.buying-cart img, .renting-cart img{
-  width: 15%;
+table img{
+  width: 100%;
   float: left;
-  margin-right: 20px;
 }
 
-.buying-cart div, .renting-cart div{
-  text-align: left;
-
+table td, table i{
+  color: #4b8282 !important;
 }
 
-.buying-cart input, .renting-cart input{
-  width: 5%;
-  color: #4b8282;
-}
-
-.remove_button{
-  float: right;
+td button .fa-close{
   font-size: 1.3em;
+}
+
+td button .fa-close:hover{
   color: #4b8282;
 }
 
-.remove_button:hover{
+td .quantity-selector, .update-btn{
+  width: 60%;
+  color: #4b8282;
+}
+
+#book_id{
+    color: #4b8282;
+    border: none;
+    background:none;
+}
+
+.update-btn{
+  text-decoration: underline;
+  font-weight: bold !important;
+}
+
+.update-btn:hover{
   color: #4b8282;
   opacity: 0.8;
-}
-
-.update_button{
-    text-align: left;
-    color: #4b8282;
-    font-size: 0.8em;
-}
-
-.update_button:hover{
-    color: #4b8282;
-    opacity: 0.8;
 }
 
 .order-summary .card, .order-summary .card-header{
