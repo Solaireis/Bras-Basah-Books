@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 
 # Import classes
 import Book
-import cart as c
+import Cart as c
 from users import GuestDB, Guest, Customer, Admin
 from forms import SignUpForm, LoginForm, AccountPageForm, Enquiry,UserEnquiry,Faq,FaqEntry,Reply, AddBookForm
 
@@ -370,6 +370,12 @@ def allbooks():
     return render_template("allbooks.html")
 
 
+# Book Info page
+@app.route("/book_info")
+def book_info():
+    return render_template("book_info.html")
+
+
 # add to cart
 @app.route("/addtocart", methods=['GET', 'POST'])
 def add_to_cart():
@@ -433,22 +439,47 @@ def add_to_cart():
     return render_template("book_info.html")
 
 
-# Checkout
-@app.route("/checkout")
-def checkout():
-    return render_template("checkout.html")
-
-
-# Book Info page
-@app.route("/book_info")
-def book_info():
-    return render_template("book_info.html")
-
-
 # Shopping Cart
 @app.route('/go_cart')
 def go_cart():
-    return render_template('cart.html', book_count=0)
+    user_id = get_user().get_user_id()
+    cart_db = shelve.open('cart')
+    book_db = shelve.open('book.db', 'r')
+    books_dict = book_db['Books']
+    book_db.close()
+    cart_list = cart_db['Cart']
+    cart_db.close()
+    book_cart = []
+    book_info = []
+    book_name = ""
+    book_price = 0
+    book_quantity = 0
+    total_price = 0
+    if len(cart_list) != 0:
+        for i in range(len(cart_list)):
+            print(cart_list[i])
+            if user_id in cart_list[i]:
+                user_cart = cart_list[i]
+                for j in range(1, len(user_cart)):
+                    print('j =', j)
+                    book_cart = [user_cart[j]]
+                    print(book_cart[0], 'here')
+                    for a in range(0,len(book_cart),2):
+                        book_id = book_cart[a][a]
+                        book_name = books_dict[book_id].get_title()
+                        book_price = books_dict[book_id].get_price()
+                        book_quantity = book_cart[a][a+1]
+                        book = book_id, book_name, float(book_price), book_quantity
+                        book_info.append(book)
+                        print(book_info)
+                        total_price += float(book_quantity)*float(book_price)
+            else:
+                print(cart_list, "cannot find user")
+
+
+        return render_template('cart.html', book_cart=book_cart, book_count=len(book_cart), book_name=book_name, book_price=book_price, book_quantity=book_quantity, book_id=book_id, total_price=total_price)
+    else:
+        return render_template('cart.html', book_count=0)
     # if len(cart.cart) > 0:
     #     for i in range(len(cart.cart)):
     #         book_name = list(cart.cart.keys())[i]
@@ -457,6 +488,42 @@ def go_cart():
     #     return render_template('cart.html', cart=cart.cart, book_count=len(cart.cart), book_name=book_name, book_price=book_price)
     # else:
     #     return render_template('cart.html', book_count=len(cart.cart))
+
+
+# Update Cart
+@app.route('/update_cart', methods=['GET', 'POST'])
+def update_cart():
+    user_id = get_user().get_user_id()
+    cart_db = shelve.open('cart')
+    cart_list = cart_db['Cart']
+    book_quantity = request.form['quantity']
+    book_id = request.form['book_id']
+    print(book_id, 'is book id', book_quantity, 'is quantity')
+    for i in range(len(cart_list)):
+            print(cart_list[i])
+            if user_id in cart_list[i]:
+                for j in range(1, len(cart_list[i])):
+                    print('j =', j)
+                    book_cart = [cart_list[i][j]]
+                    if int(book_id) == cart_list[i][j][0]:
+                        cart_list[i][j][1] = int(book_quantity)
+                        print(cart_list[i][j][1])
+                        cart_db['Cart'] = cart_list
+                    else:
+                        print(cart_list[i][j], 'cannot find leh')
+                    # for a in range(0,len(book_cart),2):
+                    #     if book_id == book_cart[a][a]
+            else:
+                print(cart_list, "cannot find user")
+    cart_db.close()
+    return go_cart()
+
+
+# Checkout
+@app.route("/checkout")
+def checkout():
+    return render_template("checkout.html")
+
 
 #
 # enquiry page
