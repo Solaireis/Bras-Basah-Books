@@ -4,7 +4,7 @@ Form classes used by BrasBasahBooks web app
 
 # Import WTForms
 from wtforms import Form, validators, StringField, RadioField,\
-                    TextAreaField, EmailField, PasswordField, FileField, \
+                    TextAreaField, EmailField, PasswordField, FileField,\
                     SelectField, IntegerField, SubmitField, DecimalField
 
 # Import custom validations (for password field)
@@ -27,7 +27,8 @@ class SignUpForm(Form):
                                           ContainsNumSymbol()])
 
     # Confirm password
-    confirm = PasswordField("Confirm Password", [validators.EqualTo("password")])
+    confirm = PasswordField("Confirm Password", [validators.InputRequired(),
+                                                 validators.EqualTo("password")])
 
     # Username
     username = StringField("Username", [validators.Length(max=25)])

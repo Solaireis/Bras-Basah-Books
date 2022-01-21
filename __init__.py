@@ -10,7 +10,8 @@ from bs4 import BeautifulSoup
 import Book
 import Cart as c
 from users import GuestDB, Guest, Customer, Admin
-from forms import SignUpForm, LoginForm, AccountPageForm, Enquiry,UserEnquiry,Faq,FaqEntry,Reply, AddBookForm
+from forms import SignUpForm, LoginForm, AccountPageForm,\
+                  Enquiry, UserEnquiry, Faq, FaqEntry, Reply, AddBookForm
 
 # CONSTANTS
 DEBUG = True         # Debug flag (True when debugging)
