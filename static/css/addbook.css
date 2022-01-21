@@ -1,0 +1,27 @@
+.grid-form-spacer {
+    padding: 50px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+
+.submitcenter {
+    margin:0 auto;
+    display:block;
+}
+
+.themecolor {
+    background-color: #588B8B;
+}
+
+.themecolor:hover {
+    background-color: #588B8B;
+}
+
+.padding-top {
+    padding-top: 15px;
+}
+
+.submitpadding {
+    padding-top: 30px;
+    padding-bottom: 30px;
+}

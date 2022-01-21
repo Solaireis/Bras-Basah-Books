@@ -218,6 +218,24 @@ footer{
 .btn-warning {
     background-color: #588B8B !important;
     color: #fff !important;
+    border: #588B8B solid !important;
+}
+
+.defaultbtn {
+    background-color: #588B8B;
+    color: #fff;
+    border: #588B8B solid;
+}
+
+.defaultbtn:hover {
+    background-color: #588B8B;
+    color: #fff;
+    border: #588B8B solid;
+}
+
+.twentypx {
+    padding-top: 20px;
+    padding-bottom: 20px;
 }
 
 /* --------------------------------------------------------------------------
