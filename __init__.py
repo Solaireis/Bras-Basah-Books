@@ -614,7 +614,11 @@ def add_book():
         except:
             print("Error in retrieving Books from book.db")
 
-        Book.Book.count_id = get_last_book_id()
+        try:
+            Book.Book.count_id = get_last_book_id()
+        except:
+            print("First time adding book so last book id not needed")
+
         book = Book.Book(add_book_form.language.data, add_book_form.category.data, add_book_form.age.data, add_book_form.action.data, add_book_form.title.data, add_book_form.author.data, add_book_form.price.data, add_book_form.qty.data, add_book_form.desc.data, add_book_form.img.data)
         books_dict[book.get_book_id()] = book
         db['Books'] = books_dict
@@ -624,17 +628,22 @@ def add_book():
         book = books_dict[book.get_book_id()]
         print(book.get_title(), book.get_price(), "was stored in book.db successfully with book_id==", book.get_book_id())
         db.close()
-        return "Book successfully added"
+        return redirect(url_for('inventory'))
     return render_template('add_book.html', form=add_book_form)
 
 
 # Inventory system for admin
 @app.route('/inventory')
 def inventory():
-    books_dict = {}
-    db = shelve.open('book.db', 'r')
-    books_dict = db['Books']
-    db.close()
+
+    try:
+        books_dict = {}
+        db = shelve.open('book.db', 'r')
+        books_dict = db['Books']
+        db.close()
+
+    except:
+        print("There are no books")
 
     books_list = []
     for key in books_dict:
