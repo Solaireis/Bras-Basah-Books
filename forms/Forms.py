@@ -60,7 +60,7 @@ class AddBookForm(Form):
     language = SelectField('Language', [validators.InputRequired()], choices=[('', 'Select'), ('E', 'English'), ('C', 'Chinese'), ('M', 'Malay'), ('T', 'Tamil')], default='')
     category = SelectField('Category', [validators.InputRequired()], choices=[('', 'Select'), ('AA', 'Action & Adventure'), ('Cl', 'Classic'), ('Co', 'Comic'), ('DM', 'Detective & Mystery')], default='')
     age = SelectField('Age', [validators.InputRequired()], choices=[('', 'Select'), ('C', 'Children'), ('T', 'Teenagers'), ('YA', 'Young Adults'), ('A', 'Adults')], default='')
-    action = SelectField('Action', [validators.InputRequired()], choices=[('', 'Select'), ('B', 'Buy'), ('R', 'Rent'), ('BR', 'Buy and Rent')], default='')
+    action = RadioField('Action', [validators.InputRequired()], choices=[('B', 'Buy'), ('R', 'Rent'), ('BR', 'Buy and Rent')])
     title = StringField('Title', [validators.InputRequired("Title is required")])
     author = StringField('Author', [validators.InputRequired("Author is required")])
     price = DecimalField('Price', [validators.InputRequired("Price is required")], places=2, rounding=None)
