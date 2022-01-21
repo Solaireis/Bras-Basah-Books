@@ -9,8 +9,10 @@
   ├─ 1.Global
   ├─ 2.NavBar
   ├─ 3.Footer
+  ├─ 4.Misc
+  ├─ 5.Fonts
   | Colour Palette for web pages (for us to self reference the colour choices)
-  ├─ #000 , #10113f , #db3a49 , #FFF , #555 , #FFC07F ,#071013 (to be updated)
+  ├─ #FCEEE0, #4b8282 , #FFF
 */
 
 /* --------------------------------------------------------------------------
@@ -216,4 +218,25 @@ footer{
 .btn-warning {
     background-color: #588B8B !important;
     color: #fff !important;
+}
+
+/* --------------------------------------------------------------------------
+    5. font
+-------------------------------------------------------------------------- */
+@font-face{
+  font-family:Rubik;
+  src: url('../fonts/Rubik-Light.ttf');
+  font-weight:normal;
+  font-style:normal;
+}
+
+@font-face{
+  font-family:Rubik;
+  src: url('../fonts/Rubik-Bold.ttf');
+  font-weight:bold;
+  font-style:normal;
+}
+
+.rubik{
+  font-family:rubik;
 }
