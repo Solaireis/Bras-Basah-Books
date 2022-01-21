@@ -1,7 +1,7 @@
 # Import modules
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_mail import Mail, Message
-from itsdangerous import URLSafeTimedSerializer, BadData
+from itsdangerous import URLSafeTimedSerializer, BadData, exc
 import shelve
 import requests
 from bs4 import BeautifulSoup
@@ -227,9 +227,15 @@ def login():
                 try:
                     user = retrieve_db("Customers", db)[user_id]
                     user_type = "Customer"
-                except KeyError:
-                    user = retrieve_db("Admins", db)[user_id]
-                    user_type = "Admin"
+                except KeyError:  # If user_id not in Customers, try admin
+                    try:
+                        user = retrieve_db("Admins", db)[user_id]
+                        user_type = "Admin"
+                    except KeyError:  # Unexpected error
+                        if DEBUG: print(f"UserID {user_id} not in database")
+                        # Create loginFailed session
+                        session["LoginFailed"] = ""
+                        return render_template("login.html", form=login_form)
 
             # Check password
             if user.check_password(password):
