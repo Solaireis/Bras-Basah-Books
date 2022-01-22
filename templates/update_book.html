@@ -15,7 +15,7 @@
 
 <h1 class="display-4 padding-top">Update Book</h1>
 
-<form method="POST" action="">
+<form method="POST" enctype="multipart/form-data" action="">
 
   <div class="row">
     <div class="col grid-form-spacer">
@@ -76,8 +76,12 @@
       </div>
     </div>
     <div class="col grid-form-spacer">
+<!--      <div class="form-group">-->
+<!--        {{ render_field(form.img, class="form-control") }}-->
+<!--      </div>-->
       <div class="form-group">
-        {{ render_field(form.img, class="form-control") }}
+        <input type="file" name="bookimg" accept="image/*" onchange="document.getElementById('bookcover').src = window.URL.createObjectURL(this.files[0])">
+        <img id="bookcover" alt="Book Cover" src="" width="100px" height="150px">
       </div>
     </div>
   </div>
@@ -92,5 +96,3 @@
   {% include 'includes/_footer.html' %}
 {% endblock %}
 
-{% block scripts %}
-{% endblock %}

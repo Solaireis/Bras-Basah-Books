@@ -24,6 +24,7 @@
     <thead>
       <tr>
         <th>Book ID</th>
+        <th>Book Cover</th>
         <th>Language</th>
         <th>Title</th>
         <th>Author</th>
@@ -38,6 +39,9 @@
     {% for book in books_list %}
       <tr>
         <td>{{ book.get_book_id() }}</td>
+        <td>
+          <img src="{{ book.get_img() }}" alt="{{ book.get_title() }}" style="width:40px;height:60px;">
+        </td>
         {% if book.get_language() == "E" %}
         <td>English</td>
         {% elif book.get_language() == "C" %}
