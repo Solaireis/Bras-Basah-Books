@@ -11,7 +11,7 @@ from wtforms import Form, validators, StringField, RadioField,\
 from .Validations import ContainsLower, ContainsUpper, ContainsNumSymbol
 
 # Import validation for file upload
-from flask_wtf.file import FileField, FileAllowed
+from flask_wtf.file import FileAllowed, FileRequired
 
 
 class SignUpForm(Form):
@@ -66,5 +66,4 @@ class AddBookForm(Form):
     price = DecimalField('Price', [validators.InputRequired("Price is required")], places=2, rounding=None)
     qty = IntegerField('Quantity', [validators.InputRequired("Quantity is required")])
     desc = TextAreaField('Description', [validators.Length(min=1), validators.InputRequired("Description is required")])
-    img = FileField('Image', validators=[FileAllowed(['jpg', 'png'])])
-    submit = SubmitField(label='Update Inventory')
+    img = FileField('Image', validators=[FileAllowed(['jpg', 'jpeg', 'png'], 'Images only!')])
