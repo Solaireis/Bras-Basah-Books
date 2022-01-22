@@ -1,10 +1,13 @@
 # Import modules
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, BadData, exc
 import shelve
 import requests
 from bs4 import BeautifulSoup
+import os
+from werkzeug.utils import secure_filename
+
 
 # Import classes
 import Book
@@ -17,8 +20,15 @@ from forms import SignUpForm, LoginForm, AccountPageForm,\
 DEBUG = True         # Debug flag (True when debugging)
 TOKEN_MAX_AGE = 900  # Max age of token (15 mins)
 
+# For image file upload
+UPLOAD_FOLDER = 'static/img/books'
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
+
+
 app = Flask(__name__)
 app.config.from_pyfile("config/app.cfg")  # Load config file
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER  # Set upload folder
+app.config['MAX_CONTENT_LENGTH'] = 4 * 1024 * 1024  #Set maximum file upload limit (4MB)
 
 # Serialiser for generating tokens
 url_serialiser = URLSafeTimedSerializer(app.config["SECRET_KEY"])
@@ -113,6 +123,11 @@ def get_last_book_id():
     #
     # count_dict[last_id] = last_id
     # db['Count'] = count_dict
+
+
+# Check if file extension is valid
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 # Before request
@@ -619,7 +634,36 @@ def add_book():
         except:
             print("First time adding book so last book id not needed")
 
+
         book = Book.Book(add_book_form.language.data, add_book_form.category.data, add_book_form.age.data, add_book_form.action.data, add_book_form.title.data, add_book_form.author.data, add_book_form.price.data, add_book_form.qty.data, add_book_form.desc.data, add_book_form.img.data)
+
+
+        # check if post request has image file part
+        if 'bookimg' not in request.files:
+            flash('There is no image uploaded!')
+            return redirect(request.url)
+        bookimg = request.files['bookimg']
+        if bookimg == '':
+            flash("No image selected for uploading")
+            return redirect(request.url)
+        if bookimg and allowed_file(bookimg.filename):
+            filename = str(secure_filename(bookimg.filename))
+            currentbookid = book.get_book_id()
+            extension=filename.split(".")
+            extension=str(extension[1])
+            bookimg.filename = str(currentbookid) + "." + extension
+
+            path = os.path.join(app.config['UPLOAD_FOLDER'], bookimg.filename)
+            bookimg.save(path)
+            print("upload_image filename: " + filename)
+
+        else:
+            print('Allowed image types are -> png, jpg, jpeg')
+            return render_template('add_book.html', form=add_book_form)
+
+        print("Book image uploaded under " + str(path))
+
+        book.set_img(str("/" + path))
         books_dict[book.get_book_id()] = book
         db['Books'] = books_dict
 
@@ -629,6 +673,7 @@ def add_book():
         print(book.get_title(), book.get_price(), "was stored in book.db successfully with book_id==", book.get_book_id())
         db.close()
         return redirect(url_for('inventory'))
+
     return render_template('add_book.html', form=add_book_form)
 
 
@@ -672,7 +717,27 @@ def update_book(id):
         book.set_price(update_book_form.price.data)
         book.set_qty(update_book_form.qty.data)
         book.set_desc(update_book_form.desc.data)
-        book.set_img(update_book_form.img.data)
+        book.set_img(book.get_img())
+
+        # check if post request has image file part
+        if 'bookimg' not in request.files:
+            flash('There is no image uploaded!')
+            return redirect(request.url)
+        bookimg = request.files['bookimg']
+        if bookimg == '':
+            flash("No image selected for uploading")
+            return redirect(request.url)
+        if bookimg and allowed_file(bookimg.filename):
+            filename = str(secure_filename(bookimg.filename))
+            currentbookid = book.get_book_id()
+            extension=filename.split(".")
+            extension=str(extension[1])
+            bookimg.filename = str(currentbookid) + "." + extension
+
+            path = os.path.join(app.config['UPLOAD_FOLDER'], bookimg.filename)
+            bookimg.save(path)
+            book.set_img(str("/" + path))
+            print("upload_image filename: " + filename)
 
         db['Books'] = books_dict
         db.close()
@@ -708,6 +773,8 @@ def delete_book(id):
     books_dict = db['Books']
 
     books_dict.pop(id)
+    id = str(id) + ".png"
+    os.remove(os.path.join(app.config['UPLOAD_FOLDER'], id))
 
     db['Books'] = books_dict
     db.close()
