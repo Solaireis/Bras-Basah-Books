@@ -35,13 +35,6 @@ url_serialiser = URLSafeTimedSerializer(app.config["SECRET_KEY"])
 
 mail = Mail()  # Mail object for sending emails
 
-with shelve.open("database") as db:
-    for key in ("EmailToUserID", "Customers", "Admins", "Orders"):
-        if key not in db:
-            db[key] = {}
-    if "Guests" not in db:
-        db["Guests"] = GuestDB()
-
 
 def retrieve_db(key, db, value={}):
     """ Retrieves object from database using key """

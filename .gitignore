@@ -5,6 +5,4 @@ __pycache__/
 .vscode/
 
 # database files
-database.bak
-database.dat
-database.dir
+database.*
