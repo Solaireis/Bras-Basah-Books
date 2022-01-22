@@ -14,7 +14,6 @@ class Customer(User):
         __gender (str): gender of customer - "M" for male, "F" for female, "O" for other
         __coupons (list): list of the coupons owned by customer
         __orders (list): list of the orders made by customer
-        shopping_cart (ShoppingCart): shopping cart of customer
     """
 
     def __init__(self, email, password, username=""):
