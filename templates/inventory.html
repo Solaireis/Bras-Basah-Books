@@ -62,7 +62,7 @@
         {% elif book.get_action() == "BR" %}
         <td>Buy and Rent</td>
         {% endif %}
-        <td><a href="/updateBook/{{book.get_book_id()}}" class="btn btn-warning">Update</a></td>
+        <td><a href="/update-book/{{book.get_book_id()}}" class="btn btn-warning">Update</a></td>
         <td>
           <form action="{{url_for('delete_book', id=book.get_book_id())}}" method="POST">
 <!--            <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{book.get_title()}} by {{book.get_author()}}?');">-->
@@ -107,6 +107,6 @@
 
 
 <div class="twentypx">
-  <a href="/addBook" class="btn defaultbtn">Add Book</a>
+  <a href="/add-book" class="btn defaultbtn">Add Book</a>
 </div>
 {% endblock %}
