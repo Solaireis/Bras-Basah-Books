@@ -772,15 +772,21 @@ def delete_book(id):
     db = shelve.open('book.db', 'w')
     books_dict = db['Books']
 
+    book = books_dict.get(id)
+    deletethisbook = str(book.get_img())
+    deletethisbook = deletethisbook[1:]
     books_dict.pop(id)
-    id = str(id) + ".png"
-    os.remove(os.path.join(app.config['UPLOAD_FOLDER'], id))
+    if os.path.isfile(deletethisbook):
+        os.remove(deletethisbook)
+        print(deletethisbook + ' is deleted')
+    else:
+        print(deletethisbook)
+        print("This book cover image does not exist")
 
     db['Books'] = books_dict
     db.close()
 
     return redirect(url_for('inventory'))
-
 
 # Only during production. To be removed when published.
 @app.route("/test")  # To go to test page: http://127.0.0.1:5000/test
