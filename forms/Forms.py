@@ -57,10 +57,10 @@ class AccountPageForm(Form):
 class AddBookForm(Form):
     """ Form used for adding books into inventory """
 
-    language = SelectField('Language', [validators.InputRequired()], choices=[('', 'Select'), ('E', 'English'), ('C', 'Chinese'), ('M', 'Malay'), ('T', 'Tamil')], default='')
-    category = SelectField('Category', [validators.InputRequired()], choices=[('', 'Select'), ('AA', 'Action & Adventure'), ('Cl', 'Classic'), ('Co', 'Comic'), ('DM', 'Detective & Mystery')], default='')
-    age = SelectField('Age', [validators.InputRequired()], choices=[('', 'Select'), ('C', 'Children'), ('T', 'Teenagers'), ('YA', 'Young Adults'), ('A', 'Adults')], default='')
-    action = RadioField('Action', [validators.InputRequired()], choices=[('B', 'Buy'), ('R', 'Rent'), ('BR', 'Buy and Rent')])
+    language = SelectField('Language', [validators.InputRequired()], choices=[('', 'Select'), ('English', 'English'), ('Chinese', 'Chinese'), ('Malay', 'Malay'), ('Tamil', 'Tamil')], default='')
+    category = SelectField('Category', [validators.InputRequired()], choices=[('', 'Select'), ('Action & Adventure', 'Action & Adventure'), ('Classic', 'Classic'), ('Comic', 'Comic'), ('Detective & Mystery', 'Detective & Mystery')], default='')
+    age = SelectField('Age', [validators.InputRequired()], choices=[('', 'Select'), ('Children', 'Children'), ('Teenagers', 'Teenagers'), ('Young Adults', 'Young Adults'), ('Adults', 'Adults')], default='')
+    action = RadioField('Action', [validators.InputRequired()], choices=[('Buy', 'Buy'), ('Rent', 'Rent'), ('Buy and Rent', 'Buy and Rent')])
     title = StringField('Title', [validators.InputRequired("Title is required")])
     author = StringField('Author', [validators.InputRequired("Author is required")])
     price = DecimalField('Price', [validators.InputRequired("Price is required")], places=2, rounding=None)
