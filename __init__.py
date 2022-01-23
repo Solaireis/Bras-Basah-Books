@@ -788,6 +788,38 @@ def delete_book(id):
 
     return redirect(url_for('inventory'))
 
+
+# Book info page v2
+@app.route('/book/<int:id>', methods=['GET', 'POST'])
+def book_info2(id):
+    book_db = shelve.open('book.db', 'r')
+    books_dict = book_db['Books']
+    book_db.close()
+
+    currentbook = []
+    book = books_dict.get(id)
+
+
+
+    book.set_book_id(book.get_book_id())
+    book.set_language(book.get_language())
+    book.set_category(book.get_category())
+    book.set_age(book.get_age())
+    book.set_action(book.get_action())
+    book.set_title(book.get_title())
+    book.set_author(book.get_author())
+    book.set_price(book.get_price())
+    book.set_qty(book.get_qty())
+    book.set_desc(book.get_desc())
+    book.set_img(book.get_img())
+
+    currentbook.append(book)
+    print(currentbook, book.get_title())
+
+    return render_template('book_info2.html', currentbook=currentbook)
+
+
+
 # Only during production. To be removed when published.
 @app.route("/test")  # To go to test page: http://127.0.0.1:5000/test
 def test():
