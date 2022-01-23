@@ -33,8 +33,10 @@
         <th>Action</th>
         <th></th>
         <th></th>
+        <th></th>
       </tr>
     </thead>
+
     <tbody>
     {% for book in books_list %}
       <tr>
@@ -42,26 +44,28 @@
         <td>
           <img src="{{ book.get_img() }}" alt="{{ book.get_title() }}" style="width:40px;height:60px;">
         </td>
-        {% if book.get_language() == "E" %}
-        <td>English</td>
-        {% elif book.get_language() == "C" %}
-        <td>Chinese</td>
-        {% elif book.get_language() == "M" %}
-        <td>Malay</td>
-        {% elif book.get_language() == "T" %}
-        <td>Tamil</td>
-        {% endif %}
+<!--        {% if book.get_language() == "E" %}-->
+<!--        <td>English</td>-->
+<!--        {% elif book.get_language() == "C" %}-->
+<!--        <td>Chinese</td>-->
+<!--        {% elif book.get_language() == "M" %}-->
+<!--        <td>Malay</td>-->
+<!--        {% elif book.get_language() == "T" %}-->
+<!--        <td>Tamil</td>-->
+<!--        {% endif %}-->
+        <td>{{ book.get_language() }}</td>
         <td>{{ book.get_title() }}</td>
         <td>{{ book.get_author() }}</td>
         <td>{{ book.get_price() }}</td>
         <td>{{ book.get_qty() }}</td>
-        {% if book.get_action() == "B" %}
-        <td>Buy</td>
-        {% elif book.get_action() == "R" %}
-        <td>Rent</td>
-        {% elif book.get_action() == "BR" %}
-        <td>Buy and Rent</td>
-        {% endif %}
+<!--        {% if book.get_action() == "B" %}-->
+<!--        <td>Buy</td>-->
+<!--        {% elif book.get_action() == "R" %}-->
+<!--        <td>Rent</td>-->
+<!--        {% elif book.get_action() == "BR" %}-->
+<!--        <td>Buy and Rent</td>-->
+<!--        {% endif %}-->
+        <td>{{ book.get_action() }}</td>
         <td><a href="/update-book/{{book.get_book_id()}}" class="btn btn-warning">Update</a></td>
         <td>
           <form action="{{url_for('delete_book', id=book.get_book_id())}}" method="POST">
@@ -99,6 +103,7 @@
 
           </form>
         </td>
+        <td><a href="/book/{{book.get_book_id()}}" class="btn btn-warning">View Book</a></td>
       </tr>
     {% endfor %}
     </tbody>
