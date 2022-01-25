@@ -747,9 +747,13 @@ def add_book():
         except:
             print("First time adding book so last book id not needed")
 
-
         book = Book.Book(add_book_form.language.data, add_book_form.category.data, add_book_form.age.data, add_book_form.action.data, add_book_form.title.data, add_book_form.author.data, add_book_form.price.data, add_book_form.qty.data, add_book_form.desc.data, add_book_form.img.data)
 
+        if add_book_form.language2.data != "":
+            book.set_language(add_book_form.language2.data)
+
+        if add_book_form.category2.data != "":
+            book.set_category(add_book_form.category2.data)
 
         # check if post request has image file part
         if 'bookimg' not in request.files:
@@ -821,8 +825,14 @@ def update_book(id):
         books_dict = db['Books']
 
         book = books_dict.get(id)
-        book.set_language(update_book_form.language.data)
-        book.set_category(update_book_form.category.data)
+        if update_book_form.language.data != "":
+            book.set_language(update_book_form.language.data)
+        else:
+            book.set_language(update_book_form.language2.data)
+        if update_book_form.category.data != "":
+            book.set_category(update_book_form.category.data)
+        else:
+            book.set_category(update_book_form.category2.data)
         book.set_age(update_book_form.age.data)
         book.set_action(update_book_form.action.data)
         book.set_title(update_book_form.title.data)
@@ -865,7 +875,9 @@ def update_book(id):
 
         book = books_dict.get(id)
         update_book_form.language.data = book.get_language()
+        update_book_form.language2.data = book.get_language()
         update_book_form.category.data = book.get_category()
+        update_book_form.category2.data = book.get_category()
         update_book_form.age.data = book.get_age()
         update_book_form.action.data = book.get_action()
         update_book_form.title.data = book.get_title()
