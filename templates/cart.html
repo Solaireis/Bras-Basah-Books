@@ -98,7 +98,7 @@
                         <td class="col-4"><h5>${{ rent_bookprice }}</h5></td>
                     </form>
                     <form method="POST" action="/delete_renting_cart">
-                        <input type="number" name="book_id" class="book_id" style="display:none;" value={{ book_id }} readonly></td>
+                        <input type="number" name="rent_book_id" class="book_id" style="display:none;" value={{ rent_bookid }} readonly></td>
                         <td class="col-1"><button type="submit" onclick="delete_renting_cart()" name="button" style="float:right;" class="btn"><i class="fa fa-close"></i></button></td>
                     </form>
                 </tr>
