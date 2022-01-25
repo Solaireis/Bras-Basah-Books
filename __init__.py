@@ -300,6 +300,7 @@ def account():
 @app.route("/account/logout")
 def logout():
     if session["UserType"] != "Guest":
+        if DEBUG: print("Logout:", get_user())
         create_guest()
     return redirect(url_for("home"))
 
