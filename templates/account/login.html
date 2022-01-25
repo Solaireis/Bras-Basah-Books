@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="/static/css/login.css">
+{% endblock %}
+
+{% block navbar %}
+  {% include 'includes/_login_navbar.html' %}
+{% endblock %}
+
+{% block content %}
+{% from "includes/_login_render_field.html" import render_field %}
+<div class="container">
+  <div class="d-flex justify-content-center h-100">
+    <div class="card">
+      <div class="card-header">
+        <h3>Login</h3>
+      </div>
+      <div class="card-body">
+        <form method="POST" action="">
+          {% if "LoginFailed" in session or "FormErrors" in session %}
+            {# Remove "LoginFailed" and "FormErrors" from session #}
+            {% if session.pop("LoginFailed", None) %}{% endif %}
+            {% if session.pop("FormErrors", None) %}{% endif %}
+            <div class="alert alert-danger p-2 mb-3">
+              Your email and/or password is incorrect, please try again
+            </div>
+          {% endif %}
+          <div class="input-group mb-3">
+            <span class="input-group-text"><i class="fa fa-user"></i></span>
+            {{ render_field(form.email, class="form-control", placeholder="Email") }}
+          </div>
+          <div class="input-group mb-3">
+            <span class="input-group-text"><i class="fa fa-lock"></i></span>
+            {{ render_field(form.password, class="form-control", placeholder="Password") }}
+          </div>
+          <input type="submit" value="Submit" class="btn btn-primary"/>
+        </form>
+      </div>
+      <div class="card-footer">
+        <div class="d-flex justify-content-center links">
+          Don't have an account?&nbsp<a href="/account/sign-up">Sign Up</a>
+        </div>
+        <div class="d-flex justify-content-center">
+          <a href="#">Forgot your password?</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
