@@ -1,7 +1,7 @@
 # Import modules
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_mail import Mail, Message
-from itsdangerous import URLSafeTimedSerializer, BadData, exc
+from itsdangerous import URLSafeTimedSerializer, BadData
 import shelve
 import requests
 from bs4 import BeautifulSoup
