@@ -50,17 +50,23 @@ td .quantity-selector, .update-btn{
   background: #d3e6e6;
 }
 
-.order-summary .card-header p{
-  font-size: 1.3em;
-  font-weight: bold;
-  margin: 5px;
+.card-header span{
+    font-size: 0.7em;
+    float: right;
+    margin: 5px;
 }
 
-.order-summary span{
-  float: right;
-  font-size: 0.7em;
+.card-body span{
+    float: right;
+}
+
+.bolder{
+    font-size: 1.3em;
+}
+
+.order-summary .card-header p{
+  font-size: 1.3em;
   margin: 5px;
-  font-weight: lighter;
 }
 
 .check-out-button{
