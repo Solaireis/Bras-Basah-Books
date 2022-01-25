@@ -1,3 +1,32 @@
+main {
+    height: 85vh;
+}
+
+.container {
+    height: 100%;
+}
+
 .navbar {
     height: 80px;
+}
+
+.card {
+    width: 400px;
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+.card-header, .card-footer {
+    padding: 1rem 2rem;
+}
+
+.input-group {
+    height: 2.5rem;
+}
+
+.card-body .btn {
+    background-color: #4b8282;
+    color: #ffffff;
 }

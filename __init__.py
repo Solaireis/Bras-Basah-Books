@@ -35,13 +35,6 @@ url_serialiser = URLSafeTimedSerializer(app.config["SECRET_KEY"])
 
 mail = Mail()  # Mail object for sending emails
 
-with shelve.open("database") as db:
-    for key in ("EmailToUserID", "Customers", "Admins", "Orders"):
-        if key not in db:
-            db[key] = {}
-    if "Guests" not in db:
-        db["Guests"] = GuestDB()
-
 
 def retrieve_db(key, db, value={}):
     """ Retrieves object from database using key """
@@ -149,7 +142,7 @@ def home():
 
 
 # Sign up page
-@app.route("/sign-up", methods=["GET", "POST"])
+@app.route("/account/sign-up", methods=["GET", "POST"])
 def sign_up():
     # Get current (guest) user
     user = get_user()
@@ -300,7 +293,7 @@ def account():
     # Set username and gender to display
     account_page_form.username.data = user.get_username()
     account_page_form.gender.data = user.get_gender()
-    return render_template("account/account.html", form=account_page_form, email=user.get_email())
+    return render_template("account/account.html", form=account_page_form, email=user.get_email(), username=user.get_username())
 
 
 # Logout

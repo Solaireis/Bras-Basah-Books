@@ -1,25 +1,41 @@
 {% extends "base.html" %}
 
-{% block title %}Login{% endblock %}
+{% block title %}My Account - {{ username }}{% endblock %}
 
-{% block content %}
-{% from "includes/_form.html" import render_field %}
-
-<h1 class="display-4">Account view</h1>
-
-<form method="POST" action="">
-  <div class="form-group">
-    {{ render_field(form.username, class="form-control") }}
-  </div>
-  <div>Email: {{ email }} <a href="/account/verify">Verify Email</a></div>
-  <div>Password: ******</div>
-  <div class="form-group">
-    {{ render_field(form.gender, class="form-control") }}
-  </div>
-  <input type="submit" value="Save changes" class="btn btn-primary"/>
-</form>
-<a href="/account/logout">Logout here</a>
+{% block stylesheets %}
+<link rel="stylesheet" href="/static/css/user.css">
 {% endblock %}
 
-{% block scripts %}
+{% block content %}
+{% from "includes/_login_render_field.html" import render_field %}
+{# Container to contain display for user related things #}
+<div class="user-container mt-4 mb-4 p-3">
+  <h1 class="display-4">Account settings</h1>
+  <form method="POST" action="">
+    <div class="mb-3 row">
+      <label for="username" class="col-sm-2 col-form-label">Username</label>
+      <div class="col-sm-10">
+        {{ render_field(form.username, class="form-control", id="username") }}
+      </div>
+    </div>
+    <div class="mb-3 row">
+      <label for="email" class="col-sm-2 col-form-label">Email</label>
+      <div class="col-sm-10" id="email">
+        {{ email }} <a href="/account/verify">Verify Email</a>
+      </div>
+    </div>
+    <div class="mb-3 row">
+      <label for="password" class="col-sm-2 col-form-label">Password</label>
+      <div class="col-sm-10" id="password">******</div>
+    </div>
+    <div class="mb-3 row">
+      <label for="gender" class="col-sm-2 col-form-label">Gender</label>
+      <div class="col-sm-10">
+        {{ render_field(form.gender, class="form-control", id="gender") }}
+      </div>
+    </div>
+    <input type="submit" value="Save changes" class="btn"/>
+  </form>
+  <a href="/account/logout">Logout here</a>
+</div>
 {% endblock %}

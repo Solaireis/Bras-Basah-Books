@@ -17,6 +17,9 @@ from flask_wtf.file import FileAllowed, FileRequired
 class SignUpForm(Form):
     """ Sign up form used when signing up """
 
+    # Username
+    username = StringField("Username", [validators.Length(max=25)])
+
     # Email
     email = EmailField("Email", [validators.Email(), validators.DataRequired()])
 
@@ -29,9 +32,6 @@ class SignUpForm(Form):
     # Confirm password
     confirm = PasswordField("Confirm Password", [validators.InputRequired(),
                                                  validators.EqualTo("password")])
-
-    # Username
-    username = StringField("Username", [validators.Length(max=25)])
 
 
 class LoginForm(Form):

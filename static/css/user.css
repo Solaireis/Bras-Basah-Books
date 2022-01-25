@@ -1,0 +1,18 @@
+.user-container {
+    background-color: #fafafa;
+}
+
+.btn {
+    background-color: #4b8282;
+    color: #ffffff;
+}
+
+#gender {
+    border: none;
+    background-color: transparent;
+}
+
+#gender > li {
+    display: inline;
+    margin-right: 1.5rem;
+}

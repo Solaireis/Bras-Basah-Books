@@ -21,9 +21,18 @@
 
 body{
   background-color: #FCEEE0;
-  font-family: Rubik, Verdana, Tahoma, sans-serif;
+  font-family: Rubik, Tahoma, sans-serif;
   color: #4b8282;
   overflow-x: hidden;
+}
+
+
+/* --------------------------------------------------------------------------
+    2. Clearing default styles
+-------------------------------------------------------------------------- */
+
+ul{
+  list-style-type: none;
 }
 
 
