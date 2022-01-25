@@ -53,18 +53,20 @@
         <div class="card">
           <div class="card-header">
             <p>Order Summary
-            <span>0 item(s)</span></p>
+            <span>{{ book_quantity+rent_book_count }} item(s)</span></p>
           </div>
           <div class="card-body">
             <p class="card-text">Subtotal<span>${{ total_price }}</span></p>
-            <p class="card-text">Shipping $<span>5.00</span></p>
-            <p class="card-text">Estimated Total $<span></span></p>
+            <p class="card-text">Shipping <span>$5.00</span></p>
+            <p class="card-text bolder">Estimated Total <span>${{ total_price+5 }}</span></p>
           </div>
         </div>
         {% if (book_count + rent_book_count) == 0 %}
-        <button type="submit" disabled class="check-out-button btn" name="button">Check Out</button>
+                <button type="submit" onclick="checkout()" disabled class="check-out-button btn" name="button">Check Out</button>
         {% else %}
-        <button type="submit" class="check-out-button btn" name="button">Check Out</button>
+          <form action="/checkout" method="POST">
+                <button type="submit" class="check-out-button btn" name="button">Check Out</button>
+          </form>
         {% endif %}
         <div class="show-payment">
           <p>Accepted Payment Method</p>
