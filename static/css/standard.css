@@ -21,7 +21,7 @@
 
 body{
   background-color: #FCEEE0;
-  font-family: 'Rubik', Verdana, Tahoma, sans-serif;
+  font-family: Rubik, Verdana, Tahoma, sans-serif;
   color: #4b8282;
   overflow-x: hidden;
 }
@@ -49,6 +49,7 @@ body{
 #store_name{
   color: white;
   font-size: 1.2em;
+  font-family: "Playfair Display";
   margin-left: 10px;
 }
 
