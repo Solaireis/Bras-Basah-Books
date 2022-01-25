@@ -25,3 +25,20 @@
     padding-top: 30px;
     padding-bottom: 30px;
 }
+
+details {
+  user-select: none;
+}
+
+details>summary span.icon {
+  transition: all 0.3s;
+}
+
+summary {
+  display: flex;
+  cursor: pointer;
+}
+
+summary::-webkit-details-marker {
+  display: none;
+}
