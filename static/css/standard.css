@@ -83,7 +83,11 @@ body{
   background: white;
   color: #4b8282;
   border-radius: 3px;
-  padding: 8px;
+  padding: 8px 10px 8px 10px;
+}
+
+.fa-search:hover{
+    color: #4b8282 !important;
 }
 
 .nav-icon{
