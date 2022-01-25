@@ -7,7 +7,7 @@
     color: #ffffff;
 }
 
-#gender {
+#email, #password, #gender {
     border: none;
     background-color: transparent;
 }
