@@ -57,8 +57,13 @@
           </div>
           <div class="card-body">
             <p class="card-text">Subtotal<span>${{ total_price }}</span></p>
+            {% if (book_count + rent_book_count) == 0 %}
+             <p class="card-text">Shipping <span>-</span></p>
+              <p class="card-text bolder">Estimated Total <span>-</span></p>
+            {% else %}
             <p class="card-text">Shipping <span>$5.00</span></p>
-            <p class="card-text bolder">Estimated Total <span>${{ total_price+5 }}</span></p>
+            <p class="card-text bolder">Estimated Total <span>${{ total_price+5.00 }}</span></p>
+            {% endif %}
           </div>
         </div>
         {% if (book_count + rent_book_count) == 0 %}
