@@ -14,7 +14,7 @@ import Book
 import Cart as c
 from users import GuestDB, Guest, Customer, Admin
 from forms import SignUpForm, LoginForm, AccountPageForm,\
-                  Enquiry, UserEnquiry, Faq, FaqEntry, Reply, AddBookForm
+                  Enquiry, UserEnquiry, Faq, FaqEntry, Reply, AddBookForm, order_form
 
 # CONSTANTS
 DEBUG = True         # Debug flag (True when debugging)
@@ -180,7 +180,7 @@ def sign_up():
 
             # Ensure that email is not registered yet
             if email in email_to_user_id:
-                return render_template("account/sign_up.html", form=sign_up_form)
+                return render_template("sign_up.html", form=sign_up_form)
 
             # Create customer
             customer = Customer(email, password, username)
@@ -205,14 +205,14 @@ def sign_up():
             db["Customers"] = customers_db
             db["Guests"] = guests_db
 
-        return redirect(url_for("verify_send"))
+        return redirect(url_for("verify_link"))
 
     # Render page
-    return render_template("account/sign_up.html", form=sign_up_form)
+    return render_template("sign_up.html", form=sign_up_form)
 
 
 # Login page
-@app.route("/account/login", methods=["GET", "POST"])
+@app.route("/login", methods=["GET", "POST"])
 def login():
     # If user is already logged in
     if session["UserType"] != "Guest":
@@ -236,7 +236,7 @@ def login():
                 except KeyError:
                     # Create loginFailed session
                     session["LoginFailed"] = ""
-                    return render_template("account/login.html", form=login_form)
+                    return render_template("login.html", form=login_form)
 
                 # Retrieve user
                 try:
@@ -250,7 +250,7 @@ def login():
                         if DEBUG: print(f"UserID {user_id} not in database")
                         # Create loginFailed session
                         session["LoginFailed"] = ""
-                        return render_template("account/login.html", form=login_form)
+                        return render_template("login.html", form=login_form)
 
             # Check password
             if user.check_password(password):
@@ -261,10 +261,10 @@ def login():
             else:
                 # Create loginFailed session
                 session["LoginFailed"] = ""
-                return render_template("account/login.html", form=login_form)
+                return render_template("login.html", form=login_form)
 
     # Render page
-    return render_template("account/login.html", form=login_form)
+    return render_template("login.html", form=login_form)
 
 
 # View account page
@@ -300,11 +300,11 @@ def account():
     # Set username and gender to display
     account_page_form.username.data = user.get_username()
     account_page_form.gender.data = user.get_gender()
-    return render_template("account/account.html", form=account_page_form, email=user.get_email())
+    return render_template("account.html", form=account_page_form, email=user.get_email())
 
 
 # Logout
-@app.route("/account/logout")
+@app.route("/logout")
 def logout():
     if session["UserType"] != "Guest":
         create_guest()
@@ -312,8 +312,8 @@ def logout():
 
 
 # Send verification link page
-@app.route("/account/verify")
-def verify_send():
+@app.route("/verify")
+def verify_link():
 
     # Get user
     user = get_user()
@@ -340,11 +340,11 @@ def verify_send():
     msg.html = f"Click <a href='{link}'>here</a> to verify your email.<br />(Link expires after 15 minutes)"
     mail.send(msg)
 
-    return render_template("account/verify/send.html", email=email)
+    return render_template("verify/send.html", email=email)
 
 
 # Verify email page
-@app.route("/account/verify/<token>")
+@app.route("/verify/<token>")
 def verify(token):
     # Get user
     user = get_user()
@@ -377,13 +377,13 @@ def verify(token):
         # Safe changes to database
         db["Customers"] = customers_db
 
-    return render_template("account/verify/verify.html", email=email)
+    return render_template("verify/verify.html", email=email)
 
 
 # Verify fail page
-@app.route("/account/verify/fail")
+@app.route("/verify/fail")
 def verify_fail():
-    render_template("account/verify/fail.html")
+    render_template("verify/fail.html")
 
 
 # allbooks
@@ -491,9 +491,7 @@ def add_to_rent():
         else:
             for i in range(len(cart_list)):
                 if user_id in cart_list[i]:
-                    for j in range(len((cart_list)[i])-1):
-                        if j == 0:
-                            j += 1
+                    for j in range(1, len((cart_list)[i])):
                         if book_id == cart_list[i][j][0]:
                             print("Book already in renting cart. Cannot rent more than 1.")
                         else:
@@ -579,7 +577,7 @@ def go_cart():
                     rent_bookprice = float(books_dict[rent_bookid].get_price()) * 0.1
                     total_price += rent_bookprice
         total_price = ("%.2f" % round(total_price, 2))
-        return render_template('cart.html', book_cart=book_cart, user_rent_cart=user_rent_cart, book_count=len(book_cart), rent_book_count=len(user_rent_cart), book_name=book_name, book_price=book_price, book_quantity=book_quantity, book_id=book_id, rent_bookid=rent_bookid, rent_bookname=rent_bookname, rent_bookprice=rent_bookprice, total_price=total_price)
+        return render_template('cart.html', book_cart=book_cart, user_rent_cart=user_rent_cart, book_count=len(book_cart), rent_book_count=len(user_rent_cart), book_name=book_name, book_price=book_price, book_quantity=book_quantity, book_id=book_id, rent_bookid=rent_bookid, rent_bookname=rent_bookname, rent_bookprice=rent_bookprice, total_price=float(total_price))
     else:
         return render_template('cart.html', book_count=0, rent_book_count=0)
 
@@ -659,11 +657,19 @@ def delete_renting_cart():
     cart_db.close()
     return go_cart()
 
+# Checkout
+@app.route("/checkout", methods=['GET', 'POST'])
+def checkout():
+    print("Check out pass")
+    OrderForm = order_form.OrderForm(request.form)
+    if request.method == 'POST' and OrderForm.validate():
+        return render_template("checkout.html", form=OrderForm)
+    return render_template("checkout.html", form=OrderForm)
 
 # Checkout
-@app.route("/checkout")
-def checkout():
-    return render_template("checkout.html")
+@app.route("/checkout1")
+def checkout1():
+    return render_template("checkout1.html")
 
 
 #
