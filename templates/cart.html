@@ -53,18 +53,25 @@
         <div class="card">
           <div class="card-header">
             <p>Order Summary
-            <span>0 item(s)</span></p>
+            <span>{{ book_quantity+rent_book_count }} item(s)</span></p>
           </div>
           <div class="card-body">
             <p class="card-text">Subtotal<span>${{ total_price }}</span></p>
-            <p class="card-text">Shipping $<span>5.00</span></p>
-            <p class="card-text">Estimated Total $<span></span></p>
+            {% if (book_count + rent_book_count) == 0 %}
+             <p class="card-text">Shipping <span>-</span></p>
+              <p class="card-text bolder">Estimated Total <span>-</span></p>
+            {% else %}
+            <p class="card-text">Shipping <span>$5.00</span></p>
+            <p class="card-text bolder">Estimated Total <span>${{ total_price+5.00 }}</span></p>
+            {% endif %}
           </div>
         </div>
         {% if (book_count + rent_book_count) == 0 %}
-        <button type="submit" disabled class="check-out-button btn" name="button">Check Out</button>
+                <button type="submit" onclick="checkout()" disabled class="check-out-button btn" name="button">Check Out</button>
         {% else %}
-        <button type="submit" class="check-out-button btn" name="button">Check Out</button>
+          <form action="/checkout" method="POST">
+                <button type="submit" class="check-out-button btn" name="button">Check Out</button>
+          </form>
         {% endif %}
         <div class="show-payment">
           <p>Accepted Payment Method</p>
@@ -96,7 +103,7 @@
                         <td class="col-4"><h5>${{ rent_bookprice }}</h5></td>
                     </form>
                     <form method="POST" action="/delete_renting_cart">
-                        <input type="number" name="book_id" class="book_id" style="display:none;" value={{ book_id }} readonly></td>
+                        <input type="number" name="rent_book_id" class="book_id" style="display:none;" value={{ rent_bookid }} readonly></td>
                         <td class="col-1"><button type="submit" onclick="delete_renting_cart()" name="button" style="float:right;" class="btn"><i class="fa fa-close"></i></button></td>
                     </form>
                 </tr>
