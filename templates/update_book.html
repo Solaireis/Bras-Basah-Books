@@ -21,11 +21,33 @@
     <div class="col grid-form-spacer">
       <div class="form-group">
         {{ render_field(form.language, class="form-control") }}
+
+        <details>
+          <summary>
+            <span class="icon">Add new</span>
+          </summary>
+          <p>
+            {{form.language2}}
+          </p>
+        </details>
+
+
       </div>
     </div>
     <div class="col grid-form-spacer">
       <div class="form-group">
         {{ render_field(form.category, class="form-control") }}
+
+        <details>
+          <summary>
+            <span class="icon">Add new</span>
+          </summary>
+          <p>
+            {{form.category2}}
+          </p>
+        </details>
+
+
       </div>
     </div>
   </div>
