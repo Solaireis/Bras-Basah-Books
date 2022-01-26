@@ -23,3 +23,12 @@ img:hover{
 .home_quote a p:hover{
   opacity: 0.8;
 }
+
+.padding-15px {
+    padding-top: 15px;
+    padding-bottom:15px;
+}
+
+.booklang {
+    padding-top: 30px;
+}
