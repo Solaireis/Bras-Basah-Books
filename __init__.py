@@ -516,9 +516,7 @@ def add_to_rent():
         else:
             for i in range(len(cart_list)):
                 if user_id in cart_list[i]:
-                    for j in range(len((cart_list)[i])-1):
-                        if j == 0:
-                            j += 1
+                    for j in range(1, len((cart_list)[i])):
                         if book_id == cart_list[i][j][0]:
                             print("Book already in renting cart. Cannot rent more than 1.")
                         else:
@@ -604,7 +602,7 @@ def go_cart():
                     rent_bookprice = float(books_dict[rent_bookid].get_price()) * 0.1
                     total_price += rent_bookprice
         total_price = ("%.2f" % round(total_price, 2))
-        return render_template('cart.html', book_cart=book_cart, user_rent_cart=user_rent_cart, book_count=len(book_cart), rent_book_count=len(user_rent_cart), book_name=book_name, book_price=book_price, book_quantity=book_quantity, book_id=book_id, rent_bookid=rent_bookid, rent_bookname=rent_bookname, rent_bookprice=rent_bookprice, total_price=total_price)
+        return render_template('cart.html', book_cart=book_cart, user_rent_cart=user_rent_cart, book_count=len(book_cart), rent_book_count=len(user_rent_cart), book_name=book_name, book_price=book_price, book_quantity=book_quantity, book_id=book_id, rent_bookid=rent_bookid, rent_bookname=rent_bookname, rent_bookprice=rent_bookprice, total_price=float(total_price))
     else:
         return render_template('cart.html', book_count=0, rent_book_count=0)
 
@@ -669,11 +667,12 @@ def delete_renting_cart():
     user_id = get_user().get_user_id()
     cart_db = shelve.open('renting_cart')
     cart_list = cart_db['Cart']
-    book_id = request.form['book_id']
+    book_id = request.form['rent_book_id']
     for i in range(len(cart_list)):
         if user_id in cart_list[i]:
             for j in range(1, len(cart_list[i])):
                 if int(book_id) == cart_list[i][j][0]:
+                    print(cart_list[i][j])
                     del cart_list[i][j]
                     print(cart_list[i], 'deleted some item')
                     cart_db['Cart'] = cart_list
@@ -684,11 +683,18 @@ def delete_renting_cart():
     cart_db.close()
     return go_cart()
 
+# # Checkout
+# @app.route("/checkout", methods=['GET', 'POST'])
+# def checkout():
+#     OrderForm = order_form.OrderForm(request.form)
+#     if request.method == 'POST' and OrderForm.validate():
+#         return render_template("checkout.html", form=OrderForm)
+#     return render_template("checkout.html", form=OrderForm)
 
 # Checkout
-@app.route("/checkout")
-def checkout():
-    return render_template("checkout.html")
+@app.route("/checkout1")
+def checkout1():
+    return render_template("checkout1.html")
 
 
 #
