@@ -16,7 +16,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="http://127.0.0.1:5000/ ">Home</a></li>
         <li class="breadcrumb-item"><a href="#">All Books</a></li>
-        <li class="breadcrumb-item"><a href="#">{{ book.get_language() }} Books</a></li>
+        <li class="breadcrumb-item"><a href="#">English Books</a></li>
         <li class="breadcrumb-item active" aria-current="page">{{ book.get_title() }}</li>
       </ol>
     </div>
@@ -38,12 +38,14 @@
 
           <form method="POST" action="/addtocart">
               <input type="number" class="quantity-selector" name="quantity" min="1" value="1">
-              <input type="submit" onclick="add_to_cart()" class="btn add-cart-button" value="ADD TO CART">
               {% if book.get_action() == "Buy and Rent" %}
-              <p>Alternatively, you may want to <a href="#">rent</a> this.</p>
+              <input type="submit" onclick="add_to_cart()" class="btn add-cart-button" value="ADD TO CART">
+              <p>Alternatively, you may want to <a href="/add_to_rent">rent</a> this.</p>
               {% elif book.get_action() == "Rent" %}
-              <p>This book is only available for <a href="#">rent</a>.</p>
+              <input type="submit" onclick="add_to_cart()" class="btn add-cart-button" value="ADD TO CART" disabled>
+              <p>This book is only available for <a href="/add_to_rent">rent</a>.</p>
               {% elif book.get_action() == "Buy" %}
+              <input type="submit" onclick="add_to_cart()" class="btn add-cart-button" value="ADD TO CART">
               <p>This book is not available for renting</a>.</p>
               {% endif %}
           </form>
