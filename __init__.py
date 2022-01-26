@@ -436,20 +436,22 @@ def book_info():
     return render_template("book_info.html")
 
 
-# add to buying cart
 @app.route("/addtocart", methods=['GET', 'POST'])
 def add_to_cart():
     cart_list = []
     cart_user = []
+    cart_db = []
     user_id = get_user().get_user_id()
-    source = requests.get("http://127.0.0.1:5000/book_info").content
-    soup = BeautifulSoup(source, 'lxml')
+
     try:
+        source = requests.get(request.referrer).content
+        soup = BeautifulSoup(source, 'lxml')
         book_id = soup.find_all('span')[1].get_text()
         book_id = int(book_id)
         for key, quantity in request.form.items():
             book_quantity = quantity
             book_quantity = int(book_quantity)
+
         cart_db = shelve.open('cart', 'c')
 
         try:
@@ -457,7 +459,6 @@ def add_to_cart():
             print(cart_list, "original database")
         except:
             cart_db['Cart'] = []
-            print("Error in retrieving Cart Item from cart.db but it is manageable")
 
         added_book = c.Cart(book_id, book_quantity)
         if len(cart_list) == 0:
@@ -481,7 +482,6 @@ def add_to_cart():
                             print("Not done yet")
                     break
                 elif i == (len(cart_list)-1) and user_id not in cart_user:
-                    print("Cannot find user id in cart")
                     new_cart = [user_id, [added_book.get_book_id(), added_book.get_book_quantity()]]
                     cart_list.append(new_cart)
                     cart_db['Cart'] = cart_list
@@ -493,10 +493,11 @@ def add_to_cart():
                 elif user_id not in cart_list[i]:
                     cart_user.append(cart_list[i][0])
                     print(cart_user)
-    except IndexError:
-        pass
-    cart_db.close()
-    return render_template("book_info.html")
+        cart_db.close()
+    except KeyError:
+        print("Error")
+    # return redirect(url_for('book_info2('+str(book_id)+')'))
+    return redirect(request.referrer)
 
 
 # add to renting cart
@@ -505,7 +506,7 @@ def add_to_rent():
     cart_list = []
     cart_user = []
     user_id = get_user().get_user_id()
-    source = requests.get("http://127.0.0.1:5000/book_info").content
+    source = requests.get(request.referrer).content
     soup = BeautifulSoup(source, 'lxml')
     try:
         book_id = soup.find_all('span')[1].get_text()
@@ -552,8 +553,7 @@ def add_to_rent():
     except IndexError:
         pass
     cart_db.close()
-    return render_template("book_info.html")
-
+    return redirect(request.referrer)
 
 # Shopping Cart
 @app.route('/go_cart')
