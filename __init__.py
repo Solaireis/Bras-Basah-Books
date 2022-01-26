@@ -229,7 +229,7 @@ def sign_up():
             db["Customers"] = customers_db
             db["Guests"] = guests_db
 
-        return redirect(url_for("home"))#"verify_send"))#########  temp  ######################################
+        return redirect(url_for("verify_send"))
 
     # Render page
     return render_template("account/sign_up.html", form=sign_up_form)
