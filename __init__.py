@@ -40,11 +40,11 @@ def retrieve_db(key, db, value={}):
     """ Retrieves object from database using key """
     try:
         value = db[key]  # Retrieve object
-        if DEBUG: print(f'retrieved db["{key}"] = {value}')
+        if DEBUG: print(f"retrieved db['{key}'] = {value}")
     except KeyError as err:
-        if DEBUG: print("retrieve_db():", repr(err), f'db["{key}"] = {value}')
+        if DEBUG: print(f"retrieve_db(): {repr(err)} | create: db['{key}'] = {value}")
         db[key] = value  # Assign value to key
-    return value
+    return db[key]  # Since shelve returns a copy of the object, this is safe
 
 
 def get_user():
@@ -58,6 +58,7 @@ def get_user():
 
         # Retrieve user
         try:
+            # Doesn't use retrieve_db() as default value is different for different db
             with shelve.open("database") as db:
                 user = db[key][session["UserID"]]
         except KeyError as err:  # If unexpected error (might occur when changes are made)
@@ -198,7 +199,7 @@ def sign_up():
             db["Customers"] = customers_db
             db["Guests"] = guests_db
 
-        return redirect(url_for("verify_send"))
+        return redirect(url_for("home"))#"verify_send"))#########  temp  ######################################
 
     # Render page
     return render_template("account/sign_up.html", form=sign_up_form)
