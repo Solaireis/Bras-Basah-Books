@@ -1,5 +1,5 @@
-from .User import User############################################
 from argon2 import PasswordHasher
+from .User import User
 
 # Password hasher for hashing
 _ph = PasswordHasher()
