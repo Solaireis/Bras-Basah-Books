@@ -36,15 +36,16 @@ url_serialiser = URLSafeTimedSerializer(app.config["SECRET_KEY"])
 mail = Mail()  # Mail object for sending emails
 
 
-def retrieve_db(key, db, value={}):
+def retrieve_db(key, db, value=None):
     """ Retrieves object from database using key """
     try:
         value = db[key]  # Retrieve object
         if DEBUG: print(f"retrieved db['{key}'] = {value}")
     except KeyError as err:
         if DEBUG: print(f"retrieve_db(): {repr(err)} | create: db['{key}'] = {value}")
+        if value is None: value = {}
         db[key] = value  # Assign value to key
-    return db[key]  # Since shelve returns a copy of the object, this is safe
+    return value
 
 
 def get_user():
