@@ -1,4 +1,4 @@
-from User import User############################################
+from .User import User############################################
 from argon2 import PasswordHasher
 
 # Password hasher for hashing
