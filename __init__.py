@@ -137,12 +137,12 @@ def before_request():
 
 
 # Home page
-@app.route("/")
+@app.route("/home")
 def home():
     return render_template("home.html")
 
 # Home page v2
-@app.route("/home2")
+@app.route("/")
 def home2():
 
     try:
