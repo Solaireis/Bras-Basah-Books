@@ -140,6 +140,36 @@ def before_request():
 def home():
     return render_template("home.html")
 
+# Home page v2
+@app.route("/home2")
+def home2():
+
+    try:
+        books_dict = {}
+        db = shelve.open('book.db', 'r')
+        books_dict = db['Books']
+        db.close()
+
+    except:
+        print("There are no books")
+
+
+    english = []
+    chinese = []
+    for key in books_dict:
+        book = books_dict.get(key)
+        if book.get_language() == "English":
+            english.append(book)
+        elif book.get_language() == "Chinese":
+            chinese.append(book)
+
+    # books_list = []
+    # for key in books_dict:
+    #     book = books_dict.get(key)
+    #     books_list.append(book)
+
+    return render_template("home2.html", english=english, chinese=chinese)  # optional: books_list=books_list
+
 
 # Sign up page
 @app.route("/account/sign-up", methods=["GET", "POST"])
