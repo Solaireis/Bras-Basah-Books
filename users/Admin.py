@@ -21,7 +21,7 @@ class Admin(User):
         self.__profile_pic = ""
         self.__master = _master
     
-    def __repr__(self, ):
+    def __repr__(self):
         return super().__repr__(email=self.__email, username=self.__username, master=self.__master)
 
     # Mutator and accessor methods
@@ -29,12 +29,12 @@ class Admin(User):
         self.__email = email
     def get_email(self):
         return self.__email
-        
+
     def set_username(self, username):
         self.__username = username
     def get_username(self):
         return self.__username
-        
+
     def set_profile_pic(self, profile_pic):
         self.__profile_pic = profile_pic
     def get_profile_pic(self):
