@@ -1,4 +1,9 @@
-from .User import User
+from User import User############################################
+from argon2 import PasswordHasher
+
+# Password hasher for hashing
+_ph = PasswordHasher()
+
 
 class Customer(User):
     """
@@ -19,7 +24,7 @@ class Customer(User):
     def __init__(self, email, password, username=""):
         super().__init__()
         self.__email = email
-        self.__password = self.hash_password(password)
+        self.set_password(password)
         self.__username = username
         self.__verified = False
         self.__profile_pic = ""
@@ -72,12 +77,13 @@ class Customer(User):
 
     # Set password, and check password
     def set_password(self, password):
-        self.__password = self.hash_password(password)
+        self.__password = _ph.hash(password)
     def check_password(self, password):
-        return self.__password == self.hash_password(password)
-
-
-    @staticmethod
-    def hash_password(password):  # Currently using weird things to just return something
-        """ Hash function of the password """
-        return "lol"+password.replace("a","b")
+        try:     # Try verifying
+            _ph.verify(self.__password, password)
+        except:  # If verifying fails
+            return False
+        else:    # If verifying succeeds
+            if _ph.check_needs_rehash(self.__password):  # Check if needs rehashing
+                self.set_password(password)
+            return True
