@@ -9,23 +9,25 @@
 {% endblock %}
 
 {% block content %}
-    <h2>Highlights of the Week</h2>
+    <h2 class="padding-15px">Highlights of the Week</h2>
     <!-- image carousel -->
 
-    <h2>English Books</h2>
+    <h2 class="booklang">English Books</h2>
     <div class="row justify-content-center">
       <div class="col-12">
         <div class="row row-cols-2 row-cols-md-4 g-4">
 
           {% for book in english %}
           <div class="col">
-            <a href="/book/{{book.get_book_id()}}"><div class="card h-100">
-              <img src="{{ book.get_img() }}" class="card-img-top" alt="{{ book.get_title() }}" width="259" height="371.56">
-              <div class="card-body">
+            <a href="/book/{{book.get_book_id()}}">
+                <div class="card h-100">
+                <img src="{{ book.get_img() }}" class="card-img-top" alt="{{ book.get_title() }}" width="259" height="371.56">
+                <div class="card-body">
                 <h5 class="card-title">{{ book.get_title() }}</h5>
                 <p class="card-text">${{ book.get_price() }}</p>
-              </div>
-            </div></a>
+                </div>
+                </div>
+            </a>
           </div>
           {% endfor %}
 
@@ -33,24 +35,26 @@
       </div>
     </div>
 
-    <h2>Chinese Books</h2>
+    <h2 class="booklang">Chinese Books</h2>
     <div class="row justify-content-center book-info">
       <div class="col-12">
         <div class="row row-cols-2 row-cols-md-4 g-4">
 
           {% for book in chinese %}
           <div class="col">
-            <a href="/book/{{book.get_book_id()}}"><div class="card h-100">
-              <img src="{{ book.get_img() }}" class="card-img-top" alt="{{ book.get_title() }}" width="259" height="371.56">
-              <div class="card-body">
+            <a href="/book/{{book.get_book_id()}}">
+                <div class="card h-100">
+                <img src="{{ book.get_img() }}" class="card-img-top" alt="{{ book.get_title() }}" width="259" height="371.56">
+                <div class="card-body">
                 <h5 class="card-title">{{ book.get_title() }}</h5>
                 <p class="card-text">${{ book.get_price() }}</p>
-              </div>
-            </div></a>
+                </div>
+                </div>
+            </a>
           </div>
           {% endfor %}
 
-
+        </div>
       </div>
     </div>
 
@@ -59,4 +63,6 @@
       <h3>blah blah</h3>
       <a href="#"><p>Browse more ></p></a>
     </div>
+
+
 {% endblock %}
