@@ -7,8 +7,8 @@ class GuestDB(dict):
     Attributes:
         __head (str): UserID of guest account at front of list
         __tail (str): UserID of guest account at end of list
-
     """
+
     def __init__(self):
         self.__head = None
         self.__tail = None
@@ -57,7 +57,7 @@ class GuestDB(dict):
 
     def renew_active(self, user_id):
         """ Renews last active date of guest and move guest to end of list """
-        
+
         # Renew guest's active
         self[user_id].renew_active()
 

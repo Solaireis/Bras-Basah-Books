@@ -291,6 +291,27 @@ def login():
     return render_template("account/login.html", form=login_form)
 
 
+# Logout
+@app.route("/account/logout")
+def logout():
+    if session["UserType"] != "Guest":
+        if DEBUG: print("Logout:", get_user())
+        create_guest()
+    return redirect(url_for("home"))
+
+
+# Forgot passwrd page
+@app.route("/account/forget-password")
+def password_forget():
+    pass
+
+
+# Reset password page
+@app.route("/account/reset-password")
+def password_reset():
+    pass
+
+
 # View account page
 @app.route("/account", methods=["GET", "POST"])
 def account():
@@ -325,15 +346,6 @@ def account():
     account_page_form.username.data = user.get_username()
     account_page_form.gender.data = user.get_gender()
     return render_template("account/account.html", form=account_page_form, email=user.get_email(), username=user.get_username())
-
-
-# Logout
-@app.route("/account/logout")
-def logout():
-    if session["UserType"] != "Guest":
-        if DEBUG: print("Logout:", get_user())
-        create_guest()
-    return redirect(url_for("home"))
 
 
 # Send verification link page
