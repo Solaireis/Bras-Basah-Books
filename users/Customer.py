@@ -78,7 +78,7 @@ class Customer(User):
     # Set password, and check password
     def set_password(self, password):
         self.__password = _ph.hash(password)
-    def check_password(self, password):
+    def verify_password(self, password):
         try:     # Try verifying
             _ph.verify(self.__password, password)
         except:  # If verifying fails

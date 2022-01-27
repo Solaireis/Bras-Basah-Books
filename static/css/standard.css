@@ -232,19 +232,19 @@ footer{
 .btn-warning {
     background-color: #588B8B !important;
     color: #fff !important;
-    border: #588B8B solid !important;
+    border: 0 !important;
 }
 
 .defaultbtn {
     background-color: #588B8B;
     color: #fff;
-    border: #588B8B solid;
+    border: 0;
 }
 
 .defaultbtn:hover {
     background-color: #588B8B;
     color: #fff;
-    border: #588B8B solid;
+    border: 0;
 }
 
 .twentypx {

@@ -3,6 +3,7 @@ Form classes used by BrasBasahBooks web app
 """
 
 # Import WTForms
+from re import L
 from wtforms import Form, validators, StringField, RadioField,\
                     TextAreaField, EmailField, PasswordField, FileField,\
                     SelectField, IntegerField, SubmitField, DecimalField
@@ -52,6 +53,23 @@ class AccountPageForm(Form):
 
     # Gender
     gender = RadioField("Gender", choices=[("M", "Male"), ("F", "Female"), ("O", "Others")])
+
+
+class ChangePasswordForm(Form):
+    """ Changing password form used for changing password """
+
+    # Current password
+    current_password = PasswordField("Current Password", [validators.InputRequired()])
+
+    # New password
+    new_password = PasswordField("New Password", [validators.InputRequired(),
+                                                  validators.Length(min=8, max=80),
+                                                  ContainsLower(), ContainsUpper(),
+                                                  ContainsNumSymbol()])
+    
+    # Confirm password
+    confirm_password = PasswordField("Confirm Password", [validators.InputRequired(),
+                                                          validators.EqualTo("new_password")])
 
 
 class AddBookForm(Form):

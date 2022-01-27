@@ -1,8 +1,8 @@
 class GuestDB(dict):
     """
-    Guest database for storing guest accounts
-    By utilising pointers, add(), remove(), and renew_active() are all O(1) operations
-    clean() is O(k) where k is number of expired guest accounts
+    Guest database for storing guest accounts.
+    By utilising pointers, add(), remove(), and renew_active() are all O(1) operations.
+    clean() is O(k) where k is number of expired guest accounts.
 
     Attributes:
         __head (str): UserID of guest account at front of list

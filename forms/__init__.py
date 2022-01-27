@@ -1,4 +1,4 @@
 from .Enquiry import Enquiry, UserEnquiry
 from .Reply import Reply
-from .Forms import SignUpForm, LoginForm, AccountPageForm, AddBookForm
+from .Forms import SignUpForm, LoginForm, AccountPageForm, ChangePasswordForm, AddBookForm
 from .Faq import Faq, FaqEntry

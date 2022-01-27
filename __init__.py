@@ -13,7 +13,7 @@ from werkzeug.utils import secure_filename
 import Book
 import Cart as c
 from users import GuestDB, Guest, Customer, Admin
-from forms import SignUpForm, LoginForm, AccountPageForm,\
+from forms import SignUpForm, LoginForm, AccountPageForm, ChangePasswordForm,\
                   Enquiry, UserEnquiry, Faq, FaqEntry, Reply, AddBookForm
 
 # CONSTANTS
@@ -48,7 +48,7 @@ def retrieve_db(key, db, value=None):
     return value
 
 
-def get_user():
+def get_user() -> Customer:
     """ Returns user by checking session key """
 
     # If session contains user_id
@@ -189,7 +189,7 @@ def sign_up():
     # Validate sign up form if request is post
     if request.method == "POST" and sign_up_form.validate():
 
-        # Extract email and password from sign up form
+        # Extract data from sign up form
         email = sign_up_form.email.data.lower()
         password = sign_up_form.password.data
         username = sign_up_form.username.data
@@ -278,7 +278,7 @@ def login():
                         return render_template("account/login.html", form=login_form)
 
             # Check password
-            if user.check_password(password):
+            if user.verify_password(password):
                 session["UserID"] = user_id
                 session["UserType"] = user_type
                 if DEBUG: print("Logged in:", user)
@@ -307,10 +307,43 @@ def password_forget():
     pass
 
 
-# Reset password page
-@app.route("/account/reset-password")
-def password_reset():
-    pass
+# Change password page
+@app.route("/account/change-password", methods=["GET", "POST"])
+def password_change():
+    # Get current user
+    user = get_user()
+
+    # If user is not logged in
+    if session["UserType"] == "Guest":
+        return redirect(url_for("login"))
+    
+    # Get change password form
+    change_password_form = ChangePasswordForm(request.form)
+
+    # Validate sign up form if request is post
+    if request.method == "POST" and change_password_form.validate():
+
+        # Extract data from sign up form
+        current_password = change_password_form.current_password.data
+        new_password = change_password_form.new_password.data
+        
+        if user.verify_password(current_password):
+            with shelve.open("database") as db:
+
+                # Retrieve user database
+                key = session["UserType"] + "s"
+                user_db = retrieve_db(key, db)
+
+                # Get user and set password
+                user = user_db[session["UserID"]]
+                user.set_password(new_password)
+
+                # Save changes to database
+                db[key] = user_db
+
+                return redirect(url_for("account"))
+
+    return render_template("account/password_change.html", form=change_password_form)
 
 
 # View account page
