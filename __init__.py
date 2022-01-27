@@ -2,11 +2,14 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, BadData
+from werkzeug.utils import secure_filename
+from typing import Union
 import shelve
+import os
+
+
 import requests
 from bs4 import BeautifulSoup
-import os
-from werkzeug.utils import secure_filename
 
 
 # Import classes
@@ -48,7 +51,7 @@ def retrieve_db(key, db, value=None):
     return value
 
 
-def get_user() -> Customer:
+def get_user() -> Union[Customer, Admin, Guest]:
     """ Returns user by checking session key """
 
     # If session contains user_id
@@ -316,7 +319,7 @@ def password_change():
     # If user is not logged in
     if session["UserType"] == "Guest":
         return redirect(url_for("login"))
-    
+
     # Get change password form
     change_password_form = ChangePasswordForm(request.form)
 
@@ -326,7 +329,7 @@ def password_change():
         # Extract data from sign up form
         current_password = change_password_form.current_password.data
         new_password = change_password_form.new_password.data
-        
+
         if user.verify_password(current_password):
             with shelve.open("database") as db:
 
