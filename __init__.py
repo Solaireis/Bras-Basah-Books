@@ -177,7 +177,7 @@ def home2():
 
 
 # Sign up page
-@app.route("/account/sign-up", methods=["GET", "POST"])
+@app.route("/user/sign-up", methods=["GET", "POST"])
 def sign_up():
     # Get current (guest) user
     user = get_user()
@@ -208,7 +208,7 @@ def sign_up():
 
             # Ensure that email is not registered yet
             if email in email_to_user_id:
-                return render_template("account/sign_up.html", form=sign_up_form)
+                return render_template("user/sign_up.html", form=sign_up_form)
 
             # Create customer
             customer = Customer(email, password, username)
@@ -236,11 +236,11 @@ def sign_up():
         return redirect(url_for("verify_send"))
 
     # Render page
-    return render_template("account/sign_up.html", form=sign_up_form)
+    return render_template("user/sign_up.html", form=sign_up_form)
 
 
 # Login page
-@app.route("/account/login", methods=["GET", "POST"])
+@app.route("/user/login", methods=["GET", "POST"])
 def login():
     # If user is already logged in
     if session["UserType"] != "Guest":
@@ -264,7 +264,7 @@ def login():
                 except KeyError:
                     # Create loginFailed session
                     session["LoginFailed"] = ""
-                    return render_template("account/login.html", form=login_form)
+                    return render_template("user/login.html", form=login_form)
 
                 # Retrieve user
                 try:
@@ -278,7 +278,7 @@ def login():
                         if DEBUG: print(f"UserID {user_id} not in database")
                         # Create loginFailed session
                         session["LoginFailed"] = ""
-                        return render_template("account/login.html", form=login_form)
+                        return render_template("user/login.html", form=login_form)
 
             # Check password
             if user.verify_password(password):
@@ -289,14 +289,14 @@ def login():
             else:
                 # Create loginFailed session
                 session["LoginFailed"] = ""
-                return render_template("account/login.html", form=login_form)
+                return render_template("user/login.html", form=login_form)
 
     # Render page
-    return render_template("account/login.html", form=login_form)
+    return render_template("user/login.html", form=login_form)
 
 
 # Logout
-@app.route("/account/logout")
+@app.route("/user/logout")
 def logout():
     if session["UserType"] != "Guest":
         if DEBUG: print("Logout:", get_user())
@@ -305,13 +305,13 @@ def logout():
 
 
 # Forgot passwrd page
-@app.route("/account/forget-password")
+@app.route("/user/forget-password")
 def password_forget():
     pass
 
 
 # Change password page
-@app.route("/account/change-password", methods=["GET", "POST"])
+@app.route("/user/change-password", methods=["GET", "POST"])
 def password_change():
     # Get current user
     user = get_user()
@@ -346,11 +346,11 @@ def password_change():
 
                 return redirect(url_for("account"))
 
-    return render_template("account/password_change.html", form=change_password_form)
+    return render_template("user/password_change.html", form=change_password_form)
 
 
 # View account page
-@app.route("/account", methods=["GET", "POST"])
+@app.route("/user/account", methods=["GET", "POST"])
 def account():
     # Get current user
     user = get_user()
@@ -382,11 +382,11 @@ def account():
     # Set username and gender to display
     account_page_form.username.data = user.get_username()
     account_page_form.gender.data = user.get_gender()
-    return render_template("account/account.html", form=account_page_form, email=user.get_email(), username=user.get_username())
+    return render_template("user/account.html", form=account_page_form, email=user.get_email(), username=user.get_username())
 
 
 # Send verification link page
-@app.route("/account/verify")
+@app.route("/user/verify")
 def verify_send():
 
     # Get user
@@ -414,11 +414,11 @@ def verify_send():
     msg.html = f"Click <a href='{link}'>here</a> to verify your email.<br />(Link expires after 15 minutes)"
     mail.send(msg)
 
-    return render_template("account/verify/send.html", email=email)
+    return render_template("user/verify/send.html", email=email)
 
 
 # Verify email page
-@app.route("/account/verify/<token>")
+@app.route("/user/verify/<token>")
 def verify(token):
     # Get user
     user = get_user()
@@ -451,13 +451,13 @@ def verify(token):
         # Safe changes to database
         db["Customers"] = customers_db
 
-    return render_template("account/verify/verify.html", email=email)
+    return render_template("user/verify/verify.html", email=email)
 
 
 # Verify fail page
-@app.route("/account/verify/fail")
+@app.route("/user/verify/fail")
 def verify_fail():
-    render_template("account/verify/fail.html")
+    render_template("user/verify/fail.html")
 
 
 # allbooks

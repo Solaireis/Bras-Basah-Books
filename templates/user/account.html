@@ -21,13 +21,13 @@
     <div class="mb-3 row">
       <label for="email" class="col-sm-2 col-form-label">Email</label>
       <div class="col-sm-10">
-        <div class="form-control" id="email">{{ email }} <a href="/account/verify">Verify Email</a></div>
+        <div class="form-control" id="email">{{ email }} <a href="{{ url_for('verify_send') }}">Verify Email</a></div>
       </div>
     </div>
     <div class="mb-3 row">
       <label for="password" class="col-sm-2 col-form-label">Password</label>
       <div class="col-sm-10">
-        <div class="form-control" id="password">******  <a href="/account/change-password">Change Password</a></div>
+        <div class="form-control" id="password">******  <a href="{{ url_for('password_change') }}">Change Password</a></div>
       </div>
     </div>
     <div class="mb-3 row">
@@ -38,6 +38,6 @@
     </div>
     <input type="submit" value="Save changes" class="btn defaultbtn"/>
   </form>
-  <a href="/account/logout">Logout here</a>
+  <a href="{{ url_for('logout') }}">Logout here</a>
 </div>
 {% endblock %}

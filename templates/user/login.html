@@ -40,10 +40,10 @@
     </div>
     <div class="card-footer">
       <div class="d-flex justify-content-center links">
-        Don't have an account?&nbsp<a href="/account/sign-up">Sign Up</a>
+        Don't have an account?&nbsp<a href="{{ url_for('sign_up') }}">Sign Up</a>
       </div>
       <div class="d-flex justify-content-center">
-        <a href="#">Forgot your password?</a>
+        <a href="{{ url_for('password_forget') }}">Forgot your password?</a>
       </div>
     </div>
   </div>
