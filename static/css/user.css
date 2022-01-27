@@ -2,11 +2,6 @@
     background-color: #fafafa;
 }
 
-.btn {
-    background-color: #4b8282;
-    color: #ffffff;
-}
-
 #email, #password, #gender {
     border: none;
     background-color: transparent;

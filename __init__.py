@@ -31,7 +31,7 @@ ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 app = Flask(__name__)
 app.config.from_pyfile("config/app.cfg")  # Load config file
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER  # Set upload folder
-app.config['MAX_CONTENT_LENGTH'] = 4 * 1024 * 1024  #Set maximum file upload limit (4MB)
+app.config['MAX_CONTENT_LENGTH'] = 4 * 1024 * 1024  # Set maximum file upload limit (4MB)
 
 # Serialiser for generating tokens
 url_serialiser = URLSafeTimedSerializer(app.config["SECRET_KEY"])
@@ -251,16 +251,16 @@ def login():
         if not login_form.validate():
             session["FormErrors"] = []
         else:
-            # Extract email and password from login form
-            email = login_form.email.data.lower()
+            # Extract username/email and password from login form
+            username = login_form.username.data.lower()
             password = login_form.password.data
 
-            # Check email
+            # Check username/email
             with shelve.open("database") as db:
 
                 # Retrieve user id
                 try:
-                    user_id = retrieve_db("EmailToUserID", db)[email]
+                    user_id = retrieve_db("EmailToUserID", db)[username]
                 except KeyError:
                     # Create loginFailed session
                     session["LoginFailed"] = ""
@@ -1034,14 +1034,7 @@ def book_info2(id):
 # Only during production. To be removed when published.
 @app.route("/test")  # To go to test page: http://127.0.0.1:5000/test
 def test():
-    # # Get user
-    # user = get_user()
-    # # If user is already logged in
-    # if session["UserType"] == "Guest":
-    #     return f"You are a guest<br/>{user}"
-    # else:
-    #     return f"You are logged in<br/>{user}"
-    return render_template("test.html")
+    return "testing site"
 
 
 if __name__ == "__main__":
