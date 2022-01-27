@@ -22,7 +22,7 @@ class SignUpForm(Form):
     username = StringField("Username", [validators.Length(max=25)])
 
     # Email
-    email = EmailField("Email", [validators.Email(), validators.DataRequired()])
+    email = EmailField("Email", [validators.Email(), validators.InputRequired()])
 
     # Password
     password = PasswordField("Password", [validators.InputRequired(),
@@ -38,8 +38,8 @@ class SignUpForm(Form):
 class LoginForm(Form):
     """ Login form used for logging in """
 
-    # Email
-    email = EmailField("Email", [validators.Email(), validators.DataRequired()])
+    # Username / Email
+    username = StringField("Username / Email", [validators.InputRequired()])
 
     # Password
     password = PasswordField("Password", [validators.InputRequired()])
@@ -49,7 +49,13 @@ class AccountPageForm(Form):
     """ Account page form used for editing account """
 
     # Username
-    username = StringField("Name", [validators.Length(max=25)])
+    username = StringField("Username", [validators.Length(max=25)])
+
+    # First Name
+    first_name = StringField("First Name", [validators.Optional()])
+
+    # Last Name
+    last_name = StringField("Last Name", [validators.Optional()])
 
     # Gender
     gender = RadioField("Gender", choices=[("M", "Male"), ("F", "Female"), ("O", "Others")])
@@ -66,7 +72,7 @@ class ChangePasswordForm(Form):
                                                   validators.Length(min=8, max=80),
                                                   ContainsLower(), ContainsUpper(),
                                                   ContainsNumSymbol()])
-    
+
     # Confirm password
     confirm_password = PasswordField("Confirm Password", [validators.InputRequired(),
                                                           validators.EqualTo("new_password")])
@@ -105,5 +111,3 @@ class AddBookForm(Form):
             return False
 
         return True
-
-

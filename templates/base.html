@@ -25,7 +25,19 @@
 
   <!-- Contents -->
   <main role="main" class="flex-shrink-0">
-    <div class="container">
+    <div class="container mt-4 mb-4">
+      {# Flash Messages #}
+      {% with messages = get_flashed_messages(with_categories=true, category_filter=("message", "warning", "error")) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="flash-{{ category }} alert alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
       {% block content %}
       {% endblock %}
     </div>

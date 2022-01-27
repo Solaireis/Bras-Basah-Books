@@ -26,6 +26,9 @@ body{
   overflow-x: hidden;
 }
 
+main {
+  min-height: 620px;
+}
 
 /* --------------------------------------------------------------------------
     2. Clearing default styles
@@ -96,7 +99,7 @@ ul{
 }
 
 .fa-search:hover{
-    color: #4b8282 !important;
+  color: #4b8282 !important;
 }
 
 .nav-icon{
@@ -140,17 +143,17 @@ ul{
 
 /* Change color of dropdown links on hover */
 .dropdown-content a:hover {
-    background-color: white;
+  background-color: white;
 }
 
 /* Show the dropdown menu on hover */
 .dropdown:hover .dropdown-content {
-    display: block;
+  display: block;
 }
 
 /* Change the background color of the dropdown button when the dropdown content is shown */
 .dropdown:hover .dropbtn {
-    background-color: #4b8282;
+  background-color: #4b8282;
 }
 
 /* --------------------------------------------------------------------------
@@ -213,12 +216,12 @@ footer{
 
 /* Page Name */
 .page-name{
-   width: 100%;
-   text-align: center;
-   border-bottom: 2px solid #4b8282;;
-   line-height: 0.1em;
-   margin: 10px 0 20px;
-   color:#4b8282;
+  width: 100%;
+  text-align: center;
+  border-bottom: 2px solid #4b8282;;
+  line-height: 0.1em;
+  margin: 10px 0 20px;
+  color:#4b8282;
 }
 
 .page-name span{
@@ -229,27 +232,42 @@ footer{
 /* --------------------------------------------------------------------------
     4. Misc
 -------------------------------------------------------------------------- */
+
+/* Buttons */
 .btn-warning {
-    background-color: #588B8B !important;
-    color: #fff !important;
-    border: 0 !important;
+  background-color: #4b8282 !important;
+  color: #fff !important;
+  border: 0 !important;
+}
+.btn-warning:hover {
+  background-color: #588B8B;
 }
 
 .defaultbtn {
-    background-color: #588B8B;
-    color: #fff;
-    border: 0;
+  background-color: #4b8282;
+  color: #fff;
+  border: 0;
+}
+.defaultbtn:hover {
+  background-color: #588B8B;
+  color: #fff;
 }
 
-.defaultbtn:hover {
-    background-color: #588B8B;
-    color: #fff;
-    border: 0;
+/* Flash messages */
+.flash-message {
+  color: #4b8282;
+  background-color: #d9ebeb;
+  border-color: #97bdbd;
+}
+.flash-error {
+  color: #842029;
+  background-color: #f8d7da;
+  border-color: #eba0a7;
 }
 
 .twentypx {
-    padding-top: 20px;
-    padding-bottom: 20px;
+  padding-top: 20px;
+  padding-bottom: 20px;
 }
 
 /* --------------------------------------------------------------------------
