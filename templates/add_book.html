@@ -13,7 +13,14 @@
 {% block content %}
 {% from "includes/_form.html" import render_field %}
 
-<h1 class="display-4 padding-top">Add Book</h1>
+<!--<h1 class="display-4 padding-top">Add Book</h1>-->
+
+<div class="d-flex justify-content-center align-items-center h-100">
+<div class = "card">
+<div class="card-header">
+
+<h2 class="m-0">Add Book</h2>
+</div>
 
 <form method="POST" enctype="multipart/form-data" action="">
 
@@ -111,6 +118,9 @@
     <input type="submit" value="Add Book" class="btn btn-primary themecolor submitcenter"/>
   </div>
 </form>
+
+</div>
+</div>
 {% endblock %}
 
 {% block footer %}
