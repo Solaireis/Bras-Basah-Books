@@ -78,12 +78,13 @@ class ChangePasswordForm(Form):
                                                           validators.EqualTo("new_password")])
 
 
+
 class AddBookForm(Form):
     """ Form used for adding books into inventory """
 
-    language = SelectField('Language', [validators.Optional()], choices=[('', 'Select'), ('English', 'English'), ('Chinese', 'Chinese'), ('Malay', 'Malay'), ('Tamil', 'Tamil')], default='')
+    language = SelectField('Language', [validators.Optional()], default='')
     language2 = StringField('Language', [validators.Optional()])
-    category = SelectField('Category', [validators.Optional()], choices=[('', 'Select'), ('Action & Adventure', 'Action & Adventure'), ('Classic', 'Classic'), ('Comic', 'Comic'), ('Detective & Mystery', 'Detective & Mystery')], default='')
+    category = SelectField('Category', [validators.Optional()], default='')
     category2 = StringField('Category', [validators.Optional()])
     age = SelectField('Age', [validators.InputRequired()], choices=[('', 'Select'), ('Children', 'Children'), ('Teenagers', 'Teenagers'), ('Young Adults', 'Young Adults'), ('Adults', 'Adults')], default='')
     action = RadioField('Action', [validators.InputRequired()], choices=[('Buy', 'Buy'), ('Rent', 'Rent'), ('Buy and Rent', 'Buy and Rent')])
@@ -111,3 +112,4 @@ class AddBookForm(Form):
             return False
 
         return True
+
