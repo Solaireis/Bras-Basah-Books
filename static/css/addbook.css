@@ -42,3 +42,11 @@ summary {
 summary::-webkit-details-marker {
   display: none;
 }
+
+.card {
+    width: 1250px;
+}
+
+.card-header, .card-footer {
+    padding: 1rem 2rem;
+}
