@@ -815,10 +815,15 @@ def faq_adm():
     return render_template("faq_adm.html", form=create_faq_form)
 
 
+lang_list = [('', 'Select'), ('English', 'English'), ('Chinese', 'Chinese'), ('Malay', 'Malay'), ('Tamil', 'Tamil')]
+cat_list = [('', 'Select'), ('Action & Adventure', 'Action & Adventure'), ('Classic', 'Classic'), ('Comic', 'Comic'), ('Detective & Mystery', 'Detective & Mystery')]
+
 # Add Book
 @app.route('/add-book', methods=['GET', 'POST'])
 def add_book():
     add_book_form = AddBookForm(request.form)
+    add_book_form.language.choices = lang_list
+    add_book_form.category.choices = cat_list
     if request.method == "POST" and add_book_form.validate():
         books_dict = {}
         db = shelve.open('book.db', 'c')
@@ -837,9 +842,12 @@ def add_book():
 
         if add_book_form.language2.data != "":
             book.set_language(add_book_form.language2.data)
+            lang_list.append(tuple([add_book_form.language2.data, add_book_form.language2.data]))
 
         if add_book_form.category2.data != "":
             book.set_category(add_book_form.category2.data)
+            cat_list.append(tuple([add_book_form.category2.data, add_book_form.category2.data]))
+
 
         # check if post request has image file part
         if 'bookimg' not in request.files:
@@ -875,7 +883,8 @@ def add_book():
         book = books_dict[book.get_book_id()]
         print(book.get_title(), book.get_price(), "was stored in book.db successfully with book_id==", book.get_book_id())
         db.close()
-        return redirect(url_for('inventory'))
+        flash("Book successfully added!")
+        # return redirect(url_for('inventory'))
 
     return render_template('add_book.html', form=add_book_form)
 
@@ -905,6 +914,8 @@ def inventory():
 @app.route('/update-book/<int:id>/', methods=['GET', 'POST'])
 def update_book(id):
     update_book_form = AddBookForm(request.form)
+    update_book_form.language.choices = lang_list
+    update_book_form.category.choices = cat_list
     if request.method == 'POST' and update_book_form.validate():
         books_dict = {}
         db = shelve.open('book.db', 'w')
@@ -951,7 +962,9 @@ def update_book(id):
         db['Books'] = books_dict
         db.close()
 
+        flash("Book successfully updated!")
         return redirect(url_for('inventory'))
+
 
     else:
         books_dict = {}
