@@ -1,8 +1,8 @@
 .user-container {
-    background-color: #fafafa;
+    background-color: #fff;
 }
 
-#email, #password, #gender {
+.no-format-form {
     border: none;
     background-color: transparent;
 }

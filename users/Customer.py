@@ -11,9 +11,10 @@ class Customer(User):
 
     Attributes:
         __user_id (str): unique ID identifier of customer
+        __username (str): username of customer
         __email (str): email of customer
         __password (str): hashed password of customer
-        __username (str): username of customer
+        __name (str): name of customers
         __verified (bool): True when customer's email is verified
         __profile_pic (str): path of profile pic of customer
         __gender (str): gender of customer - "M" for male, "F" for female, "O" for other
@@ -21,11 +22,12 @@ class Customer(User):
         __orders (list): list of the orders made by customer
     """
 
-    def __init__(self, email, password, username=""):
+    def __init__(self, username, email, password):
         super().__init__()
+        self.__username = username
         self.__email = email
         self.set_password(password)
-        self.__username = username
+        self.__name = ""
         self.__verified = False
         self.__profile_pic = ""
         self.__gender = ""
@@ -33,19 +35,28 @@ class Customer(User):
         self.__orders = []
 
     def __repr__(self):
-        return super().__repr__(email=self.__email, username=self.__username)
+        return super().__repr__(username=self.__username, email=self.__email)
 
 
     # Mutator and accessor methods
-    def set_email(self, email):
-        self.__email = email
-    def get_email(self):
-        return self.__email
-
     def set_username(self, username):
         self.__username = username
     def get_username(self):
         return self.__username
+
+    def set_name(self, name):
+        self.__name = name
+    def get_name(self):
+        return self.__name
+    
+    def get_display_name(self):
+        """ Returns name for displaying, displays username if name not provided """
+        return self.__name or self.__username
+
+    def set_email(self, email):
+        self.__email = email
+    def get_email(self):
+        return self.__email
 
     def set_profile_pic(self, profile_pic):
         self.__profile_pic = profile_pic
@@ -83,7 +94,9 @@ class Customer(User):
             _ph.verify(self.__password, password)
         except:  # If verifying fails
             return False
-        else:    # If verifying succeeds
-            if _ph.check_needs_rehash(self.__password):  # Check if needs rehashing
-                self.set_password(password)
-            return True
+
+        # Check if needs rehashing
+        if _ph.check_needs_rehash(self.__password):
+            self.set_password(password)
+
+        return True
