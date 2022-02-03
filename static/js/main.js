@@ -1,20 +1,61 @@
-// Example starter JavaScript for disabling form submissions if there are invalid fields
+/* Validate forms */
 (function () {
-  'use strict'
+  "use strict";
 
-  // Fetch all the forms we want to apply custom Bootstrap validation styles to
-  var forms = document.querySelectorAll('.needs-validation')
+  /* Validate forms on submit */
 
-  // Loop over them and prevent submission
-  Array.prototype.slice.call(forms)
-    .forEach(function (form) {
-      form.addEventListener('submit', function (event) {
-        if (!form.checkValidity()) {
-          event.preventDefault()
-          event.stopPropagation()
-        }
+  // Get all forms that needs validation
+  const forms = document.querySelectorAll('.needs-validation')
 
-        form.classList.add('was-validated')
-      }, false)
-    })
-})()
+  // Iterate through forms and prevent submission
+  Array.prototype.filter.call(forms, form => {
+
+    form.addEventListener("submit", event => {
+
+      // If form has invalid data
+      if (!form.checkValidity()) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+
+      // Add validated class
+      form.classList.add("was-validated");
+    }, false);
+  });
+
+
+  /* Validate inputs on blur and input */
+
+  // Get all inputs in forms that needs validation
+  const inputs = document.querySelectorAll(".needs-validation input");
+
+  // Iterate through inputs and validate
+  Array.prototype.filter.call(inputs, input => {
+
+    input.addEventListener("blur", () => {
+      // Reset classes
+      input.classList.remove("is-valid");
+      input.classList.remove("is-invalid");
+
+      // Validate input and add corresponding classes
+      if (input.checkValidity()) {
+        input.classList.add("is-valid");
+      } else {
+        input.classList.add("is-invalid");
+      }
+    }, false);
+
+    input.addEventListener("input", () => {
+      // Reset classes
+      input.classList.remove("is-valid");
+      input.classList.remove("is-invalid");
+
+      // Validate input and add corresponding classes
+      if (input.checkValidity()) {
+        input.classList.add("is-valid");
+      } else {
+        input.classList.add("is-invalid");
+      }
+    }, false);
+  });
+})();

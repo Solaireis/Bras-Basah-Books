@@ -33,6 +33,7 @@ class SignUpForm(Form):
 
     # Confirm password
     confirm = PasswordField("Confirm Password", [validators.InputRequired(),
+                                                 validators.Length(min=8, max=80),
                                                  validators.EqualTo("password")])
 
 
