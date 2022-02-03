@@ -32,7 +32,8 @@
   // Iterate through inputs and validate
   Array.prototype.filter.call(inputs, input => {
 
-    input.addEventListener("blur", () => {
+    // Validator function
+    function validator() {
       // Reset classes
       input.classList.remove("is-valid");
       input.classList.remove("is-invalid");
@@ -43,19 +44,10 @@
       } else {
         input.classList.add("is-invalid");
       }
-    }, false);
+    }
 
-    input.addEventListener("input", () => {
-      // Reset classes
-      input.classList.remove("is-valid");
-      input.classList.remove("is-invalid");
-
-      // Validate input and add corresponding classes
-      if (input.checkValidity()) {
-        input.classList.add("is-valid");
-      } else {
-        input.classList.add("is-invalid");
-      }
-    }, false);
+    // Calll validator on blur and input event
+    input.addEventListener("blur", validator, false);
+    input.addEventListener("input", validator, false);
   });
 })();
