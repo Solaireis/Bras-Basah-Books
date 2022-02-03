@@ -1,7 +1,18 @@
-class GuestDB(dict):
+from typing import TypeVar, Dict
+
+
+# Added type hinting as I needed my editor to recognise the type
+# So that I can code faster with less errors
+_KT = TypeVar("_KT")
+_VT = TypeVar("_VT")
+
+
+class GuestDB(dict, Dict[_KT, _VT]):
     """
-    Guest database for storing guest accounts.
-    By utilising pointers, add(), remove(), and renew_active() are all O(1) operations.
+    Guest database for storing guest accounts
+
+    By utilising pointers, add(), remove(), and renew_active() are all O(1) operations
+
     clean() is O(k) where k is number of expired guest accounts.
 
     Attributes:
@@ -10,6 +21,7 @@ class GuestDB(dict):
     """
 
     def __init__(self):
+        super().__init__()
         self.__head = None
         self.__tail = None
 

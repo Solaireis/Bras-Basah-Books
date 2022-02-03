@@ -3,13 +3,12 @@ Form classes used by BrasBasahBooks web app
 """
 
 # Import WTForms
-from re import L
 from wtforms import Form, validators, StringField, RadioField,\
                     TextAreaField, EmailField, PasswordField, FileField,\
                     SelectField, IntegerField, SubmitField, DecimalField
 
 # Import custom validations (for password field)
-from .Validations import ContainsLower, ContainsUpper, ContainsNumSymbol
+from .Validations import ContainsLower, ContainsUpper, ContainsNumSymbol, ValidUsername
 
 # Import validation for file upload
 from flask_wtf.file import FileAllowed, FileRequired
@@ -19,10 +18,12 @@ class SignUpForm(Form):
     """ Sign up form used when signing up """
 
     # Username
-    username = StringField("Username", [validators.Length(max=25)])
+    username = StringField("Username", [validators.InputRequired(),
+                                        validators.Length(min=3, max=20),
+                                        ValidUsername()])
 
     # Email
-    email = EmailField("Email", [validators.Email(), validators.InputRequired()])
+    email = EmailField("Email", [validators.InputRequired(), validators.Email()])
 
     # Password
     password = PasswordField("Password", [validators.InputRequired(),
@@ -48,17 +49,11 @@ class LoginForm(Form):
 class AccountPageForm(Form):
     """ Account page form used for editing account """
 
-    # Username
-    username = StringField("Username", [validators.Length(max=25)])
-
-    # First Name
-    first_name = StringField("First Name", [validators.Optional()])
-
-    # Last Name
-    last_name = StringField("Last Name", [validators.Optional()])
+    # Name
+    name = StringField("Name", [validators.Optional(), validators.Length(min=1)])
 
     # Gender
-    gender = RadioField("Gender", choices=[("M", "Male"), ("F", "Female"), ("O", "Others")])
+    gender = RadioField("Gender", [validators.Optional()], choices=[("M", "Male"), ("F", "Female"), ("O", "Others")])
 
 
 class ChangePasswordForm(Form):

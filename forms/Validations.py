@@ -1,65 +1,85 @@
 """
-Validation classs used by Forms.py
+Validation classes used by Forms.py
 
 P.S. Teacher I read through the source code for wtforms.validators
 to figure out how does the validators class worked to create
-my own custom validator class Contains
+my own custom validator classes
 I also went and learn how to use regex
 gimme extra marks pls
+hahahahahahaha
 """
-from wtforms import ValidationError
-import re
+from wtforms.validators import Regexp
 
 
-class SearchRegex:
+class ContainsLower(Regexp):
     """
-    Search the incoming data using the given regex pattern
-
-    Args:
-        pattern (str): The regex pattern
-        message (str): Error message to raise in case of a validation error
+    Validates if incoming data contains a lowercase character
     """
 
-    def __init__(self, pattern, message):
-        self.__pattern = re.compile(pattern)
-        self.__message = message
-
+    def __init__(self, message=None):
+        pattern = r".*[a-z].*"
+        super().__init__(pattern, message=message)
+    
     def __call__(self, form, field):
-        if self.__pattern.search(field.data):
-            return
+        message = self.message
+        if message is None:
+            message = field.gettext("Field must contain at least one lowercase letter.")
 
-        raise ValidationError(self.__message)
+        super().__call__(form, field, message)
 
 
-class ContainsLower(SearchRegex):
+class ContainsUpper(Regexp):
     """
-    Checks if data incoming data contains a lowercase character
-    """
-
-    def __init__(self):
-        super().__init__(r"[a-z]",
-                         "Field must contain at least one lowercase letter.")
-
-
-class ContainsUpper(SearchRegex):
-    """
-    Checks if data incoming data contains an uppercase character
+    Validates if incoming data contains a uppercase character
     """
 
-    def __init__(self):
-        super().__init__(r"[A-Z]",
-                         "Field must contain at least one uppercase letter.")
+    def __init__(self, message=None):
+        pattern = r".*[A-Z].*"
+        super().__init__(pattern, message=message)
+    
+    def __call__(self, form, field):
+        message = self.message
+        if message is None:
+            message = field.gettext("Field must contain at least one uppercase letter.")
+
+        super().__call__(form, field, message)
 
 
-class ContainsNumSymbol(SearchRegex):
+class ContainsNumSymbol(Regexp):
     """
-    Checks if data incoming data contains a number or symbol
+    Validates if incoming data contains a number or symbol
     """
 
-    def __init__(self):
+    def __init__(self, message=None):
         # numbers:      [0-9]
         # symbols: [ -/]     [:-@]     [\[-1]     [{-~]
         # letters:                [A-Z]      [a-z]
         # num&sym: [      -     @]     [\[-1]     [{-~]
-        super().__init__(r"[ -@\[-`{-~]",
-                         "Field must contain at least one symbol or number.")
+        pattern = r".*[ -@\[-`{-~].*"
+        super().__init__(pattern, message=message)
+    
+    def __call__(self, form, field):
+        message = self.message
+        if message is None:
+            message = field.gettext("Field must contain at least one symbol or number.")
+
+        super().__call__(form, field, message)
+
+
+class ValidUsername(Regexp):
+    """
+    Validates if incoming data is a valid format for username
+
+    Username must only contain alphanumeric characters (including underscore)
+    """
+
+    def __init__(self, message=None):
+        pattern = r"^\w*$"
+        super().__init__(pattern, message=message)
+    
+    def __call__(self, form, field):
+        message = self.message
+        if message is None:
+            message = field.gettext("Username can only contain letters, numbers, and underscores.")
+
+        super().__call__(form, field, message)

@@ -19,14 +19,16 @@
     </div>
     <div class="card-body">
       <form method="POST" action="">
-        {% if "LoginFailed" in session or "FormErrors" in session %}
-          {# Remove "LoginFailed" and "FormErrors" from session #}
-          {% if session.pop("LoginFailed", None) %}{% endif %}
-          {% if session.pop("FormErrors", None) %}{% endif %}
-          <div class="alert alert-danger p-2 mb-4">
-            Your email and/or password is incorrect, please try again
-          </div>
-        {% endif %}
+        {# Flash login error message #}
+        {% with messages = get_flashed_messages(category_filter=("form-error")) %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="flash-error alert p-2 mb-4" role="alert">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
         <div class="input-group mb-4">
           <span class="input-group-text"><i class="fa fa-user"></i></span>
           {{ render_field(form.username, class="form-control", placeholder="Username / Email") }}

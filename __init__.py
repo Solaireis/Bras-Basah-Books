@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, BadData
 from werkzeug.utils import secure_filename
-from typing import Union
+from typing import Union, Dict
 import shelve
 import os
 
@@ -39,15 +39,17 @@ url_serialiser = URLSafeTimedSerializer(app.config["SECRET_KEY"])
 mail = Mail()  # Mail object for sending emails
 
 
-def retrieve_db(key, db, value=None):
+# Added type hintings as I needed my editor to recognise the type
+def retrieve_db(key, db, value=None) -> Union[
+    Dict[str, Customer], Dict[str, Admin], GuestDB[str, Guest], Dict[str, Book.Book]]:
     """ Retrieves object from database using key """
     try:
         value = db[key]  # Retrieve object
         if DEBUG: print(f"retrieved db['{key}'] = {value}")
     except KeyError as err:
-        if DEBUG: print(f"retrieve_db(): {repr(err)} | create: db['{key}'] = {value}")
         if value is None: value = {}
         db[key] = value  # Assign value to key
+        if DEBUG: print(f"retrieve_db(): {repr(err)} | create: db['{key}'] = {value}")
     return value
 
 
@@ -193,25 +195,30 @@ def sign_up():
     if request.method == "POST" and sign_up_form.validate():
 
         # Extract data from sign up form
+        username = sign_up_form.username.data
         email = sign_up_form.email.data.lower()
         password = sign_up_form.password.data
-        username = sign_up_form.username.data
 
         # Create new user
         with shelve.open("database") as db:
 
-            # Get Customers, EmailToUserID, Guests
+            # Get Customers, UsernameToUserID, EmailToUserID, Guests
             customers_db = retrieve_db("Customers", db)
+            username_to_user_id = retrieve_db("UsernameToUserID", db)
             email_to_user_id = retrieve_db("EmailToUserID", db)
             guests_db = retrieve_db("Guests", db)
 
 
-            # Ensure that email is not registered yet
-            if email in email_to_user_id:
+            # Ensure that email and username are not registered yet
+            if username.lower() in username_to_user_id:
+                if DEBUG: print("Sign-up: username already exists")
+                return render_template("user/sign_up.html", form=sign_up_form)
+            elif email in email_to_user_id:
+                if DEBUG: print("Sign-up: email already exists")
                 return render_template("user/sign_up.html", form=sign_up_form)
 
             # Create customer
-            customer = Customer(email, password, username)
+            customer = Customer(username, email, password)
             if DEBUG: print(f"Created: {customer}")
 
             # Delete guest account
@@ -221,6 +228,7 @@ def sign_up():
             # Store customer into database
             user_id = customer.get_user_id()
             customers_db[user_id] = customer
+            username_to_user_id[username.lower()] = user_id
             email_to_user_id[email] = user_id
 
             # Create session to login
@@ -229,6 +237,7 @@ def sign_up():
             if DEBUG: print(f"Logged in: {customer}")
 
             # Save changes to database
+            db["UsernameToUserID"] = username_to_user_id
             db["EmailToUserID"] = email_to_user_id
             db["Customers"] = customers_db
             db["Guests"] = guests_db
@@ -249,21 +258,25 @@ def login():
     login_form = LoginForm(request.form)
     if request.method == "POST":
         if not login_form.validate():
-            session["FormErrors"] = []
+            # Flash login error message
+            flash("Your account and/or password is incorrect, please try again", "form-error")
         else:
             # Extract username/email and password from login form
             username = login_form.username.data.lower()
             password = login_form.password.data
+
+            # Get key for retrieving from database
+            key = "EmailToUserID" if "@" in username else "UsernameToUserID"
 
             # Check username/email
             with shelve.open("database") as db:
 
                 # Retrieve user id
                 try:
-                    user_id = retrieve_db("EmailToUserID", db)[username]
+                    user_id = retrieve_db(key, db)[username]
                 except KeyError:
-                    # Create loginFailed session
-                    session["LoginFailed"] = ""
+                    # Flash login error message
+                    flash("Your account and/or password is incorrect, please try again", "form-error")
                     return render_template("user/login.html", form=login_form)
 
                 # Retrieve user
@@ -276,8 +289,8 @@ def login():
                         user_type = "Admin"
                     except KeyError:  # Unexpected error
                         if DEBUG: print(f"UserID {user_id} not in database")
-                        # Create loginFailed session
-                        session["LoginFailed"] = ""
+                        # Flash login error message
+                        flash("Your account and/or password is incorrect, please try again", "form-error")
                         return render_template("user/login.html", form=login_form)
 
             # Check password
@@ -287,9 +300,8 @@ def login():
                 if DEBUG: print("Logged in:", user)
                 return redirect(url_for("home"))
             else:
-                # Create loginFailed session
-                session["LoginFailed"] = ""
-                return render_template("user/login.html", form=login_form)
+                # Flash login error message
+                flash("Your account and/or password is incorrect, please try again", "form-error")
 
     # Render page
     return render_template("user/login.html", form=login_form)
@@ -304,8 +316,8 @@ def logout():
     return redirect(url_for("home"))
 
 
-# Forgot passwrd page
-@app.route("/user/forget-password")
+# Forgot password page
+@app.route("/user/forget-password", methods=["GET", "POST"])
 def password_forget():
     pass
 
@@ -324,27 +336,32 @@ def password_change():
     change_password_form = ChangePasswordForm(request.form)
 
     # Validate sign up form if request is post
-    if request.method == "POST" and change_password_form.validate():
+    if request.method == "POST":
+        if not change_password_form.validate():
+            session["DisplayFieldError"] = True
+        else:
+            # Extract data from sign up form
+            current_password = change_password_form.current_password.data
+            new_password = change_password_form.new_password.data
 
-        # Extract data from sign up form
-        current_password = change_password_form.current_password.data
-        new_password = change_password_form.new_password.data
+            if not user.verify_password(current_password):
+                flash("Your password is incorrect, please try again")
+            else:
+                with shelve.open("database") as db:
 
-        if user.verify_password(current_password):
-            with shelve.open("database") as db:
+                    # Retrieve user database
+                    key = session["UserType"] + "s"
+                    user_db = retrieve_db(key, db)
 
-                # Retrieve user database
-                key = session["UserType"] + "s"
-                user_db = retrieve_db(key, db)
+                    # Get user and set password
+                    user = user_db[session["UserID"]]
+                    user.set_password(new_password)
 
-                # Get user and set password
-                user = user_db[session["UserID"]]
-                user.set_password(new_password)
+                    # Save changes to database
+                    db[key] = user_db
 
-                # Save changes to database
-                db[key] = user_db
-
-                return redirect(url_for("account"))
+                    if DEBUG: print("Password changed for", user)
+                    return redirect(url_for("account"))
 
     return render_template("user/password_change.html", form=change_password_form)
 
@@ -365,24 +382,34 @@ def account():
     # Validate account page form if request is post
     if request.method == "POST" and account_page_form.validate():
 
+        # Flash success message
+        flash("Account settings updated successfully")
+
         # Extract email and password from sign up form
-        username = account_page_form.username.data
+        name = account_page_form.name.data
         gender = account_page_form.gender.data
 
         with shelve.open("database") as db:
             # Get Customers
             customers_db = retrieve_db("Customers", db)
-            user.set_username(username)
+            user = customers_db[session["UserID"]]
+            user.set_name(name)
             user.set_gender(gender)
-            customers_db[session["UserID"]] = user
 
             # Save changes to database
             db["Customers"] = customers_db
 
+        # Redirect to prevent form resubmission
+        return redirect(url_for("account"))
+
     # Set username and gender to display
-    account_page_form.username.data = user.get_username()
+    account_page_form.name.data = user.get_name()
     account_page_form.gender.data = user.get_gender()
-    return render_template("user/account.html", form=account_page_form, email=user.get_email(), username=user.get_username())
+    return render_template("user/account.html",
+                           form=account_page_form,
+                           display_name=user.get_display_name(),
+                           username=user.get_username(),
+                           email=user.get_email())
 
 
 # Send verification link page
@@ -1047,7 +1074,11 @@ def book_info2(id):
 # Only during production. To be removed when published.
 @app.route("/test")  # To go to test page: http://127.0.0.1:5000/test
 def test():
-    return "testing site"
+    with shelve.open("database") as db:
+        c = retrieve_db("Customers", db)
+        u = retrieve_db("UsernameToUserID", db)
+        e = retrieve_db("EmailToUserID", db)
+    return c, u, e
 
 
 if __name__ == "__main__":
