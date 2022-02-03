@@ -316,7 +316,7 @@ def logout():
     return redirect(url_for("home"))
 
 
-# Forgot passwrd page
+# Forgot password page
 @app.route("/user/forget-password", methods=["GET", "POST"])
 def password_forget():
     pass
