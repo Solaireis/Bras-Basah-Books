@@ -499,10 +499,48 @@ def book_info():
     return render_template("book_info.html")
 
 
-@app.route("/addtocart", methods=['GET', 'POST'])
-def add_to_cart():
+# add to buying cart
+@app.route("/addtocart/<int:id>", methods=['GET', 'POST'])
+def add_to_buy(id):
+    user_id = get_user().get_user_id()
+    buy_quantity = int(request.form['quantity'])
+    cart_dict = {}
+    cart_db = shelve.open('cart', 'c')
+    try:
+        cart_dict = cart_db['Cart']
+        print(cart_dict, "original database")
+    except:
+        print("Error while retrieving")
+
+    book = c.AddtoBuy(id, buy_quantity)
+    if user_id in cart_dict:
+        print("Hi yes inside")
+        print(book)
+        cart_dict[user_id] = book
+        print(cart_dict)
+    else:
+        print("no no not inside")
+        cart_dict[user_id] = book
+        cart_db['Cart'] = cart_dict
+        print(cart_dict, "changed database")
+    for i in range(len(cart_dict)):
+        print(list(cart_dict.keys())[i])
+    # print(book.get_buy_dict())
+    # cart_list = cart_db[user_id]
+    # print(cart_list, "original database")
+    # # except:
+    # #     print("Error while retrieving data from cart.db")
+    #
+    # book = c.AddtoBuy(id, buy_quantity)
+    # cart_list[user_id] = {book}
+    # # print(book.get_buy_dict())
+    # cart_db[user_id] = cart_list
+    return redirect(request.referrer)
+
+def add_to_cart2():
     cart_list = []
     cart_user = []
+    id_list = []
     cart_db = []
     user_id = get_user().get_user_id()
 
@@ -533,29 +571,37 @@ def add_to_cart():
         else:
             for i in range(len(cart_list)):
                 if user_id in cart_list[i]:
-                    for j in range(len((cart_list)[i])-1):
-                        if j == 0:
-                            j += 1
+                    print("yes this person inside")
+                    print([cart_list][i][i],  'is the person')
+
+                    for j in range(1, len((cart_list)[i])):
+                        print(cart_list[i][j][0],  "ahuh ")
                         if book_id == cart_list[i][j][0]:
+                            print("The book is inside")
                             cart_list[i][j][1] += book_quantity
-                            print(cart_list, "before changing database")
                             cart_db['Cart'] = cart_list
+                            print(cart_list, "after changing")
+                            break
+                        elif j == (len(cart_list[i])-1) and book_id not in id_list:
+                            print("The book is not inside")
+                            old_cart = cart_list[i]
+                            print(old_cart,'this is the old cart')
+                            new_item = [added_book.get_book_id(), added_book.get_book_quantity()]
+                            old_cart.append(new_item)
+                            cart_list[i] = old_cart
+                            cart_db['Cart'] = cart_list
+                            print(cart_list)
                         else:
-                            print("Oops book is not in this user's cart")
-                            print("Not done yet")
+                            print("Searching")
+                            id_list.append(cart_list[i][j][0])
+
                     break
                 elif i == (len(cart_list)-1) and user_id not in cart_user:
                     new_cart = [user_id, [added_book.get_book_id(), added_book.get_book_quantity()]]
                     cart_list.append(new_cart)
                     cart_db['Cart'] = cart_list
-                    print(cart_list)
-                # for line in cart_db:
-                #     cart_list.append(line)
-                #print(cart_list,'current database')
-
                 elif user_id not in cart_list[i]:
                     cart_user.append(cart_list[i][0])
-                    print(cart_user)
         cart_db.close()
     except KeyError:
         print("Error")
@@ -596,9 +642,24 @@ def add_to_rent():
                     for j in range(1, len((cart_list)[i])):
                         if book_id == cart_list[i][j][0]:
                             print("Book already in renting cart. Cannot rent more than 1.")
+                            break
                         else:
-                            print("Oops book is not in this user's cart")
-                            print("Not done yet")
+                            old_cart = cart_list[i]
+                            new_item = [added_book.get_book_id()]
+                            old_cart.append(new_item)
+                            cart_list[i] = old_cart
+                            print(cart_list[i], 'is now updated')
+                            cart_db['Cart'] = cart_list
+
+                        #     elif j == (len(cart_list[i])-1) and book_id not in id_list:
+                        #     old_cart = cart_list[i]
+                        #     new_item = [added_book.get_book_id(), added_book.get_book_quantity()]
+                        #     old_cart.append(new_item)
+                        #     cart_list[i] = old_cart
+                        #     cart_db['Cart'] = cart_list
+                        #     print(cart_list)
+                        # else:
+                        #     id_list.append(cart_list[i][j][0])
                     break
                 elif i == (len(cart_list)-1) and user_id not in cart_user:
                     print("Cannot find user id in cart")
@@ -606,9 +667,6 @@ def add_to_rent():
                     cart_list.append(new_cart)
                     cart_db['Cart'] = cart_list
                     print(cart_list)
-                # for line in cart_db:
-                #     cart_list.append(line)
-                #print(cart_list,'current database')
 
                 elif user_id not in cart_list[i]:
                     cart_user.append(cart_list[i][0])
@@ -617,6 +675,7 @@ def add_to_rent():
         pass
     cart_db.close()
     return redirect(request.referrer)
+
 
 # Shopping Cart
 @app.route('/go_cart')
@@ -634,6 +693,7 @@ def go_cart():
     try:
         rentingcart_db = shelve.open('renting_cart')
         renting_cart_list = rentingcart_db['Cart']
+        print(renting_cart_list,'is renting cart list')
         rentingcart_db.close()
     except:
         renting_cart_list = []
@@ -642,8 +702,8 @@ def go_cart():
     books_dict = book_db['Books']
     book_db.close()
     book_cart = []
+    rent_cart = []
     user_rent_cart = []
-    book_info = []
     book_id = 0
     rent_bookid = 0
     book_name = ""
@@ -653,33 +713,50 @@ def go_cart():
     book_quantity = 0
     total_price = 0
     if len(cart_list) != 0:
+        print("Go through buying cart")
         for i in range(len(cart_list)):
             if user_id in cart_list[i]:
+                print(cart_list)
+                print("Yes he is inside")
                 user_cart = cart_list[i]
                 for j in range(1, len(user_cart)):
-                    book_cart = [user_cart[j]]
-                    for a in range(0,len(book_cart),2):
-                        book_id = book_cart[a][a]
-                        book_name = books_dict[book_id].get_title()
-                        book_price = books_dict[book_id].get_price()
-                        book_quantity = book_cart[a][a+1]
-                        book = book_id, book_name, float(book_price), book_quantity
-                        book_info.append(book)
-                        total_price += float(book_quantity)*float(book_price)
-
-        if len(renting_cart_list) != 0:
-            for b in range(len(renting_cart_list)):
+                    book_cart.append(user_cart[j])
+                for a in range(0,len(book_cart)):
+                    print(book_cart,'book cart here')
+                    book_id = book_cart[a][0]
+                    book_img =  books_dict[book_id].get_img()
+                    book_name = books_dict[book_id].get_title()
+                    book_price = books_dict[book_id].get_price()
+                    book_quantity = book_cart[a][1]
+                    total_price = float(total_price)
+                    total_price += float(book_quantity)*float(book_price)
+                    total_price = ("%.2f" % round(total_price, 2))
+        if len(renting_cart_list) == 0:
+            return render_template('cart.html', book_cart=book_cart, books_dict=books_dict, rent_cart=rent_cart, book_count=len(book_cart), rent_book_count=len(user_rent_cart), book_name=book_name, book_price=book_price, book_quantity=book_quantity, book_id=book_id, rent_bookid=rent_bookid, rent_bookname=rent_bookname, rent_bookprice=rent_bookprice, total_price=float(total_price))
+    if len(renting_cart_list) != 0:
+        print(renting_cart_list, 'renting')
+        for b in range(len(renting_cart_list)):
+            if user_id in renting_cart_list[b]:
                 user_rent_cart = renting_cart_list[b]
-                if user_id in user_rent_cart:
-                    user_rent_cart.pop(0)
-                for c in range(len(user_rent_cart)):
-                    rent_bookid = user_rent_cart[c][0]
-                    rent_bookname = books_dict[rent_bookid].get_title()
-                    rent_bookprice = float(books_dict[rent_bookid].get_price()) * 0.1
-                    total_price += rent_bookprice
+                print(user_rent_cart)
+                # user_rent_cart.pop(0)
+            for c in range(1,len(user_rent_cart)):
+                rent_cart.append(user_rent_cart[c])
+                print(rent_cart)
+            for d in range(len(rent_cart)):
+                rent_bookid = rent_cart[d][0]
+                print(rent_bookid, "should be the id")
+                rent_bookname = books_dict[rent_bookid].get_title()
+                rent_bookimg = books_dict[rent_bookid].get_img()
+                rent_bookprice = float(books_dict[rent_bookid].get_price()) * 0.1
+                rent_bookprice = ("%.2f" % round(rent_bookprice, 2))
+                rent_bookprice = float(rent_bookprice)
+                total_price = float(total_price)
+                total_price += rent_bookprice
         total_price = ("%.2f" % round(total_price, 2))
-        return render_template('cart.html', book_cart=book_cart, user_rent_cart=user_rent_cart, book_count=len(book_cart), rent_book_count=len(user_rent_cart), book_name=book_name, book_price=book_price, book_quantity=book_quantity, book_id=book_id, rent_bookid=rent_bookid, rent_bookname=rent_bookname, rent_bookprice=rent_bookprice, total_price=float(total_price))
+        return render_template('cart.html', book_cart=book_cart, books_dict=books_dict, rent_cart=rent_cart, book_count=len(book_cart), rent_book_count=len(user_rent_cart), book_name=book_name, book_price=book_price, book_quantity=book_quantity, book_id=book_id, rent_bookid=rent_bookid, rent_bookname=rent_bookname, rent_bookprice=rent_bookprice, total_price=float(total_price))
     else:
+        print(len(renting_cart_list),'what is this')
         return render_template('cart.html', book_count=0, rent_book_count=0)
 
 
@@ -691,19 +768,15 @@ def update_cart():
     cart_list = cart_db['Cart']
     book_quantity = request.form['quantity']
     book_id = request.form['book_id']
-    print(book_id, 'is book id', book_quantity, 'is quantity')
     for i in range(len(cart_list)):
-            print(cart_list[i])
             if user_id in cart_list[i]:
                 for j in range(1, len(cart_list[i])):
-                    print('j =', j)
                     book_cart = [cart_list[i][j]]
                     if int(book_id) == cart_list[i][j][0]:
                         if int(book_quantity) == 0:
                             delete_buying_cart()
                         else:
                             cart_list[i][j][1] = int(book_quantity)
-                            print(cart_list[i][j][1])
                             cart_db['Cart'] = cart_list
                     else:
                         print(cart_list[i][j], 'cannot find leh')
@@ -723,15 +796,21 @@ def delete_buying_cart():
     book_id = request.form['book_id']
     for i in range(len(cart_list)):
         if user_id in cart_list[i]:
+            print("user id is inside this renting")
             for j in range(1, len(cart_list[i])):
+                print(cart_list[i],'cart_list[i]')
+                print(cart_list[i][j], 'is cart_list[i]')
                 if int(book_id) == cart_list[i][j][0]:
                     del cart_list[i][j]
                     print(cart_list[i], 'deleted some item')
                     cart_db['Cart'] = cart_list
-                    if len(cart_list[i]) == 1:
-                        del cart_list[i]
-                        print(cart_list)
-                        cart_db['Cart'] = cart_list
+                    break
+            if len(cart_list[i]) == 1:
+                del cart_list[i]
+                print(cart_list,'uh oh not here')
+                cart_db['Cart'] = cart_list
+            else:
+                print("Uh oh not 1")
     cart_db.close()
     return go_cart()
 
@@ -752,10 +831,14 @@ def delete_renting_cart():
                     del cart_list[i][j]
                     print(cart_list[i], 'deleted some item')
                     cart_db['Cart'] = cart_list
-                    if len(cart_list[i]) == 1:
-                        del cart_list[i]
-                        print(cart_list)
-                        cart_db['Cart'] = cart_list
+                    break
+        if len(cart_list[i]) == 1:
+            print(cart_list[i],'cart_list[i]')
+            #del cart_list[i]
+            print(cart_list,'cart_list')
+            #cart_db['Cart'] = cart_list
+        else:
+            print("Oh nooooo")
     cart_db.close()
     return go_cart()
 
