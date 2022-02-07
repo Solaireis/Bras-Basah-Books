@@ -1101,7 +1101,7 @@ def update_coupons(id):
         db['Coupon'] = coupon_dict
         db.close()
 
-        return redirect(url_for('retrieve_coupon'))
+        return redirect(url_for('retrieve_coupons'))
 
     else:
         coupon_dict={}
