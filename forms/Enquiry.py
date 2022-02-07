@@ -10,13 +10,14 @@ from users.Customer import Customer
 from wtforms import Form, StringField, RadioField, SelectField, TextAreaField, validators, EmailField, DateField
 
 class Enquiry(Form):
-    name = StringField('Username', [validators.Length(min=1, max=100), validators.DataRequired()])
+    name = StringField('Name', [validators.Length(min=1, max=100), validators.DataRequired()])
     email = EmailField('Email', [validators.Email(), validators.DataRequired()])
-    enquiry_type = SelectField('Enquiry Type', [validators.DataRequired()], choices=[('', 'Select'), ('B', 'Question about Books'), ('F', 'Feedback')], default='')
+    enquiry_type = SelectField('Enquiry Type', [validators.DataRequired()], choices=[('', 'Select'), ('B', 'Question about Books'), ('F', 'Feedback'),('R','Report site vulnerability')], default='')
     comments = TextAreaField('Comments', [validators.Optional()])
 
 
 class UserEnquiry:
+    count = 0
     def __init__(self, name, email, enquiry_type, comments):
         # Args: for the self
         #
@@ -27,7 +28,8 @@ class UserEnquiry:
         #
         # Notes:
         #     realised that i need user class and also guest accounts, therefore it has to obtained from them
-
+        UserEnquiry.count += 1
+        self.__count = UserEnquiry.count
         self.__enquiry_id = str(uuid.uuid4())  # enquiry_id: unique id of the enquiry which is needed for matching ids together
         self.__user_id = None  # to link with the user
         self.__name = name
@@ -37,6 +39,11 @@ class UserEnquiry:
 
 
     # setting mutators and assessor methods
+    def get_count(self):
+        return self.__count
+
+    def set_count(self, count):
+        self.__count = count
 
     # enquiry id
     def get_enquiry_id(self):

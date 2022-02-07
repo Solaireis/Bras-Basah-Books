@@ -1,18 +1,20 @@
 {% extends "base.html" %}
-{% block title %}ADMIN Query Dashboard{% endblock %}
+{% block title %}ADMIN coupon Dashboard{% endblock %}
 
 {% block stylesheets %}
 
 <link rel="stylesheet" href="/static/css/adm_dashboard.css">
 
 {% endblock %}
+
 {% block content %}
+{% from "includes/_form.html" import render_field %}
 <div class="container-fluid container-padding-50">
     <div class="card">
         <div class="card-body">
             <div class="row">
                 <div class="col-sm-12">
-                    <h1 class="display-4, main-header">Enquiry Dashboard</h1>
+                    <h1 class="display-4, main-header">Coupon dashboard</h1>
                 </div>
             </div>
 
@@ -36,7 +38,7 @@
                     <thead>
                         <tr>
                           <th>
-                            Total Enquiries Unanswered:
+                            Total Coupons Active:
                           </th>
                           {% if count == 0 %}
                           <th colspan="7">0</th>
@@ -48,38 +50,28 @@
 
                         </tr>
                         <tr>
-                            <th> Enquiry ID</th>
+                            <th> Coupon ID</th>
                             <th>Name</th>
-                            <th>Email</th>
-                            <th>Enquiry Code Type</th>
-                            <th>Enquiry Type</th>
-                            <th>Comments</th>
+                            <th>Discount</th>
+                            <th>Number of days active</th>
+                            <th>Coupon Code</th>
                             <th colspan = "2" style="text-align:center;"> Actions</th>
 
                         </tr>
                     </thead>
                     <tbody>
-                    {% for enquiry in enquiry_list %}
+                    {% for coupon in coupon_list %}
                         <tr>
-                            <td>{{enquiry.get_count()}}</td>
-                            <td>{{enquiry.get_name()}}</td>
-                            <td>{{enquiry.get_enquiry_type()}}</td>
-                            <td>{{enquiry.get_email()}}</td>
-
-                            {% if enquiry.get_enquiry_type() == "B" %}
-                            <td>Question about Books</td>
-                            {% elif enquiry.get_enquiry_type() == "F" %}
-                            <td>Feedback</td>
-                            {% elif enquiry.get_enquiry_type() == "R" %}
-                            <td>Report Vulnerability</td>
-
-                            {% endif %}
-                            <td>{{enquiry.get_comments()}}</td>
+                            <td>{{coupon.get_count()}}</td>
+                            <td>{{coupon.get_name()}}</td>
+                            <td>{{coupon.get_discount()}}</td>
+                            <td>{{coupon.get_valid_date()}}</td>
+                            <td>{{coupon.get_coupon_code_id()}}</td>
                             <td>
-                                <a href ="/update-enq/{{enquiry.get_count()}}" class="btn btn-warning">Update</a>
+                                <a href ="/update-coupon/{{coupon.get_count()}}" class="btn btn-warning">Update</a>
                             </td>
                             <td>
-                                <form action="{{url_for('delete_enq',id=enquiry.get_count())}}" method="POST">
+                                <form action="{{url_for('delete_enq',id=coupon.get_count())}}" method="POST">
                                     <input type="submit" value="Delete" class="btn btn-danger">
                                 </form>
                             </td>

@@ -17,7 +17,7 @@ import Book
 import Cart as c
 from users import GuestDB, Guest, Customer, Admin
 from forms import SignUpForm, LoginForm, AccountPageForm, ChangePasswordForm,\
-                  Enquiry, UserEnquiry, Faq, FaqEntry, Reply, AddBookForm
+                  Enquiry, UserEnquiry, Faq, FaqEntry, Reply, AddBookForm, Coupon, CouponForm
 
 # CONSTANTS
 DEBUG = True         # Debug flag (True when debugging)
@@ -856,6 +856,7 @@ def checkout1():
     return render_template("checkout1.html")
 
 
+
 #
 # enquiry page
 #
@@ -869,10 +870,15 @@ def enquiry_cust():
         try:
             enquiry_dict = db['Enquiry']
         except:
-            print("Error in retrieving enquiries from enquiry.db.")
+            print("Error in retrieving enquiries ")
+
+        try:
+            UserEnquiry.count = count_id('Enquiry')
+        except:
+            print("No database found")
 
         enquiry = UserEnquiry(create_enquiry_form.name.data, create_enquiry_form.email.data, create_enquiry_form.enquiry_type.data, create_enquiry_form.comments.data)
-        enquiry_dict[enquiry.get_enquiry_id()] = enquiry
+        enquiry_dict[enquiry.get_count()] = enquiry
         db['Enquiry'] = enquiry_dict
 
         db.close()
@@ -887,9 +893,8 @@ def enquiry_cust():
 
 @app.route("/enquiry-adm")
 def enquiry_retrieve_adm():
-    enquiry_dict={}
-    db = shelve.open('database','r')
-    enquiry_dict = db['Enquiry']
+    db = shelve.open('database','c')
+    enquiry_dict = retrieve_db('Enquiry', db )  # refer to the retrieve_db function
     db.close()
 
     enquiry_list = []
@@ -908,21 +913,209 @@ def faq_adm():
     create_faq_form = Faq(request.form)
     if request.method == 'POST' and create_faq_form.validate():
         faq_dict = {}
-        db = shelve.open('faq','c')
+        db = shelve.open('database','c')
 
         try:
             faq_dict = db['Faq']
         except:
             print("Error in retrieving faq queries from faq.db")
 
+
+        try:
+            FaqEntry.count = count_id('Faq')
+        except:
+            print("No Database found")
+
         faq = FaqEntry(create_faq_form.title.data, create_faq_form.desc.data)
-        faq_dict[faq.get_faq_id()] = faq
+        faq_dict[faq.get_count()] = faq
         db['Faq'] = faq_dict
 
         db.close()
 
         return redirect(url_for('home'))
     return render_template("faq_adm.html", form=create_faq_form)
+
+
+def count_id(Table):
+    the_dict = {}
+    db = shelve.open('database','r')
+    the_dict = db[Table]
+    db.close()
+
+    count = list(the_dict.keys())
+    highest_id = max(count)
+    return int(highest_id)
+
+@app.route('/update-enq/<int:id>/', methods=['GET', 'POST'])
+def update_enq(id):
+    update_enquiry = Enquiry(request.form)
+
+    if request.method == 'POST' and update_enquiry.validate():
+        users_dict={}
+        db = shelve.open('database','w')
+        enquiry_dict = db['Enquiry']
+
+        enquiry_id = enquiry_dict.get(id)
+        enquiry_id.set_name(update_enquiry.name.data)
+        enquiry_id.set_email(update_enquiry.email.data)
+        enquiry_id.set_enquiry_type(update_enquiry.enquiry_type.data)
+        enquiry_id.set_comments(update_enquiry.comments.data)
+
+        db['Enquiry'] = enquiry_dict
+        db.close()
+        return redirect(url_for('enquiry_retrieve_adm'))
+
+    else:
+        enquiry_dict = {}
+        db = shelve.open('database','r')
+        enquiry_dict = db['Enquiry']
+        db.close()
+
+        enquiry_id = enquiry_dict.get(id)
+        update_enquiry.name.data = enquiry_id.get_name()
+        update_enquiry.email.data = enquiry_id.get_email()
+        update_enquiry.enquiry_type.data = enquiry_id.get_enquiry_type()
+        update_enquiry.comments.data = enquiry_id.get_comments()
+
+        return render_template('enquiry_adm_upd.html', form= update_enquiry)
+
+# delete Enquiry
+@app.route('/delete-enq/<int:id>',methods=['POST'])
+def delete_enq(id):
+    enquiry_dict = {}
+    db = shelve.open('database','w')
+    enquiry_dict = db['Enquiry']
+
+    enquiry_dict.pop(id)
+    db['Enquiry'] = enquiry_dict
+    db.close()
+    return redirect(url_for('enquiry_retrieve_adm'))
+
+# retrieve enquiry
+
+@app.route('/faq-adm-retrieve')
+def faq():
+    db = shelve.open('database','c')
+    faq_dict = retrieve_db('Faq',db)
+    db.close()
+
+    faq_list = []
+    for key in faq_dict:
+        faq = faq_dict.get(key)
+        faq_list.append(faq)
+        print(faq_list)
+
+    return render_template("faq.html", count=len(faq_list), faq_list=faq_list)
+
+
+# update enquiry
+
+@app.route('/faq-adm-upd/<int:id>/',methods=['GET','POST'])
+def update_faq(id):
+    update_faq = Faq(request.form)
+    if request.method == 'POST' and update_faq.validate():
+        faq_dict = {}
+        db = shelve.open('database','w')
+        faq_dict = db['Faq']
+
+        faq = faq_dict.get(id)
+        faq.set_title(update_faq.title.data)
+        faq.set_desc(update_faq.desc.data)
+
+        db['Faq'] = faq_dict
+        db.close()
+        return redirect(url_for('faq'))
+
+    else:
+        faq_dict = {}
+        db = shelve.open('database','r')
+        faq_dict = db['Faq']
+        db.close()
+
+        faq = faq_dict.get(id)
+        update_faq.title.data = faq.get_title()
+        update_faq.desc.data = faq.get_desc()
+        return render_template('faq_adm_upd.html', form=update_faq)
+
+# delete enquiry
+@app.route('/delete-faq/<int:id>', methods=['POST'])
+def delete_faq(id):
+    faq_dict={}
+    db = shelve.open('database','w')
+    faq_dict = db['Faq']
+    faq_dict.pop(id)
+    db['Faq'] = faq_dict
+    db.close()
+    return redirect(url_for('faq'))
+
+# Create coupon
+@app.route('/coupon', methods =['GET','POST'])
+def coupon_adm():
+    create_coupon = CouponForm(request.form)   # import the coupon class first
+    if request.method == 'POST' and create_coupon.validate():
+        db = shelve.open('database', 'c')
+        coupon_dict = retrieve_db('Coupon',db)
+
+        try:
+            Coupon.count = count_id('Coupon')
+
+        except:
+            print("No Database found")
+
+        coupon = Coupon(create_coupon.name.data,create_coupon.discount.data, create_coupon.valid_date.data,create_coupon.coupon_code.data)
+        coupon_dict[coupon.get_count()] = coupon
+        db['Coupon'] = coupon_dict
+        db.close()
+
+
+    return render_template("coupon.html", form=create_coupon)
+
+@app.route('/retrieve-coupons')
+def retrieve_coupons():
+    coupon_dict = {}
+    db = shelve.open('database','r')
+    coupon_dict = retrieve_db('Coupon',db)
+    db.close()
+
+    coupon_list=[]
+    for key in coupon_dict:
+        coupon = coupon_dict.get(key)
+        coupon_list.append(coupon)
+
+    return render_template('retrieve_coupons.html', count=len(coupon_list), coupon_list=coupon_list)
+
+@app.route('/update-coupon/<int:id>/',methods=['GET','POST'])
+def update_coupons(id):
+    coupon_form = CouponForm(request.form)
+    if request.method == 'POST' and coupon_form.validate():
+        coupon_dict = {}
+        db = shelve.open('database','w')
+        coupon_dict = db['Coupon']
+
+        coupon = coupon_dict.get(id)
+        coupon.set_name(coupon_form.name.data)
+        coupon.set_discount(coupon_form.discount.data)
+        coupon.set_valid_date(coupon_form.valid_date.data)
+        coupon.set_coupon_code_id(coupon_form.coupon_code.data)
+
+        db['Coupon'] = coupon_dict
+        db.close()
+
+        return redirect(url_for('retrieve_coupon'))
+
+    else:
+        coupon_dict={}
+        db =shelve.open('database','r')
+        coupon_dict = db['Coupon']
+        db.close()
+
+        coupon = coupon_dict.get(id)
+        coupon_form.name.data = coupon.get_name()
+        coupon_form.discount.data = coupon.get_discount()
+        coupon_form.valid_date.data = coupon.get_valid_date()
+        coupon_form.coupon_code.data = coupon.get_coupon_code_id()
+
+        return render_template('update_coupons.html', form=coupon_form)
 
 
 lang_list = [('', 'Select'), ('English', 'English'), ('Chinese', 'Chinese'), ('Malay', 'Malay'), ('Tamil', 'Tamil')]

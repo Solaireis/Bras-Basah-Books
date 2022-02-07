@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Coupon Admin Update{% endblock %}
+
+{% block stylesheets %}
+
+<link rel="stylesheet" href="/static/css/adm_dashboard.css">
+
+{% endblock %}
+
+{% block content %}
+{% from "includes/_form.html" import render_field %}
+<div class="container-padding-50"></div>
+<div class="card">
+  <div class="card-body">
+    <h1 class="display-4">Admin Update Coupon</h1>
+    <h3>Create your coupons here</h3>
+    <div class="container-padding-20"></div>
+    <form method="POST" action="">
+      <div class="form-group container-padding-20">
+        {{ render_field(form.name, class="form-control") }}
+      </div>
+      <div class="form-group container-padding-20">
+        {{ render_field(form.discount, class="form-control") }}
+      </div>
+      <div class="form-group container-padding-20">
+        {{ render_field(form.valid_date, class="form-control") }}
+      </div>
+      <div class="form-group container-padding-20">
+        {{ render_field(form.coupon_code, class="form-control") }}
+      </div>
+      <div class="container-padding-20"></div>
+      <input type="submit" value="Create Coupon" class="btn btn-warning"/>
+      <input type="reset" value="Clear Fields" class="btn btn-danger"/>
+    </form>
+  </div>
+</div>
+<div class="container-padding-20"></div>
+
+{% endblock %}
