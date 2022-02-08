@@ -2,10 +2,8 @@
 (function () {
   "use strict";
 
-  /* Validate forms on submit */
-
   // Get all forms that needs validation
-  const forms = document.querySelectorAll('.needs-validation')
+  const forms = document.querySelectorAll('.needs-validation');
 
   // Iterate through forms and prevent submission
   Array.prototype.filter.call(forms, form => {
@@ -22,9 +20,6 @@
       form.classList.add("was-validated");
     }, false);
   });
-
-
-  /* Validate inputs on blur and input */
 
   // Get all inputs in forms that needs validation
   const inputs = document.querySelectorAll(".needs-validation input");

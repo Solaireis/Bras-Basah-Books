@@ -192,7 +192,11 @@ def sign_up():
     sign_up_form = SignUpForm(request.form)
 
     # Validate sign up form if request is post
-    if request.method == "POST" and sign_up_form.validate():
+    if request.method == "POST":
+        if not sign_up_form.validate():
+            if DEBUG: print("Sign-up: form field invalid")
+            session["DisplayFieldError"] = True
+            return render_template("user/sign_up.html", form=sign_up_form)
 
         # Extract data from sign up form
         username = sign_up_form.username.data
@@ -212,9 +216,11 @@ def sign_up():
             # Ensure that email and username are not registered yet
             if username.lower() in username_to_user_id:
                 if DEBUG: print("Sign-up: username already exists")
+                session["DisplayFieldError"] = True
                 return render_template("user/sign_up.html", form=sign_up_form)
             elif email in email_to_user_id:
                 if DEBUG: print("Sign-up: email already exists")
+                session["DisplayFieldError"] = True
                 return render_template("user/sign_up.html", form=sign_up_form)
 
             # Create customer
@@ -345,7 +351,7 @@ def password_change():
             new_password = change_password_form.new_password.data
 
             if not user.verify_password(current_password):
-                flash("Your password is incorrect, please try again")
+                flash("Your password is incorrect, please try again", "form-error")
             else:
                 with shelve.open("database") as db:
 
@@ -380,27 +386,33 @@ def account():
     account_page_form = AccountPageForm(request.form)
 
     # Validate account page form if request is post
-    if request.method == "POST" and account_page_form.validate():
+    if request.method == "POST":
 
-        # Flash success message
-        flash("Account settings updated successfully")
+        if not account_page_form.validate():
+            name = account_page_form.name
+            gender = account_page_form.gender
+            # Flash error message (only flash the 1st error)
+            flash(name.errors[0] if name.errors else gender.errors[0], "error")
+        else:
+            # Flash success message
+            flash("Account settings updated successfully")
 
-        # Extract email and password from sign up form
-        name = account_page_form.name.data
-        gender = account_page_form.gender.data
+            # Extract email and password from sign up form
+            name = " ".join(account_page_form.name.data.split())
+            gender = account_page_form.gender.data
 
-        with shelve.open("database") as db:
-            # Get Customers
-            customers_db = retrieve_db("Customers", db)
-            user = customers_db[session["UserID"]]
-            user.set_name(name)
-            user.set_gender(gender)
+            with shelve.open("database") as db:
+                # Get Customers
+                customers_db = retrieve_db("Customers", db)
+                user = customers_db[session["UserID"]]
+                user.set_name(name)
+                user.set_gender(gender)
 
-            # Save changes to database
-            db["Customers"] = customers_db
+                # Save changes to database
+                db["Customers"] = customers_db
 
-        # Redirect to prevent form resubmission
-        return redirect(url_for("account"))
+            # Redirect to prevent form resubmission
+            return redirect(url_for("account"))
 
     # Set username and gender to display
     account_page_form.name.data = user.get_name()
@@ -441,7 +453,8 @@ def verify_send():
     msg.html = f"Click <a href='{link}'>here</a> to verify your email.<br />(Link expires after 15 minutes)"
     mail.send(msg)
 
-    return render_template("user/verify/send.html", email=email)
+    flash(f"Verification email sent to {email}")
+    return redirect(url_for("account"))
 
 
 # Verify email page
