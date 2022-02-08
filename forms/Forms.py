@@ -18,40 +18,45 @@ class SignUpForm(Form):
     """ Sign up form used when signing up """
 
     # Username
-    username = StringField("Username", [validators.InputRequired(),
-                                        validators.Length(min=3, max=20),
-                                        ValidUsername()])
+    username = StringField("Username", [validators.InputRequired(message=""),
+                                        validators.Length(min=3, max=20, message=""),
+                                        ValidUsername(message="Username can only contain letters, numbers, and underscores")])
 
     # Email
-    email = EmailField("Email", [validators.InputRequired(), validators.Email()])
+    email = EmailField("Email", [validators.InputRequired(message=""),
+                                 validators.Email(message=""),
+                                 validators.Length(max=320, message="")])
 
     # Password
-    password = PasswordField("Password", [validators.InputRequired(),
-                                          validators.Length(min=8, max=80),
-                                          ContainsLower(), ContainsUpper(),
-                                          ContainsNumSymbol()])
+    password = PasswordField("Password", [validators.InputRequired(message=""),
+                                          validators.Length(min=8, max=80, message=""),
+                                          ContainsLower(message="Password must contain at least one lowercase letter"),
+                                          ContainsUpper(message="Password must contain at least one uppercase letter"),
+                                          ContainsNumSymbol(message="Password must contain at least one symbol or number")])
 
     # Confirm password
-    confirm = PasswordField("Confirm Password", [validators.InputRequired(),
-                                                 validators.Length(min=8, max=80),
-                                                 validators.EqualTo("password")])
+    confirm = PasswordField("Confirm Password", [validators.InputRequired(message=""),
+                                                 validators.Length(min=8, max=80, message=""),
+                                                 validators.EqualTo("password", message="Password entered is different")])
 
 
 class LoginForm(Form):
     """ Login form used for logging in """
 
     # Username / Email
-    username = StringField("Username / Email", [validators.InputRequired()])
+    username = StringField("Username / Email", [validators.InputRequired(message="")])
 
     # Password
-    password = PasswordField("Password", [validators.InputRequired()])
+    password = PasswordField("Password", [validators.InputRequired(message="")])
 
 
 class AccountPageForm(Form):
     """ Account page form used for editing account """
 
     # Name
-    name = StringField("Name", [validators.Optional(), validators.Length(min=1)])
+    name = StringField("Name", [validators.Optional(),
+                                validators.Regexp("^[a-zA-Z ]*$", message="Name should only contain letters and spaces"),
+                                validators.Length(min=2, max=26, message="Name should be 2-26 characters long")])
 
     # Gender
     gender = RadioField("Gender", [validators.Optional()], choices=[("M", "Male"), ("F", "Female"), ("O", "Others")])
@@ -61,17 +66,19 @@ class ChangePasswordForm(Form):
     """ Changing password form used for changing password """
 
     # Current password
-    current_password = PasswordField("Current Password", [validators.InputRequired()])
+    current_password = PasswordField("Current Password", [validators.InputRequired(message="")])
 
     # New password
-    new_password = PasswordField("New Password", [validators.InputRequired(),
-                                                  validators.Length(min=8, max=80),
-                                                  ContainsLower(), ContainsUpper(),
-                                                  ContainsNumSymbol()])
+    new_password = PasswordField("New Password", [validators.InputRequired(message=""),
+                                                  validators.Length(min=8, max=80, message=""),
+                                                  ContainsLower(message="Password must contain at least one lowercase letter"),
+                                                  ContainsUpper(message="Password must contain at least one uppercase letter"),
+                                                  ContainsNumSymbol(message="Password must contain at least one symbol or number")])
 
     # Confirm password
-    confirm_password = PasswordField("Confirm Password", [validators.InputRequired(),
-                                                          validators.EqualTo("new_password")])
+    confirm_password = PasswordField("Confirm Password", [validators.InputRequired(message=""),
+                                                          validators.Length(min=8, max=80, message=""),
+                                                          validators.EqualTo("new_password", message="Password entered is different")])
 
 
 
@@ -108,4 +115,3 @@ class AddBookForm(Form):
             return False
 
         return True
-

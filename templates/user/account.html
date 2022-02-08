@@ -9,41 +9,44 @@
 {% block content %}
 {% from "includes/_login_render_field.html" import render_field %}
 {# Container to contain display for user related things #}
-<div class="user-container p-3">
-  <h1 class="display-4">Account settings</h1>
-  <form method="POST" action="">
-    <div class="mb-3 row">
-      <label for="username" class="col-sm-2 col-form-label">Username</label>
-      <div class="col-sm-10">
-        <div class="form-control no-format-form" id="username">{{ username }} <a href="#">Change</a></div>
+<div class="row user-container">
+  {% include 'includes/_user_sidebar.html' %}
+  <div class="col-10 p-3">
+    <h1 class="display-4">Account settings</h1>
+    <form method="POST" action="">
+      <div class="mb-3 row">
+        <label for="username" class="col-sm-2 col-form-label">Username</label>
+        <div class="col-sm-10">
+          <div class="form-control no-format-form" id="username">{{ username }} <a href="#">Change</a></div>
+        </div>
       </div>
-    </div>
-    <div class="mb-3 row">
-      <label for="name" class="col-sm-2 col-form-label">Name</label>
-      <div class="col-sm-10">
-        {{ render_field(form.name, class="form-control", id="name") }}
+      <div class="mb-3 row">
+        <label for="name" class="col-sm-2 col-form-label">Name</label>
+        <div class="col-sm-10">
+          {{ render_field(form.name, class="form-control", id="name") }}
+        </div>
       </div>
-    </div>
-    <div class="mb-3 row">
-      <label for="email" class="col-sm-2 col-form-label">Email</label>
-      <div class="col-sm-10">
-        <div class="form-control no-format-form" id="email">{{ email }} <a href="{{ url_for('verify_send') }}">Verify Email</a></div>
+      <div class="mb-3 row">
+        <label for="email" class="col-sm-2 col-form-label">Email</label>
+        <div class="col-sm-10">
+          <div class="form-control no-format-form" id="email">{{ email }} <a href="{{ url_for('verify_send') }}">Verify Email</a></div>
+        </div>
       </div>
-    </div>
-    <div class="mb-3 row">
-      <label for="password" class="col-sm-2 col-form-label">Password</label>
-      <div class="col-sm-10">
-        <div class="form-control no-format-form" id="password">******  <a href="{{ url_for('password_change') }}">Change</a></div>
+      <div class="mb-3 row">
+        <label for="password" class="col-sm-2 col-form-label">Password</label>
+        <div class="col-sm-10">
+          <div class="form-control no-format-form" id="password">******  <a href="{{ url_for('password_change') }}">Change</a></div>
+        </div>
       </div>
-    </div>
-    <div class="mb-3 row">
-      <label for="gender" class="col-sm-2 col-form-label">Gender</label>
-      <div class="col-sm-10">
-        {{ render_field(form.gender, class="form-control no-format-form", id="gender") }}
+      <div class="mb-3 row">
+        <label for="gender" class="col-sm-2 col-form-label">Gender</label>
+        <div class="col-sm-10">
+          {{ render_field(form.gender, class="form-control no-format-form", id="gender") }}
+        </div>
       </div>
-    </div>
-    <input type="submit" value="Save changes" class="btn defaultbtn"/>
-  </form>
-  <a href="{{ url_for('logout') }}">Logout here</a>
+      <input type="submit" value="Save changes" class="btn defaultbtn"/>
+    </form>
+  </div>
 </div>
+<a href="{{ url_for('logout') }}">Logout here</a>
 {% endblock %}

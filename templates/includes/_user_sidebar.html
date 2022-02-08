@@ -1,0 +1,40 @@
+<div class="d-flex flex-column sidebar col-2 p-3">
+  <ul class="nav nav-pills flex-column mb-auto">
+    <li class="nav-item">
+      <a href="#" class="nav-link active" aria-current="page">
+        My Account
+      </a>
+    </li>
+    <li>
+      <a href="{{ url_for('account') }}" class="nav-link link-dark">
+        My Orders
+      </a>
+    </li>
+    <li>
+      <a href="{{ url_for('account') }}" class="nav-link link-dark">
+        My Wishlist
+      </a>
+    </li>
+    <li>
+      <a href="{{ url_for('account') }}" class="nav-link link-dark">
+        My Coupons
+      </a>
+    </li>
+  </ul>
+</div>
+
+{% macro render_field(active) %}
+  {% set display_error = field.errors and session.pop("DisplayFieldError", False) %}
+  {% if display_error %}<span class="d-none display-invalid"></span>{% endif %}
+  {{ field(**kwargs)|safe }}
+  {% if message %}
+    <div class="invalid-feedback">{{ message }}</div>
+  {% endif %}
+  {% if display_error %}
+    {% for error in field.errors %}
+      {% if error %}
+        <div class="invalid-feedback display-feedback">{{ error }}</div>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endmacro %}

@@ -2,6 +2,10 @@
     background-color: #fff;
 }
 
+.sidebar {
+    background-color: rgb(202, 216, 202);
+}
+
 .no-format-form {
     border: none;
     background-color: transparent;

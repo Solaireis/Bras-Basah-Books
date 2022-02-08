@@ -32,7 +32,7 @@ main {
 
 
 /* --------------------------------------------------------------------------
-    Clearing default styles
+    Clearing & Setting Default Styles
 -------------------------------------------------------------------------- */
 ul{
   list-style-type: none;
@@ -272,6 +272,11 @@ footer{
   color: #fff;
 }
 
+button:focus, .btn:focus {
+  border-color: #97bdbd !important;
+  box-shadow: 0 0 0 0.25rem rgba(72, 161, 161, 0.25) !important;
+}
+
 
 /* --------------------------------------------------------------------------
     Flash Messages
@@ -280,6 +285,11 @@ footer{
   color: #4b8282;
   background-color: #d9ebeb;
   border-color: #97bdbd;
+}
+.flash-warning {
+  color: #664d03;
+  background-color: #ffeeb7;
+  border-color: #ffdc74;
 }
 .flash-error {
   color: #842029;
@@ -301,12 +311,25 @@ footer{
 }
 
 .form-control.is-valid, .was-validated .form-control:valid {
-  border-color: #ced4da;
-  background-image: none;
+  border-color: #ced4da !important;
+  background-image: none !important;
 }
 .form-control.is-valid:focus, .was-validated .form-control:valid:focus {
-  border-color: #97bdbd;
-  box-shadow: 0 0 0 0.25rem rgba(72, 161, 161, 0.25);
+  border-color: #97bdbd !important;
+  box-shadow: 0 0 0 0.25rem rgba(72, 161, 161, 0.25) !important;
+}
+
+.display-invalid + .form-control {
+  border-color: #dc3545;
+}
+.display-invalid + .form-control:focus {
+  box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+}
+.display-invalid ~ .display-feedback {
+  display: block;
+}
+.form-control.is-valid ~ .display-feedback, .was-validated .form-control:valid ~ .display-feedback{
+  display: none !important;
 }
 
 
