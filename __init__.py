@@ -6,6 +6,7 @@ from werkzeug.utils import secure_filename
 from typing import Union, Dict
 import shelve
 import os
+import stripe
 
 # Import classes
 import Book
