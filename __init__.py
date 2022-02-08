@@ -565,7 +565,7 @@ def add_to_rent(id):
     except:
         print("Error while retrieving data from cart.db")
 
-    book = c.AddtoRent(id)
+        book = c.AddtoRent(id)
     if user_id in cart_dict:
         book_dict = cart_dict[user_id]
         print(book_dict)
@@ -575,8 +575,6 @@ def add_to_rent(id):
             book_dict.append([id])
             print(book_dict)
             cart_dict[user_id] = book_dict
-            cart_db['Cart'] = cart_dict
-            print(cart_dict, 'updated database')
         else:
             print("user has other books in his renting cart")
             if id in book_dict[1]:
@@ -586,13 +584,11 @@ def add_to_rent(id):
                 print("This user does not has the book in renting cart")
                 book_dict[1].append(id)
                 cart_dict[user_id] = book_dict
-                cart_db['Cart'] = cart_dict
-                print(cart_dict, 'updated database')
     else:
         print("This user has nothing in both cart")
         cart_dict[user_id] = ['', [id]]
-        cart_db['Cart'] = cart_dict
-        print(cart_dict, 'updated database')
+    cart_db['Cart'] = cart_dict
+    print(cart_dict, 'updated database')
     return redirect(request.referrer)
 
 # view shopping cart
