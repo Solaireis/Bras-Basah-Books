@@ -40,10 +40,10 @@
               <input type="number" class="quantity-selector" name="quantity" min="1" value="1">
               {% if book.get_action() == "Buy and Rent" %}
               <input type="submit" onclick="add_to_buy()" class="btn add-cart-button" value="ADD TO CART">
-              <p>Alternatively, you may want to <a href="/add_to_rent">rent</a> this.</p>
+              <p>Alternatively, you may want to <a href="/addtorent/{{ book.get_book_id() }}">rent</a> this.</p>
               {% elif book.get_action() == "Rent" %}
               <input type="submit" onclick="add_to_buy()" class="btn add-cart-button" value="ADD TO CART" disabled>
-              <p>This book is only available for <a href="/add_to_rent">rent</a>.</p>
+              <p>This book is only available for <a href="/addtorent/{{ book.get_book_id() }}">rent</a>.</p>
               {% elif book.get_action() == "Buy" %}
               <input type="submit" onclick="add_to_buy()" class="btn add-cart-button" value="ADD TO CART">
               <p>This book is not available for renting</a>.</p>
