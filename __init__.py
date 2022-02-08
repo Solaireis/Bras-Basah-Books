@@ -967,7 +967,7 @@ def update_enq(id):
 
     else:
         enquiry_dict = {}
-        db = shelve.open('database','r')
+        db = shelve.open('database','w')
         enquiry_dict = db['Enquiry']
         db.close()
 
@@ -1073,7 +1073,7 @@ def coupon_adm():
 @app.route('/retrieve-coupons')
 def retrieve_coupons():
     coupon_dict = {}
-    db = shelve.open('database','r')
+    db = shelve.open('database','w')
     coupon_dict = retrieve_db('Coupon',db)
     db.close()
 
@@ -1105,7 +1105,7 @@ def update_coupons(id):
 
     else:
         coupon_dict={}
-        db =shelve.open('database','r')
+        db =shelve.open('database','w')
         coupon_dict = db['Coupon']
         db.close()
 
