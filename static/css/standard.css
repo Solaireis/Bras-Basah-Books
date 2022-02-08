@@ -176,6 +176,53 @@ ul{
   background-color: #4b8282;
 }
 
+.mobile-nav .btn{
+    background: #4b8282;
+    overflow-x: hidden;
+}
+
+.mobile-nav i{
+    float: right;
+    color: white;
+    font-size: 1.6em;
+    margin-top: 8px;
+}
+
+#mobile-logo{
+    width: 10%;
+    float: left;
+}
+
+.offcanvas{
+    background-color: #FCEEE0;
+}
+
+.mobile-nav ul li i{
+    color: #4b8282;
+    float: left;
+}
+
+.mobile-nav table{
+    width: 100%;
+}
+
+.mobile-nav ul table tr td h5{
+    padding: 10px;
+    margin-left: 25px;
+}
+
+.mobile-nav .nav-item .nav-link, .mobile-nav .nav-item .mobile-dropbtn{
+    color: #4b8282;
+    background: none;
+}
+
+.mobile-nav hr{
+    color: #4b8282;
+    opacity: 0.8;
+    padding: 0;
+    margin: 0;
+}
+
 
 /* --------------------------------------------------------------------------
     Footer
