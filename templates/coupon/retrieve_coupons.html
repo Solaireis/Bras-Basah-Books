@@ -71,7 +71,7 @@
                                 <a href ="/update-coupon/{{coupon.get_count()}}" class="btn btn-warning">Update</a>
                             </td>
                             <td>
-                                <form action="{{url_for('delete_enq',id=coupon.get_count())}}" method="POST">
+                                <form action="{{url_for('delete_coupons',id=coupon.get_count())}}" method="POST">
                                     <input type="submit" value="Delete" class="btn btn-danger">
                                 </form>
                             </td>

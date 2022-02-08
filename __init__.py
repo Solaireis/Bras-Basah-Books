@@ -1117,6 +1117,17 @@ def update_coupons(id):
 
         return render_template('coupon/update_coupons.html', form=coupon_form)
 
+@app.route('/delete-coupon/<int:id>',methods=['GET', 'POST'])
+def delete_coupons(id):
+    coupon_dict = {}
+    db = shelve.open('database','w')
+    coupon_dict = db['Coupon']
+    coupon_dict.pop(id)
+    db['Coupon'] = coupon_dict
+    db.close()
+    return redirect(url_for('retrieve_coupons'))
+
+
 
 lang_list = [('', 'Select'), ('English', 'English'), ('Chinese', 'Chinese'), ('Malay', 'Malay'), ('Tamil', 'Tamil')]
 cat_list = [('', 'Select'), ('Action & Adventure', 'Action & Adventure'), ('Classic', 'Classic'), ('Comic', 'Comic'), ('Detective & Mystery', 'Detective & Mystery')]
