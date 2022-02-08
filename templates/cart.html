@@ -69,8 +69,8 @@
         {% if (buy_count + rent_count) == 0 %}
                 <button type="submit" disabled class="check-out-button btn" name="button">Check Out</button>
         {% else %}
-          <form action="/checkout1" method="POST">
-                <button type="submit" onclick="checkout1()" class="check-out-button btn" name="button">Check Out</button>
+          <form action="/create-checkout-session/{{ total_price }}" method="POST">
+                <button type="submit" class="check-out-button btn" name="button">Check Out</button>
           </form>
         {% endif %}
         <div class="show-payment">
@@ -115,5 +115,4 @@
 {% endblock %}
 
 {% block scripts %}
-<!-- put js here -->
 {% endblock %}
