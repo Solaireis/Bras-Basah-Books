@@ -7,11 +7,6 @@ from typing import Union, Dict
 import shelve
 import os
 
-
-import requests
-from bs4 import BeautifulSoup
-
-
 # Import classes
 import Book
 import Cart as c
