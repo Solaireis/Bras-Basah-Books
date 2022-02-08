@@ -885,7 +885,7 @@ def enquiry_cust():
 
         return redirect(url_for('home'))
 
-    return render_template("enquiry_customer.html", form=create_enquiry_form)
+    return render_template("enquiry/enquiry_customer.html", form=create_enquiry_form)
 
 #
 # retrieve customers
@@ -903,7 +903,7 @@ def enquiry_retrieve_adm():
         enquiry_list.append(enquiry)
         print(enquiry_list)
 
-    return render_template("enquiry_admin.html", count=len(enquiry_list), enquiry_list=enquiry_list)
+    return render_template("enquiry/enquiry_admin.html", count=len(enquiry_list), enquiry_list=enquiry_list)
 
 #
 # faq Admin create
@@ -933,7 +933,7 @@ def faq_adm():
         db.close()
 
         return redirect(url_for('home'))
-    return render_template("faq_adm.html", form=create_faq_form)
+    return render_template("faq/faq_adm.html", form=create_faq_form)
 
 
 def count_id(Table):
@@ -977,7 +977,7 @@ def update_enq(id):
         update_enquiry.enquiry_type.data = enquiry_id.get_enquiry_type()
         update_enquiry.comments.data = enquiry_id.get_comments()
 
-        return render_template('enquiry_adm_upd.html', form= update_enquiry)
+        return render_template('enquiry/enquiry_adm_upd.html', form= update_enquiry)
 
 # delete Enquiry
 @app.route('/delete-enq/<int:id>',methods=['POST'])
@@ -1005,10 +1005,10 @@ def faq():
         faq_list.append(faq)
         print(faq_list)
 
-    return render_template("faq.html", count=len(faq_list), faq_list=faq_list)
+    return render_template("faq/faq.html", count=len(faq_list), faq_list=faq_list)
 
 
-# update enquiry
+# update faq
 
 @app.route('/faq-adm-upd/<int:id>/',methods=['GET','POST'])
 def update_faq(id):
@@ -1035,7 +1035,7 @@ def update_faq(id):
         faq = faq_dict.get(id)
         update_faq.title.data = faq.get_title()
         update_faq.desc.data = faq.get_desc()
-        return render_template('faq_adm_upd.html', form=update_faq)
+        return render_template('faq/faq_adm_upd.html', form=update_faq)
 
 # delete enquiry
 @app.route('/delete-faq/<int:id>', methods=['POST'])
@@ -1068,7 +1068,7 @@ def coupon_adm():
         db.close()
 
 
-    return render_template("coupon.html", form=create_coupon)
+    return render_template("coupon/coupon.html", form=create_coupon)
 
 @app.route('/retrieve-coupons')
 def retrieve_coupons():
@@ -1082,7 +1082,7 @@ def retrieve_coupons():
         coupon = coupon_dict.get(key)
         coupon_list.append(coupon)
 
-    return render_template('retrieve_coupons.html', count=len(coupon_list), coupon_list=coupon_list)
+    return render_template('coupon/retrieve_coupons.html', count=len(coupon_list), coupon_list=coupon_list)
 
 @app.route('/update-coupon/<int:id>/',methods=['GET','POST'])
 def update_coupons(id):
@@ -1115,7 +1115,7 @@ def update_coupons(id):
         coupon_form.valid_date.data = coupon.get_valid_date()
         coupon_form.coupon_code.data = coupon.get_coupon_code_id()
 
-        return render_template('update_coupons.html', form=coupon_form)
+        return render_template('coupon/update_coupons.html', form=coupon_form)
 
 
 lang_list = [('', 'Select'), ('English', 'English'), ('Chinese', 'Chinese'), ('Malay', 'Malay'), ('Tamil', 'Tamil')]
