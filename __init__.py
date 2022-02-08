@@ -689,6 +689,31 @@ def delete_renting_cart(id):
     return redirect(request.referrer)
 
 
+@app.route('/create-checkout-session/<total_price>', methods=['POST'])
+def create_checkout_session(total_price):
+    total_price = float(total_price)+5
+    total_price *= 100
+    total_price = int(total_price)
+    checkout_session = stripe.checkout.Session.create(
+        line_items=[
+            {
+                'price_data': {
+                'currency': 'sgd',
+                'product_data': {
+                  'name': 'Books',
+                },
+                'unit_amount': total_price,
+              },
+              'quantity': 1,
+            },
+        ],
+        payment_method_types=['card'],
+        mode='payment',
+        success_url='http://127.0.0.1:5000/orderconfirm',
+        cancel_url='http://127.0.0.1:5000/shopping_cart',
+    )
+    return redirect(checkout_session.url)
+
 # # Checkout
 # @app.route("/checkout", methods=['GET', 'POST'])
 # def checkout():
@@ -696,6 +721,16 @@ def delete_renting_cart(id):
 #     if request.method == 'POST' and OrderForm.validate():
 #         return render_template("checkout.html", form=OrderForm)
 #     return render_template("checkout.html", form=OrderForm)
+
+@app.route("/orderconfirm")
+def orderconfirm():
+    user_id = get_user().get_user_id()
+    cart_db = shelve.open('cart', 'c')
+    cart_dict = cart_db['Cart']
+    del cart_dict[user_id]
+    cart_db['Cart'] = cart_dict
+    print(cart_dict, 'updated database')
+    return render_template("order_confirmation.html")
 
 # Checkout
 @app.route("/checkout1")
