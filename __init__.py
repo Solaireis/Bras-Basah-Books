@@ -729,6 +729,28 @@ def orderconfirm():
     user_id = get_user().get_user_id()
     cart_db = shelve.open('cart', 'c')
     cart_dict = cart_db['Cart']
+
+    print(cart_dict)
+    cartvalue = cart_dict[user_id]
+    print(cartvalue)
+    for i in cartvalue:
+        cartvalue2 = i
+    print(cartvalue2)
+    books_dict = {}
+    db = shelve.open('book.db', 'w')
+    books_dict = db['Books']
+    print(books_dict)
+    for i in books_dict:
+        for x, y in zip(list(cartvalue2.keys()), list(cartvalue2.values())):
+            if i == x:
+                book = books_dict.get(i)
+                print("qty b4", book.get_qty())
+                newqty = int(book.get_qty()) - int(y)
+                book.set_qty(newqty)
+                print("qty aft", book.get_qty())
+    db['Books'] = books_dict
+    db.close()
+
     del cart_dict[user_id]
     cart_db['Cart'] = cart_dict
     print(cart_dict, 'updated database')
