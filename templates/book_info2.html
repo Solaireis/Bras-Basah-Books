@@ -16,7 +16,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="http://127.0.0.1:5000/ ">Home</a></li>
         <li class="breadcrumb-item"><a href="#">All Books</a></li>
-        <li class="breadcrumb-item"><a href="#">English Books</a></li>
+        <li class="breadcrumb-item"><a href="#">{{ book.get_language() }} Books</a></li>
         <li class="breadcrumb-item active" aria-current="page">{{ book.get_title() }}</li>
       </ol>
     </div>
