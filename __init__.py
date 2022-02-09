@@ -28,6 +28,7 @@ app = Flask(__name__)
 app.config.from_pyfile("config/app.cfg")  # Load config file
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER  # Set upload folder
 app.config['MAX_CONTENT_LENGTH'] = 4 * 1024 * 1024  # Set maximum file upload limit (4MB)
+stripe.api_key = 'sk_test_51KPNSMLcZKZGRW8Qkzf58oSvjzX5LxhHQLBPZkmlCijcfXdhdXtXTTDXf3FqMHd1fd3kWcvxktgp7cj0ka4uSmzS00ilLjWTBX' # Stripe API Key
 
 # Serialiser for generating tokens
 url_serialiser = URLSafeTimedSerializer(app.config["SECRET_KEY"])
