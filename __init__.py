@@ -724,34 +724,6 @@ def delete_renting_cart(id):
     cart_db['Cart'] = cart_dict
     cart_db.close()
     return redirect(request.referrer)
-
-@app.route('/create-checkout-session/<total_price>', methods=['POST'])
-def create_checkout_session(total_price):
-    print("creating checkout session...")
-    total_price = float(total_price)+5
-    total_price *= 100
-    total_price = int(total_price)
-    checkout_session = stripe.checkout.Session.create(
-        line_items=[
-            {
-                'price_data': {
-                'currency': 'sgd',
-                'product_data': {
-                  'name': 'Books',
-                },
-                'unit_amount': total_price,
-              },
-              'quantity': 1,
-            },
-        ],
-        payment_method_types=['card'],
-        mode='payment',
-        success_url='http://127.0.0.1:5000/orderconfirm',
-        cancel_url=request.referrer,
-    )
-    # Orderform = OrderForm.OrderForm(request.form)
-    # if request.method == 'POST' and Orderform.validate():
-    return redirect(checkout_session.url)
   
 # Checkout
 @app.route("/checkout", methods=['GET', 'POST'])
@@ -905,12 +877,6 @@ def orderconfirm():
     cart_db.close()
     db.close()
     return render_template("order_confirmation.html")
-
-# Checkout
-@app.route("/checkout1")
-def checkout1():
-    return render_template("checkout1.html")
-
 
 
 #
