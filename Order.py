@@ -32,12 +32,3 @@ class Order_Detail(User_Order):
     def get_user_order(self):
         return self.user_order
 
-user_id = 2
-order_id = 3
-order_item = [{1:2}, [2,3]]
-total_price = 100
-ship_address = '123B AMK Road'
-ship_method = "Delivery"
-order = Order_Detail(user_id, order_id, ship_address, ship_method, order_item, total_price)
-print(order.get_order_info())
-print(order.get_ship_info())
