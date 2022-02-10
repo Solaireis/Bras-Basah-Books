@@ -53,8 +53,9 @@
                             <th> Coupon ID</th>
                             <th>Name</th>
                             <th>Discount</th>
-                            <th>Number of days active</th>
                             <th>Coupon Code</th>
+                            <th>start date</th>
+                            <th>end date</th>
                             <th colspan = "2" style="text-align:center;"> Actions</th>
 
                         </tr>
@@ -65,8 +66,9 @@
                             <td>{{coupon.get_count()}}</td>
                             <td>{{coupon.get_name()}}</td>
                             <td>{{coupon.get_discount()}}</td>
-                            <td>{{coupon.get_valid_date()}}</td>
                             <td>{{coupon.get_coupon_code_id()}}</td>
+                            <td>{{coupon.get_start_date()}}</td>
+                            <td>{{coupon.get_end_date()}}</td>
                             <td>
                                 <a href ="/update-coupon/{{coupon.get_count()}}" class="btn btn-warning">Update</a>
                             </td>

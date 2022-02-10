@@ -13,7 +13,7 @@ import Book, Cart as c, Order as o
 from users import GuestDB, Guest, Customer, Admin
 from forms import SignUpForm, LoginForm, AccountPageForm, ChangePasswordForm, \
                   Enquiry, UserEnquiry, Faq, FaqEntry, Reply, AddBookForm, \
-                  Coupon, CouponForm, OrderForm
+                  Coupon, CreateCoupon, OrderForm
 
 # CONSTANTS
 DEBUG = True         # Debug flag (True when debugging)
@@ -1000,7 +1000,7 @@ def delete_faq(id):
 # Create coupon
 @app.route('/coupon', methods =['GET','POST'])
 def coupon_adm():
-    create_coupon = CouponForm(request.form)   # import the coupon class first
+    create_coupon = CreateCoupon(request.form)   # import the coupon class first
     if request.method == 'POST' and create_coupon.validate():
         db = shelve.open('database', 'c')
         coupon_dict = retrieve_db('Coupon',db)
@@ -1011,13 +1011,13 @@ def coupon_adm():
         except:
             print("No Database found")
 
-        coupon = Coupon(create_coupon.name.data,create_coupon.discount.data, create_coupon.valid_date.data,create_coupon.coupon_code.data)
+        coupon = Coupon(create_coupon.name.data,create_coupon.discount.data,create_coupon.coupon_code.data,create_coupon.startdate.data,create_coupon.enddate.data)
         coupon_dict[coupon.get_count()] = coupon
         db['Coupon'] = coupon_dict
         db.close()
 
 
-    return render_template("coupon/coupon.html", form=create_coupon)
+    return render_template("coupon/create_coupons.html", form=create_coupon)
 
 @app.route('/retrieve-coupons')
 def retrieve_coupons():
@@ -1035,7 +1035,7 @@ def retrieve_coupons():
 
 @app.route('/update-coupon/<int:id>/',methods=['GET','POST'])
 def update_coupons(id):
-    coupon_form = CouponForm(request.form)
+    coupon_form = CreateCoupon(request.form)
     if request.method == 'POST' and coupon_form.validate():
         coupon_dict = {}
         db = shelve.open('database','w')
