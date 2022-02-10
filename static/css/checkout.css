@@ -29,12 +29,13 @@ a:hover{
 }
 
 /* Button in check out form */
-.checkout-form button{
-  float: right;
-  width: 20%;
+.submit-btn{
+  width: 100%;
   background-color: #4b8282;
   border-color: #4b8282;
   color: white;
+  margin-top: 12px;
+  margin-bottom: 20px;
 }
 
 .checkout-form .submit-btn:hover, .checkout-form .promocode-btn:hover{
@@ -46,4 +47,72 @@ a:hover{
 
 .checkout-form .promocode-btn{
   width: 100%;
+}
+
+/* Order Summary */
+.order_summary{
+    overflow-y: auto;
+    height: 450px;
+}
+.order_summary thead th{
+    position: sticky;
+    top: 0;
+    border-top-right-radius: 8px;
+    border-top-left-radius: 8px;
+    padding: 12px;
+}
+
+.order_summary thead th a{
+    font-size: 0.7em;
+    float: right;
+    padding-top: 4px;
+}
+
+.order_summary .bottom-sticky td{
+    position: sticky;
+    bottom: 0;
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    padding: 12px;
+}
+
+.float_right{
+    float: right;
+}
+
+.order_summary img{
+    width: 100%;
+    padding:0 !important;
+    margin: 0 !important;
+}
+
+table{
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th, td{
+    padding: 2px;
+    background: white;
+    border-bottom: #d3e6e6 1px solid;
+}
+
+.label td{
+    text-align: center;
+    padding-top: 6px;
+}
+
+th{
+    background: #d3e6e6;
+}
+
+.products td{
+    width: 50px;
+    text-align: center;
+}
+
+/* Edit Cart Modal */
+.buying-cart table img{
+  width: 100%;
+  float: left;
 }
