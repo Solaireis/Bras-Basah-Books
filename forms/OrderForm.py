@@ -36,8 +36,6 @@ class Order_Detail(User_Order):
         self.name = name
         self.email = email
         self.contact_num = contact_num
-        #self.order_date = order_date
-        #self.order_status = order_status
         self.order_item = order_item
         self.total_price = total_price
         self.order_id = str(uuid.uuid4())
@@ -48,15 +46,59 @@ class Order_Detail(User_Order):
         self.user_order = {user_id: self.ship_info, self.order_id: self.order_info}
         #print(self.user_order)
 
+    # overall dictionary & list
     def get_ship_info(self):
         return self.ship_info
-
     def get_order_info(self):
         return self.order_info
-
     def get_user_order(self):
         return self.user_order
 
+    # get user id and order id
     def get_user_id(self):
         return self.user_id
+    def get_order_id(self):
+        user_order = self.get_user_order()
+        order_id = list(user_order)[1]
+        return order_id
 
+    # get data from ship_info
+    def get_name(self):
+        return self.name
+    def get_email(self):
+        return self.email
+    def get_contact_num(self):
+        return self.contact_num
+    def get_ship_address(self):
+        return self.ship_address
+    def get_ship_method(self):
+        return self.ship_method
+
+    def get_order_date(self):
+        ship_info = self.get_ship_info()
+        order_date = ship_info['order_date']
+        return order_date
+    def get_order_status(self):
+        ship_info = self.get_ship_info()
+        order_status = ship_info['order_status']
+        return order_status
+
+    # get data from order_info
+    def get_order_item(self):
+        return self.order_item
+    def get_buy_item(self):
+        order_item = self.get_order_item()
+        if order_item[0] != '':
+            buy_item = order_item[0]
+        else:
+            buy_item = ''
+        return buy_item
+    def get_rent_item(self):
+        order_item = self.get_order_item()
+        if len(order_item) == 1:
+            rent_item = ''
+        else:
+            rent_item = order_item[1]
+        return rent_item
+    def get_total_price(self):
+        return self.total_price
