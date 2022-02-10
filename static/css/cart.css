@@ -12,6 +12,16 @@ table td, table i{
   color: #4b8282 !important;
 }
 
+.buying-cart a{
+    text-decoration: none;
+    color: #4b8282;
+}
+
+.buying-cart a:hover{
+    opacity: 0.9;
+    text-decoration: underline;
+}
+
 td button .fa-close{
   font-size: 1.3em;
 }
