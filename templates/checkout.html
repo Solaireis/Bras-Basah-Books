@@ -16,22 +16,23 @@
 <div class="row">
     <div class="col-md-9 col-12">
         <h3>Shipping Information</h3>
-        <h5>Shipping Option</h5>
-        <button type="button" name="button" class="btn shipping-option">
-          <h5>Standard Delivery<span>$5.00</span></h5>
-          <p>SingPost (3 - 5 business days)</p>
-        </button>
-        <button type="button" name="button" class="btn shipping-option">
-          <h5>Self-collection<span>Free</span></h5>
-          <p>Reserve online, collect at <a href="#">our store</a>.</p>
-        </button>
-        <form method="POST" class="row checkout-form" action="">
-            <h5>Shipping Address</h5>
-            <div class="form-group col-6">
-                {{ render_field(form.first_name, class="form-control") }}
+<!--        <h5>Shipping Option</h5>-->
+<!--        <button type="button" name="button" class="btn shipping-option">-->
+<!--          <h5>Standard Delivery<span>$5.00</span></h5>-->
+<!--          <p>SingPost (3 - 5 business days)</p>-->
+<!--        </button>-->
+<!--        <button type="button" name="button" class="btn shipping-option">-->
+<!--          <h5>Self-collection<span>Free</span></h5>-->
+<!--          <p>Reserve online, collect at <a href="#">our store</a>.</p>-->
+<!--        </button>-->
+        <form method="POST" class="row checkout-form" action="/create-checkout-session/{{ total_price }}">
+            <h5>Shipping Option</h5>
+            <div class="form-group col-12">
+                {{ render_field(form.ship_method, class="form-control", style="list-style-type:none") }}
             </div>
-            <div class="form-group col-6">
-                {{ render_field(form.last_name, class="form-control") }}
+            <h5>Shipping Address</h5>
+            <div class="form-group col-12">
+                {{ render_field(form.name, class="form-control") }}
             </div>
             <div class="form-group col-6">
                 {{ render_field(form.contact_num, class="form-control") }}
@@ -45,12 +46,7 @@
             <div class="col-9">
             </div>
             <div class="col-md-3 col-12">
-                <form action="/" method="POST">
-                    <input style="display:none;" type="submit" value="Continue" class="btn submit-btn">
-                </form>
-                  <form action="/create-checkout-session/{{ total_price }}" method="POST">
-                        <button type="submit" class="btn submit-btn" name="button">Check Out</button>
-                  </form>
+                <button type="submit" class="btn submit-btn" name="button">Check Out</button>
             </div>
         </form>
     </div>
@@ -71,7 +67,7 @@
                 <td><img src={{ books_dict[key].get_img() }}></td>
                 <td style="text-align:left;">{{ books_dict[key].get_title() }}</td>
                 <td>X{{ buy_cart[key] }}</td>
-                <td>{{ books_dict[key].get_price() }}</td>
+                <td>${{ books_dict[key].get_price() }}</td>
             {% endfor %}
         {% endif %}
         {% if rent_count != 0 %}
@@ -91,7 +87,7 @@
                   <h6>Subtotal <span class="float_right">${{ total_price }}</span></h6>
                   <h6>Shipping <span class="float_right">$5.0</span></h6>
                   <h6>Coupon Applied <span class="float_right">$-</span></h6>
-                  <h5>Total To Pay <span class="float_right">${{ total_price + 5 }}</span></h5>
+                  <h5>Total To Pay <span class="float_right">${{ "%.2f"|format((total_price|float)+5) }}</span></h5>
               </td>
           </tr>
         </tbody>
@@ -99,10 +95,6 @@
     </div>
 </div>
 
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-  Launch demo modal
-</button>
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -122,14 +114,13 @@
             {% for key in buy_cart %}
                 <tr>
                     <form method="POST" action="/update_cart/{{ key }}">
-                        <td class="col-2"><img src="{{ books_dict[key].get_img() }}" alt="book cover"></td>
-                        <td class="col-5"><h4>{{ books_dict[key].get_title() }}</h4>#{{ key }}</td>
-                        <td class="col-2"><h5>${{ books_dict[key].get_price() }}</h5></td>
-                        <td class="col-2"><input type="number" class="quantity-selector" name="quantity" min="0" value={{ buy_cart[key] }}>
+                        <td class="col-3"><img src="{{ books_dict[key].get_img() }}" alt="book cover"></td>
+                        <td class="col-7"><h4>{{ books_dict[key].get_title() }}</h4>#{{ key }}</td>
+                        <td class="col-1"><h5>${{ books_dict[key].get_price() }}</h5></td>
+                        <td class="col-1"><input type="number" class="quantity-selector" name="quantity" min="0" value={{ buy_cart[key] }}>
                         <button type="submit" class="btn update-btn" onclick="update_cart()">Update</button></td>
                     </form>
                     <form method="POST" action="/delete_buying_cart/{{ key }}">
-                        <input type="number" name="book_id" class="book_id" style="display:none;" value={{ books_dict[key] }} readonly></td>
                         <td class="col-1"><button type="submit" onclick="delete_buying_cart()" name="button" style="float:right;" class="btn"><i class="fa fa-close"></i></button></td>
                     </form>
                 </tr>
@@ -144,8 +135,8 @@
             <tbody>
             {% for book in rent_cart %}
                 <tr>
-                    <td rowspan="col-2"><img src={{ books_dict[book].get_img() }} alt="book cover"></td>
-                    <td class="col-5"><h4>{{ books_dict[book].get_title() }}</h4>#<input type="number" class="book_id" value={{ book }} readonly></td>
+                    <td rowspan="col-3"><img src={{ books_dict[book].get_img() }} alt="book cover"></td>
+                    <td class="col-5"><h4>{{ books_dict[book].get_title() }}</h4>#{{ book }}</td>
                     <td class="col-4"><h5>{{ "$%.2f"|format((books_dict[book].get_price()|float)*0.1) }}</h5></td>
                     <form method="POST" action="/delete_renting_cart/{{ book }}">
                         <td class="col-1"><button type="submit" onclick="delete_renting_cart()" name="button" style="float:right;" class="btn"><i class="fa fa-close"></i></button></td>
@@ -158,10 +149,10 @@
       </div>
       {% endif %}
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
+<!--      <div class="modal-footer">-->
+<!--        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
+<!--        <button type="button" class="btn btn-primary">Save changes</button>-->
+<!--      </div>-->
     </div>
   </div>
 </div>
