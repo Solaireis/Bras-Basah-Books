@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}View Coupons{% endblock %}
+
+{% block content %}
+{% from "includes/_form.html" import render_field %}
+<form method="POST" action="">
+    <div class="form-group container-padding-20">
+      {{ render_field(form.coupon_code, class="form-control") }}
+    </div>
+    <input type="submit" value="Create Coupon" class="btn btn-warning"/>
+  </form>
+
+{% endblock %}

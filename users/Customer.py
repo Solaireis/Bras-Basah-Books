@@ -105,3 +105,8 @@ class Customer(User):
             self.set_password(password)
 
         return True
+
+    # Eden integration
+    def add_coupons(self,coupon_code):
+        self.__coupons.append(coupon_code)
+    

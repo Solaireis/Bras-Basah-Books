@@ -13,7 +13,7 @@ import Book, Cart as c
 from users import GuestDB, Guest, Customer, Admin
 from forms import SignUpForm, LoginForm, AccountPageForm, ChangePasswordForm, \
                   Enquiry, UserEnquiry, Faq, FaqEntry, Reply, AddBookForm, \
-                  Coupon, CreateCoupon, OrderForm
+                  Coupon, CreateCoupon, OrderForm, RequestCoupon
 
 # CONSTANTS
 DEBUG = True         # Debug flag (True when debugging)
@@ -981,7 +981,7 @@ def faq_adm():
 
 def count_id(Table):
     the_dict = {}
-    db = shelve.open('database','r')
+    db = shelve.open('database','c')
     the_dict = db[Table]
     db.close()
 
@@ -1099,14 +1099,9 @@ def coupon_adm():
         db = shelve.open('database', 'c')
         coupon_dict = retrieve_db('Coupon',db)
 
-        try:
-            Coupon.count = count_id('Coupon')
-
-        except:
-            print("No Database found")
 
         coupon = Coupon(create_coupon.name.data,create_coupon.discount.data,create_coupon.coupon_code.data,create_coupon.startdate.data,create_coupon.enddate.data)
-        coupon_dict[coupon.get_count()] = coupon
+        coupon_dict[coupon.get_coupon_code_id] = coupon
         db['Coupon'] = coupon_dict
         db.close()
 
@@ -1170,7 +1165,57 @@ def delete_coupons(id):
     db.close()
     return redirect(url_for('retrieve_coupons'))
 
+@app.route('/request-coupon', methods=['GET', 'POST'])
+def request_coupons():
+    request_coupons = RequestCoupon(request.form)
+    if request.method == 'POST' and request_coupons.validate():
+        db = shelve.open('database','c')
+        coupon_dict = retrieve_db('Coupon',db)
+        
+        coupon_list = []
+        for key in coupon_dict:
+            coupon = coupon_dict.get(key)
+            print('coupon_code',coupon.get_coupon_code_id())
+            if coupon.get_coupon_code_id() == request_coupons.coupon_code.data:
+                coupon_list.append(coupon.get_coupon_code_id())
+                print('coupon_list',coupon_list)
+                print('Found coupon')
+                if session["UserType"] == "Customer":
+                    customer_dict = retrieve_db('Customers',db)
+                    customer = customer_dict.get(session["UserID"])
+                    customer.add_coupons(coupon.get_coupon_code_id())
+                    customer_dict[session["UserID"]] = customer
+                    db['Customers'] = customer_dict
+                    db.close()
+                    return redirect(url_for('retrieve_cu_coupons'))
+            else:
+                print('no match for coupon')
+    
+    return render_template('coupon/customer_coupons.html', form=request_coupons)
 
+@app.route('/retrieve-customer-coupons', methods=['GET', 'POST'])
+def retrieve_cu_coupons():
+    customer_dict = {}
+    db = shelve.open('database','w')
+    customer_dict = retrieve_db('Customers',db)
+    db.close()
+
+    
+    customer = customer_dict.get(session["UserID"])
+    coupon_list = customer.get_coupons()
+
+    coupon_dict = {}
+    db = shelve.open('database','w')
+    coupon_dict = retrieve_db('Coupon',db)
+    db.close()
+
+    coupon_list_final = []
+    for coupon in coupon_list:
+        for key in coupon_dict:
+            if coupon == coupon_dict.get(key).get_coupon_code_id():
+                coupon_list_final.append(coupon_dict.get(key))
+
+    return render_template('coupon/retrieve_cust_coupons.html', count=len(coupon_list_final), coupon_list=coupon_list_final)
 
 lang_list = [('', 'Select'), ('English', 'English'), ('Chinese', 'Chinese'), ('Malay', 'Malay'), ('Tamil', 'Tamil')]
 cat_list = [('', 'Select'), ('Action & Adventure', 'Action & Adventure'), ('Classic', 'Classic'), ('Comic', 'Comic'), ('Detective & Mystery', 'Detective & Mystery')]
