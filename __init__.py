@@ -136,6 +136,7 @@ def before_first_request():
         username_to_user_id = retrieve_db("UsernameToUserID", db)
         email_to_user_id = retrieve_db("EmailToUserID", db)
 
+        # Goes through admin accounts
         has_master_account = False
         for admin in admins_db.values():
             if admin.is_master():
