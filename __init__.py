@@ -558,17 +558,13 @@ def allbooks():
     return render_template("allbooks.html")
 
 
-# Book Info page
-@app.route("/book_info")
-def book_info():
-    return render_template("book_info.html")
 # add to buying cart
 @app.route("/addtocart/<int:id>", methods=['GET', 'POST'])
 def add_to_buy(id):
     user_id = get_user().get_user_id()
     buy_quantity = int(request.form['quantity'])
     cart_dict = {}
-    cart_db = shelve.open('cart', 'c')
+    cart_db = shelve.open('database', 'c')
     msg = ""
     try:
         cart_dict = cart_db['Cart']
@@ -608,7 +604,7 @@ def add_to_buy(id):
 def add_to_rent(id):
     user_id = get_user().get_user_id()
     cart_dict = {}
-    cart_db = shelve.open('cart', 'c')
+    cart_db = shelve.open('database', 'c')
     book_dict = {}
     try:
         cart_dict = cart_db['Cart']
@@ -650,8 +646,8 @@ def add_to_rent(id):
 def cart():
     user_id = get_user().get_user_id()
     cart_dict = {}
-    cart_db = shelve.open('cart', 'c')
-    book_db = shelve.open('book.db', 'r')
+    cart_db = shelve.open('database', 'c')
+    book_db = shelve.open('book.db')
     books_dict = book_db['Books']
     book_db.close()
     buy_count = 0
@@ -687,11 +683,11 @@ def cart():
                 total_price = float(("%.2f" % round(total_price, 2)))
     return render_template('cart.html', buy_count=buy_count, rent_count=rent_count, buy_cart=buy_cart, rent_cart=rent_cart, books_dict=books_dict, total_price=total_price)
 
-  # update quantity in buying cart
+# update quantity in buying cart
 @app.route('/update_cart/<int:id>', methods=['GET', 'POST'])
 def update_cart(id):
     user_id = get_user().get_user_id()
-    cart_db = shelve.open('cart')
+    cart_db = shelve.open('database')
     cart_dict = cart_db['Cart']
     buy_cart = cart_dict[user_id][0]
     book_quantity = int(request.form['quantity'])
@@ -711,7 +707,7 @@ def update_cart(id):
 @app.route("/delete_buying_cart/<int:id>", methods=['GET', 'POST'])
 def delete_buying_cart(id):
     user_id = get_user().get_user_id()
-    cart_db = shelve.open('cart')
+    cart_db = shelve.open('database')
     cart_dict = cart_db['Cart']
     buy_cart = cart_dict[user_id][0]
     #only has buying cart
@@ -732,7 +728,7 @@ def delete_buying_cart(id):
 @app.route("/delete_renting_cart/<int:id>", methods=['GET', 'POST'])
 def delete_renting_cart(id):
     user_id = get_user().get_user_id()
-    cart_db = shelve.open('cart')
+    cart_db = shelve.open('database')
     cart_dict = cart_db['Cart']
     rent_cart = cart_dict[user_id][1]
     rent_cart.remove(id)
@@ -745,13 +741,13 @@ def delete_renting_cart(id):
     cart_db['Cart'] = cart_dict
     cart_db.close()
     return redirect(request.referrer)
-  
+
 # Checkout
 @app.route("/checkout", methods=['GET', 'POST'])
 def checkout():
     user_id = get_user().get_user_id()
     cart_dict = {}
-    cart_db = shelve.open('cart', 'c')
+    cart_db = shelve.open('database', 'c')
     book_db = shelve.open('book.db', 'r')
     books_dict = book_db['Books']
     book_db.close()
@@ -804,22 +800,22 @@ def checkout():
 @app.route('/create-checkout-session/<total_price>', methods=['POST'])
 def create_checkout_session(total_price):
     user_id = get_user().get_user_id()
-    db_dict = {}
+    order_dict = {}
     print("creating checkout session...")
     total_price = float(total_price)+5
     try:
-        cart_db = shelve.open('cart', 'r')
-        cart_dict = cart_db['Cart']
+        db = shelve.open('database')
+        cart_dict = db['Cart']
         user_cart = cart_dict[user_id]
-        db = shelve.open('database', 'c')
+        #db = shelve.open('database')
     except:
         user_cart = []
     Orderform = OrderForm.OrderForm(request.form)
     if request.method == 'POST' and Orderform.validate():
         new_order = OrderForm.Order_Detail(user_id, Orderform.name.data, Orderform.email.data, str(Orderform.contact_num.data), \
                    Orderform.address.data, Orderform.ship_method.data, user_cart, total_price)
-        db_dict[user_id] = new_order
-        db['Pending_Order'] = db_dict
+        order_dict[user_id] = new_order
+        db['Pending_Order'] = order_dict
         total_price *= 100
         total_price = int(total_price)
         checkout_session = stripe.checkout.Session.create(
@@ -846,19 +842,21 @@ def create_checkout_session(total_price):
         flash(list(Orderform.errors.values())[0][0], 'warning')
         return redirect(request.referrer)
 
+#
 # show confirmation page upon successful payment
+#
 @app.route("/orderconfirm")
 def orderconfirm():
     user_id = get_user().get_user_id()
     db_order= []
     books_dict = {}
-    cart_db = shelve.open('cart', 'c')
+    #cart_db = shelve.open('cart', 'c')
     book_db = shelve.open('book.db', 'w')
     db = shelve.open('database', 'c')
-    cart_dict = cart_db['Cart']
+    cart_dict = db['Cart']
     db_pending = db['Pending_Order']
     books_dict = book_db['Books']
-# in case user hand itchy go and reload the page, bring them back to home page
+    # in case user hand itchy go and reload the page, bring them back to home page
     try:
         new_order = db_pending[user_id]
         cartvalue = cart_dict[user_id]
@@ -888,14 +886,14 @@ def orderconfirm():
         book_db['Books'] = books_dict
         db['Pending_Order'] = db_pending
         db['Order'] = db_order
-        cart_db['Cart'] = cart_dict
+        db['Cart'] = cart_dict
         print(db_pending, 'should not have pending order as user already check out')
         print(cart_dict, 'updated database')
         print(db_order, 'updated database')
     except KeyError:
         return home2()
     book_db.close()
-    cart_db.close()
+    #db.close()
     db.close()
     return render_template("order_confirmation.html")
 
