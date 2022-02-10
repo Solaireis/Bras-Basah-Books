@@ -17,20 +17,9 @@
 .sidebar .nav-link {
     color: #4b8282;
 }
-/* .sidebar .nav-link.active {
-    position: relative;
+.sidebar .nav-pills .nav-link.active {
+    background-color: #4b8282;
 }
-.sidebar .nav-link.active::after {
-    content: "";
-    position: absolute;
-    top: -6px;
-    left: 152.5px;
-    width: 0;
-    height: 0;
-    border-top: 25px solid transparent;
-    border-bottom: 25px solid transparent;
-    border-right: 17px solid #fff;
-} */
 
 /* Account Page */
 .no-format-form {
@@ -42,4 +31,7 @@
 #gender > li {
     display: inline;
     margin-right: 1.5rem;
+}
+.nav-link{
+    transition: none;
 }
