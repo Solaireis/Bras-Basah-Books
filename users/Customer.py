@@ -1,6 +1,10 @@
 from argon2 import PasswordHasher
 from .User import User
 
+# Profile pic path
+UPLOAD_FOLDER = r"/static/img/profile-pic/"
+DEFAULT_PIC_NAME = r"default"
+
 # Password hasher for hashing
 _ph = PasswordHasher()
 
@@ -16,7 +20,7 @@ class Customer(User):
         __password (str): hashed password of customer
         __name (str): name of customers
         __verified (bool): True when customer's email is verified
-        __profile_pic (str): path of profile pic of customer
+        __profile_pic (bool): True when profile pic is set
         __gender (str): gender of customer - "M" for male, "F" for female, "O" for other
         __coupons (list): list of the coupons owned by customer
         __orders (list): list of the orders made by customer
@@ -29,7 +33,7 @@ class Customer(User):
         self.set_password(password)
         self.__name = ""
         self.__verified = False
-        self.__profile_pic = ""
+        self.__profile_pic = False
         self.__gender = ""
         self.__coupons = []
         self.__orders = []
@@ -58,10 +62,11 @@ class Customer(User):
     def get_email(self):
         return self.__email
 
-    def set_profile_pic(self, profile_pic):
-        self.__profile_pic = profile_pic
+    def profile_pic_set(self):
+        self.__profile_pic = True
     def get_profile_pic(self):
-        return self.__profile_pic
+        filename = self.get_user_id() if self.__profile_pic else DEFAULT_PIC_NAME
+        return f"{UPLOAD_FOLDER}{filename}.png"
 
     def set_gender(self, gender):
         self.__gender = gender

@@ -423,9 +423,11 @@ def account():
         if not account_page_form.validate():
             name = account_page_form.name
             gender = account_page_form.gender
+            picture = account_page_form.picture
 
             # Flash error message (only flash the 1st error)
-            flash(name.errors[0] if name.errors else gender.errors[0], "error")
+            error = name.errors[0] if name.errors else picture.errors[0] if picture.errors else gender.errors[0]
+            flash(error, "error")
         else:
             # Flash success message
             flash("Account settings updated successfully")
@@ -434,12 +436,28 @@ def account():
             name = " ".join(account_page_form.name.data.split())
             gender = account_page_form.gender.data
 
+            # Check files submitted for profile pic
+            if "picture" in request.files:
+                file = request.files["picture"]
+                if file and allowed_file(file.filename):
+                    file.save(os.path.join(PROFILE_PIC_UPLOAD_FOLDER, user.get_user_id()+".png"))
+                else:
+                    file = None
+            else:
+                file = None
+
             with shelve.open("database") as db:
                 # Get Customers
                 customers_db = retrieve_db("Customers", db)
                 user = customers_db[session["UserID"]]
+
+                # Set name and gender
                 user.set_name(name)
                 user.set_gender(gender)
+
+                # If image uploaded, set profile pic
+                if file is not None:
+                    user.profile_pic_set()
 
                 # Save changes to database
                 db["Customers"] = customers_db
@@ -453,6 +471,7 @@ def account():
     return render_template("user/account.html",
                            form=account_page_form,
                            display_name=user.get_display_name(),
+                           picture_path=user.get_profile_pic(),
                            username=user.get_username(),
                            email=user.get_email())
 

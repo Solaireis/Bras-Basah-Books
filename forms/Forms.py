@@ -54,7 +54,8 @@ class AccountPageForm(Form):
     """ Account page form used for editing account """
 
     # Picture
-    picture = FileField("Picture", [FileAllowed(["jpg", "jpeg", "png"], message="")])
+    picture = FileField("Picture", [validators.Optional(),
+                                    FileAllowed(["jpg", "jpeg", "png"], message="File uploaded is not in an accepted format")])
 
     # Name
     name = StringField("Name", [validators.Optional(),
