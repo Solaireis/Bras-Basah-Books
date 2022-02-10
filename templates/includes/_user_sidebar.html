@@ -1,7 +1,7 @@
 <div class="d-flex flex-column sidebar col-2 p-3">
   <ul class="nav flex-column mb-auto">
     <li>
-      <a href="#" class="nav-link active" aria-current="page">
+      <a href="#" class="nav-link active disabled">
         My Account
       </a>
     </li>
@@ -22,17 +22,3 @@
     </li>
   </ul>
 </div>
-
-{% macro render_field(active) %}
-  {% if active %}}{% endif %}
-  {% if message %}
-    <div class="invalid-feedback">{{ message }}</div>
-  {% endif %}
-  {% if display_error %}
-    {% for error in field.errors %}
-      {% if error %}
-        <div class="invalid-feedback display-feedback">{{ error }}</div>
-      {% endif %}
-    {% endfor %}
-  {% endif %}
-{% endmacro %}

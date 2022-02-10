@@ -1,14 +1,42 @@
+/* General */
 .user-container {
     background-color: #fff;
 }
+.user-container h2 {
+    color: #999;
+}
+.user-container hr {
+    opacity: 1;
+}
 
+
+/* Sidebar */
 .sidebar {
     background-color: #eee;
 }
+.sidebar .nav-link {
+    color: #4b8282;
+}
+/* .sidebar .nav-link.active {
+    position: relative;
+}
+.sidebar .nav-link.active::after {
+    content: "";
+    position: absolute;
+    top: -6px;
+    left: 152.5px;
+    width: 0;
+    height: 0;
+    border-top: 25px solid transparent;
+    border-bottom: 25px solid transparent;
+    border-right: 17px solid #fff;
+} */
 
+/* Account Page */
 .no-format-form {
     border: none;
     background-color: transparent;
+    padding-left: 0;
 }
 
 #gender > li {
