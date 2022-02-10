@@ -18,16 +18,16 @@ class Admin(User):
         __master (bool): flag for master admin account (True when account is master admin)
     """
 
-    def __init__(self, email, password, username="", _master=False):
+    def __init__(self, username, email, password, _master=False):
         super().__init__()
-        self.__email = email
-        self.__password = self.hash_password(password)
         self.__username = username
+        self.__email = email
+        self.set_password(password)
         self.__profile_pic = ""
         self.__master = _master
-    
+
     def __repr__(self):
-        return super().__repr__(email=self.__email, username=self.__username, master=self.__master)
+        return super().__repr__(username=self.__username, email=self.__email, master=self.__master)
 
     # Mutator and accessor methods
     def set_email(self, email):
@@ -52,12 +52,14 @@ class Admin(User):
     # Set password, and check password
     def set_password(self, password):
         self.__password = _ph.hash(password)
-    def check_password(self, password):
+    def verify_password(self, password):
         try:     # Try verifying
             _ph.verify(self.__password, password)
         except:  # If verifying fails
             return False
-        else:    # If verifying succeeds
-            if _ph.check_needs_rehash(self.__password):  # Check if needs rehashing
-                self.set_password(password)
-            return True
+
+        # Check if needs rehashing
+        if _ph.check_needs_rehash(self.__password):
+            self.set_password(password)
+
+        return True

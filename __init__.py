@@ -225,8 +225,8 @@ def sign_up():
             if DEBUG: print(f"Created: {customer}")
 
             # Delete guest account
-            if DEBUG: print(f"Deleted: {user}")
             guests_db.remove(user.get_user_id())
+            if DEBUG: print(f"Deleted: {user}")
 
             # Store customer into database
             user_id = customer.get_user_id()
@@ -1265,13 +1265,83 @@ def book_info2(id):
 
 
 # Only during production. To be removed when published.
-@app.route("/test")  # To go to test page: http://127.0.0.1:5000/test
+@app.route("/test", methods=["GET", "POST"])  # To go to test page: http://127.0.0.1:5000/test
 def test():
-    with shelve.open("database") as db:
-        c = retrieve_db("Customers", db)
-        u = retrieve_db("UsernameToUserID", db)
-        e = retrieve_db("EmailToUserID", db)
-    return c, u, e
+    # Get current (guest) user
+    user = get_user()
+
+    sign_up_form = SignUpForm(request.form)
+
+    # Validate sign up form if request is post
+    if request.method == "POST":
+        if not sign_up_form.validate():
+            if DEBUG: print("Sign-up: form field invalid")
+            session["DisplayFieldError"] = True
+            flash("WARNING: TESTING PAGE FOR CREATING ADMINS", "warning")
+            flash(f"Currently logged in as: {user}")
+            return render_template("user/sign_up.html", form=sign_up_form)
+
+        # Extract data from sign up form
+        username = sign_up_form.username.data
+        email = sign_up_form.email.data.lower()
+        password = sign_up_form.password.data
+
+        # Create new user
+        with shelve.open("database") as db:
+
+            # Get Admins, UsernameToUserID, EmailToUserID, Guests
+            admins_db = retrieve_db("Admins", db)
+            username_to_user_id = retrieve_db("UsernameToUserID", db)
+            email_to_user_id = retrieve_db("EmailToUserID", db)
+            guests_db = retrieve_db("Guests", db)
+
+
+            # Ensure that email and username are not registered yet
+            if username.lower() in username_to_user_id:
+                if DEBUG: print("Sign-up: username already exists")
+                session["DisplayFieldError"] = True
+                flash("WARNING: TESTING PAGE FOR CREATING ADMINS", "warning")
+                flash(f"Currently logged in as: {user}")
+                return render_template("user/sign_up.html", form=sign_up_form)
+            elif email in email_to_user_id:
+                if DEBUG: print("Sign-up: email already exists")
+                session["DisplayFieldError"] = True
+                flash("WARNING: TESTING PAGE FOR CREATING ADMINS", "warning")
+                flash(f"Currently logged in as: {user}")
+                return render_template("user/sign_up.html", form=sign_up_form)
+
+            # Create customer
+            admin = Admin(username, email, password)
+            if DEBUG: print(f"Created: {admin}")
+
+            # Delete guest account
+            guests_db.remove(user.get_user_id())
+            if DEBUG: print(f"Deleted: {user}")
+
+            # Store customer into database
+            user_id = admin.get_user_id()
+            admins_db[user_id] = admin
+            username_to_user_id[username.lower()] = user_id
+            email_to_user_id[email] = user_id
+
+            # Create session to login
+            session["UserID"] = user_id
+            session["UserType"] = "Admin"
+            if DEBUG: print(f"Logged in: {admin}")
+
+            # Save changes to database
+            db["UsernameToUserID"] = username_to_user_id
+            db["EmailToUserID"] = email_to_user_id
+            db["Admins"] = admins_db
+            db["Guests"] = guests_db
+
+        flash(f"Currently logged in as: {user}")
+        return redirect(url_for("home"))
+
+    # Render page
+    flash("WARNING: TESTING PAGE FOR CREATING ADMINS", "warning")
+    flash(f"Currently logged in as: {user}")
+    return render_template("user/sign_up.html", form=sign_up_form)
 
 
 if __name__ == "__main__":
