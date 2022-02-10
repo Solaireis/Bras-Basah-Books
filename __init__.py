@@ -20,13 +20,14 @@ DEBUG = True         # Debug flag (True when debugging)
 TOKEN_MAX_AGE = 900  # Max age of token (15 mins)
 
 # For image file upload
-UPLOAD_FOLDER = 'static/img/books'
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
+BOOK_IMG_UPLOAD_FOLDER = 'static/img/books'
+PROFILE_PIC_UPLOAD_FOLDER = "static/img/profile-pic"
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
 
 
 app = Flask(__name__)
 app.config.from_pyfile("config/app.cfg")  # Load config file
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER  # Set upload folder
+app.config['UPLOAD_FOLDER'] = BOOK_IMG_UPLOAD_FOLDER  # Set upload folder
 app.config['MAX_CONTENT_LENGTH'] = 4 * 1024 * 1024  # Set maximum file upload limit (4MB)
 stripe.api_key = 'sk_test_51KPNSMLcZKZGRW8Qkzf58oSvjzX5LxhHQLBPZkmlCijcfXdhdXtXTTDXf3FqMHd1fd3kWcvxktgp7cj0ka4uSmzS00ilLjWTBX' # Stripe API Key
 
@@ -37,7 +38,7 @@ mail = Mail()  # Mail object for sending emails
 
 
 # Added type hintings as I needed my editor to recognise the type
-def retrieve_db(key, db, value=None) -> Union[
+def retrieve_db(key, db, value=None) -> Union[\
     Dict[str, Customer], Dict[str, Admin], GuestDB[str, Guest], Dict[str, Book.Book]]:
     """ Retrieves object from database using key """
     try:
@@ -422,6 +423,7 @@ def account():
         if not account_page_form.validate():
             name = account_page_form.name
             gender = account_page_form.gender
+
             # Flash error message (only flash the 1st error)
             flash(name.errors[0] if name.errors else gender.errors[0], "error")
         else:
@@ -442,8 +444,8 @@ def account():
                 # Save changes to database
                 db["Customers"] = customers_db
 
-            # Redirect to prevent form resubmission
-            return redirect(url_for("account"))
+        # Redirect to prevent form resubmission
+        return redirect(url_for("account"))
 
     # Set username and gender to display
     account_page_form.name.data = user.get_name()
