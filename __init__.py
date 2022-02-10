@@ -1343,6 +1343,10 @@ def test():
     flash(f"Currently logged in as: {user}")
     return render_template("user/sign_up.html", form=sign_up_form)
 
+
+#
+# Error handling page
+#
 @app.errorhandler(404) 
 def page_not_found(e): 
     return render_template("error/404.html")
