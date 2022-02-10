@@ -127,6 +127,39 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+# Before first request
+@app.before_first_request
+def before_first_request():
+    # Check if Master admin exists
+    with shelve.open("database") as db:
+        admins_db = retrieve_db("Admins", db)
+        username_to_user_id = retrieve_db("UsernameToUserID", db)
+        email_to_user_id = retrieve_db("EmailToUserID", db)
+
+        has_master_account = False
+        for admin in admins_db.values():
+            if admin.is_master():
+                has_master_account = True
+                break
+
+        # Create master account
+        if not has_master_account:
+            # I stored the password in config file cause I didn't want it to appear in python file
+            master = Admin("admin", "211973e@mymail.nyp.edu.sg", app.config["MASTER_PASS"], _master=True)
+            if DEBUG: print(f"Created: {master}")
+
+            # Store customer into database
+            user_id = master.get_user_id()
+            admins_db[user_id] = master
+            username_to_user_id[master.get_username().lower()] = user_id
+            email_to_user_id[master.get_email()] = user_id
+
+            # Save changes to database
+            db["UsernameToUserID"] = username_to_user_id
+            db["EmailToUserID"] = email_to_user_id
+            db["Admins"] = admins_db
+
+
 # Before request
 @app.before_request
 def before_request():
@@ -1306,6 +1339,20 @@ def book_info2(id):
     return render_template('book_info2.html', currentbook=currentbook)
 
 
+#
+# about page static
+#
+@app.route("/about", methods=["GET", "POST"])
+def about():
+    return render_template("about.html")
+
+#
+# Error handling page
+#
+@app.errorhandler(404) 
+def page_not_found(e): 
+    return render_template("error/404.html")
+
 
 # Only during production. To be removed when published.
 @app.route("/test", methods=["GET", "POST"])  # To go to test page: http://127.0.0.1:5000/test
@@ -1387,20 +1434,5 @@ def test():
     return render_template("user/sign_up.html", form=sign_up_form)
 
 
-#
-# Error handling page
-#
-@app.errorhandler(404) 
-def page_not_found(e): 
-    return render_template("error/404.html")
-
-#
-# about page static
-#
-@app.route("/about", methods=["GET", "POST"])
-def about():
-    return render_template("about.html")
-
-
 if __name__ == "__main__":
-    app.run(debug=DEBUG)
+    app.run(debug=DEBUG)  # Run app
