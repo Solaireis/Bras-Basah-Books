@@ -81,3 +81,6 @@ class Coupon:
     
     def set_end_date(self, date):
         self.__end_date = date
+
+class RequestCoupon(Form):
+    coupon_code = StringField('Coupon Code', [validators.data_required()])
