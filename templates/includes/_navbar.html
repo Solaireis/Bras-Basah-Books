@@ -32,20 +32,23 @@
         </li>
 
         <!-- put a jinja argument here to only show if user account is an admin -->
-        <li class="">
-          <div class="dropdown">
-            <button class="dropbtn dropdown-toggle">Admin</button>
-            <div class="dropdown-content">
-              <a href="/add-book">Add Book</a>
-              <a href="/inventory">View Inventory</a>
-              <a href="/enquiry-adm">Contact Us Admin</a>
-              <a href="/faq-adm">FAQ Admin</a>
-              <a href ="/faq-adm-retrieve">Retrieve FAQ</a>
-              <a href="/coupon">coupon</a>
-              <a href="/retrieve-coupons">coupon dashboard</a>
+        {% if session['UserType'] == 'Admin' %}
+          <li class="">
+            <div class="dropdown">
+              <button class="dropbtn dropdown-toggle">Admin</button>
+              <div class="dropdown-content">
+                <a href="/add-book">Add Book</a>
+                <a href="/inventory">View Inventory</a>
+                <a href="/enquiry-adm">Contact Us Admin</a>
+                <a href="/faq-adm">FAQ Admin</a>
+                <a href ="/faq-adm-retrieve">Retrieve FAQ</a>
+                <a href="/coupon">coupon</a>
+                <a href="/retrieve-coupons">coupon dashboard</a>
+              </div>
             </div>
-          </div>
-        </li>
+          </li>
+        {% endif %}
+        
       </ul>
 
       <ul class="nav justify-content-end">
