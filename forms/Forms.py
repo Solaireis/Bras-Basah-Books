@@ -53,6 +53,9 @@ class LoginForm(Form):
 class AccountPageForm(Form):
     """ Account page form used for editing account """
 
+    # Picture
+    picture = FileField("Picture", [FileAllowed(["jpg", "jpeg", "png"], message="")])
+
     # Name
     name = StringField("Name", [validators.Optional(),
                                 validators.Regexp("^[a-zA-Z ]*$", message="Name should only contain letters and spaces"),
