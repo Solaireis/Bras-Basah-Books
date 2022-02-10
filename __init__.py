@@ -1,5 +1,5 @@
 # Import modules
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash 
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, BadData
 from werkzeug.utils import secure_filename
@@ -1342,6 +1342,10 @@ def test():
     flash("WARNING: TESTING PAGE FOR CREATING ADMINS", "warning")
     flash(f"Currently logged in as: {user}")
     return render_template("user/sign_up.html", form=sign_up_form)
+
+@app.errorhandler(404) 
+def page_not_found(e): 
+    return render_template("error/404.html")
 
 
 if __name__ == "__main__":
