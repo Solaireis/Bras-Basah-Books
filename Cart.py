@@ -9,7 +9,6 @@ class AddtoBuy(SCart):
         self.book_id = book_id
         self.book_quantity = book_quantity
         self.buy_dict.update({book_id:book_quantity})
-        print(self.buy_dict)
 
     def get_buy_dict(self):
         return self.buy_dict
