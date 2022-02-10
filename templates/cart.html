@@ -25,15 +25,14 @@
       </div>
       {% else %}
       <div class="col-9 buying-cart">
-
-<!--        <img src="{{ url_for('static',filename='img/cover2.png') }}" alt="book cover">-->
           <table class="table table-striped">
             <tbody>
             {% for key in buy_cart %}
                 <tr>
                     <form method="POST" action="/update_cart/{{ key }}">
-                        <td class="col-2"><img src="{{ books_dict[key].get_img() }}" alt="book cover"></td>
-                        <td class="col-5"><h4>{{ books_dict[key].get_title() }}</h4>#<input type="number" class="book_id" name="book_id" value={{ key }} readonly></td>
+
+                        <td class="col-2"><a href="/book/{{ key }}"><img src="{{ books_dict[key].get_img() }}" alt="book cover"></a></td>
+                        <td class="col-5"><a href="/book/{{ key }}"><h4>{{ books_dict[key].get_title() }}</h4></a>#{{ key }}</td>
                         <td class="col-2"><h5>${{ books_dict[key].get_price() }}</h5></td>
                         <td class="col-2"><input type="number" class="quantity-selector" name="quantity" min="0" value={{ buy_cart[key] }}>
                         <button type="submit" class="btn update-btn" onclick="update_cart()">Update</button></td>
@@ -46,7 +45,6 @@
             {% endfor %}
               </tbody>
           </table>
-
       </div>
       {% endif %}
       <div class="col-3 order-summary">
@@ -69,7 +67,10 @@
         {% if (buy_count + rent_count) == 0 %}
                 <button type="submit" disabled class="check-out-button btn" name="button">Check Out</button>
         {% else %}
-          <form action="/create-checkout-session/{{ total_price }}" method="POST">
+<!--          <form action="/create-checkout-session/{{ total_price }}" method="POST">-->
+<!--                <button type="submit" class="check-out-button btn" name="button">Check Out</button>-->
+<!--          </form>-->
+          <form action="/checkout" method="POST">
                 <button type="submit" class="check-out-button btn" name="button">Check Out</button>
           </form>
         {% endif %}
