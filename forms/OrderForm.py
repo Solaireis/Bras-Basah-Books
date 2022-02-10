@@ -60,13 +60,3 @@ class Order_Detail(User_Order):
     def get_user_id(self):
         return self.user_id
 
-user_id = 2
-
-order_item = [{1:2}, [2,3]]
-total_price = 100
-ship_address = '123B AMK Road'
-ship_method = "Delivery"
-name = 'Chiobu'
-email = 'chiobu@email.com'
-contact_num = 12341234
-#order = Order_Detail(user_id, name, email, contact_num, ship_address, ship_method, order_item, total_price)
