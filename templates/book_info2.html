@@ -46,7 +46,7 @@
               <p>This book is only available for <a href="/addtorent/{{ book.get_book_id() }}">renting</a> at {{ "$%.2f"|format((book.get_price()|float)*0.1) }} for 14 days.</p>
               {% elif book.get_action() == "Buy" %}
               <input type="submit" onclick="add_to_buy()" class="btn add-cart-button" value="ADD TO CART">
-              <p>This book is not available for renting</a>.</p>
+              <p>This book is not available for renting.</p>
               {% endif %}
           </form>
 
