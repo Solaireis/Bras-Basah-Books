@@ -24,9 +24,7 @@
 </div>
 
 {% macro render_field(active) %}
-  {% set display_error = field.errors and session.pop("DisplayFieldError", False) %}
-  {% if display_error %}<span class="d-none display-invalid"></span>{% endif %}
-  {{ field(**kwargs)|safe }}
+  {% if active %}}
   {% if message %}
     <div class="invalid-feedback">{{ message }}</div>
   {% endif %}
