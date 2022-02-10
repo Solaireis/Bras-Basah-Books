@@ -13,7 +13,7 @@ import Book
 import Cart as c
 from users import GuestDB, Guest, Customer, Admin
 from forms import SignUpForm, LoginForm, AccountPageForm, ChangePasswordForm,\
-                  Enquiry, UserEnquiry, Faq, FaqEntry, Reply, AddBookForm, Coupon, CouponForm
+                  Enquiry, UserEnquiry, Faq, FaqEntry, Reply, AddBookForm, Coupon, CouponForm, OrderForm
 
 # CONSTANTS
 DEBUG = True         # Debug flag (True when debugging)
@@ -508,7 +508,6 @@ def allbooks():
 def book_info():
     return render_template("book_info.html")
 
-
 # add to buying cart
 @app.route("/addtocart/<int:id>", methods=['GET', 'POST'])
 def add_to_buy(id):
@@ -516,6 +515,7 @@ def add_to_buy(id):
     buy_quantity = int(request.form['quantity'])
     cart_dict = {}
     cart_db = shelve.open('cart', 'c')
+    msg = ""
     try:
         cart_dict = cart_db['Cart']
         print(cart_dict, "original database")
@@ -530,13 +530,13 @@ def add_to_buy(id):
         if book_dict == '':
             print("This user does not has anything in buying cart")
             cart_dict[user_id].pop(0)
-            print(cart_dict, 'after removing 6699')
             cart_dict[user_id].insert(0, {id:buy_quantity})
         else:
             if book.get_book_id() in book_dict:
                 book_dict[book.get_book_id()] += buy_quantity
                 print("This user has the book in cart")
                 cart_dict[user_id][0] = book_dict
+                msg = "Added to cart"
             else:
                 print(book_dict, 'no not in book dict')
                 print('This user does not has this book in cart')
@@ -562,7 +562,7 @@ def add_to_rent(id):
     except:
         print("Error while retrieving data from cart.db")
 
-        book = c.AddtoRent(id)
+    book = c.AddtoRent(id)
     if user_id in cart_dict:
         book_dict = cart_dict[user_id]
         print(book_dict)
@@ -594,7 +594,6 @@ def cart():
     user_id = get_user().get_user_id()
     cart_dict = {}
     cart_db = shelve.open('cart', 'c')
-    book_dict = {}
     book_db = shelve.open('book.db', 'r')
     books_dict = book_db['Books']
     book_db.close()
@@ -690,9 +689,9 @@ def delete_renting_cart(id):
     cart_db.close()
     return redirect(request.referrer)
 
-
 @app.route('/create-checkout-session/<total_price>', methods=['POST'])
 def create_checkout_session(total_price):
+    print("creating checkout session...")
     total_price = float(total_price)+5
     total_price *= 100
     total_price = int(total_price)
@@ -712,18 +711,61 @@ def create_checkout_session(total_price):
         payment_method_types=['card'],
         mode='payment',
         success_url='http://127.0.0.1:5000/orderconfirm',
-        cancel_url='http://127.0.0.1:5000/shopping_cart',
+        cancel_url=request.referrer,
     )
+    # Orderform = OrderForm.OrderForm(request.form)
+    # if request.method == 'POST' and Orderform.validate():
     return redirect(checkout_session.url)
 
-# # Checkout
-# @app.route("/checkout", methods=['GET', 'POST'])
-# def checkout():
-#     OrderForm = order_form.OrderForm(request.form)
-#     if request.method == 'POST' and OrderForm.validate():
-#         return render_template("checkout.html", form=OrderForm)
-#     return render_template("checkout.html", form=OrderForm)
+# Checkout
+@app.route("/checkout", methods=['GET', 'POST'])
+def checkout():
+    user_id = get_user().get_user_id()
+    cart_dict = {}
+    cart_db = shelve.open('cart', 'c')
+    book_db = shelve.open('book.db', 'r')
+    books_dict = book_db['Books']
+    book_db.close()
+    buy_count = 0
+    rent_count = 0
+    total_price = 0
+    buy_cart = {}
+    rent_cart = []
+    try:
+        cart_dict = cart_db['Cart']
+        print(cart_dict)
+    except:
+        print("Error while retrieving data from cart.db")
 
+    if user_id in cart_dict:
+        user_cart = cart_dict[user_id]
+        if user_cart[0] == '':
+            print('This user has nothing in the buying cart')
+        else:
+            buy_cart = user_cart[0]
+            # buy_count = len(user_cart[0])
+            for key in buy_cart:
+                buy_count += buy_cart[key]
+                total_price = float(total_price)
+                total_price += float(buy_cart[key]*books_dict[key].get_price())
+                total_price = float(("%.2f" % round(total_price, 2)))
+        if len(user_cart) == 1:
+            print('This user has nothing in the renting cart')
+        else:
+            rent_cart = user_cart[1]
+            rent_count = len(user_cart[1])
+            for book in rent_cart:
+                total_price += float(books_dict[book].get_price()) * 0.1
+                total_price = float(("%.2f" % round(total_price, 2)))
+    else:
+        return home2()
+    Orderform = OrderForm.OrderForm(request.form)
+    Orderform.validate()
+    # if request.method == 'POST' and Orderform.validate():
+    #     return render_template("checkout.html", form=Orderform)
+    return render_template("checkout.html", form=Orderform, total_price=total_price, buy_count=buy_count, rent_count=rent_count, buy_cart=buy_cart, rent_cart=rent_cart, books_dict=books_dict)
+
+# show confirmation page upon successful payment
 @app.route("/orderconfirm")
 def orderconfirm():
     user_id = get_user().get_user_id()
@@ -754,6 +796,7 @@ def orderconfirm():
     del cart_dict[user_id]
     cart_db['Cart'] = cart_dict
     print(cart_dict, 'updated database')
+    cart_db.close()
     return render_template("order_confirmation.html")
 
 # Checkout
