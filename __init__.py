@@ -9,7 +9,7 @@ import os
 import stripe
 
 # Import classes
-import Book, Cart as c, Order as o
+import Book, Cart as c
 from users import GuestDB, Guest, Customer, Admin
 from forms import SignUpForm, LoginForm, AccountPageForm, ChangePasswordForm, \
                   Enquiry, UserEnquiry, Faq, FaqEntry, Reply, AddBookForm, \
