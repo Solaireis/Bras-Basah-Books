@@ -14,28 +14,40 @@
 /* --------------------------------------------------------------------------
     1. Body Styling
 -------------------------------------------------------------------------- */
-.main-header {
-    font-family:"Playfair Display", "Times New Roman", serif;
+
+.p-align-text{
+    width:500px;
+    margin:0 auto;
+
 }
 
-.container-padding-50 {
-    padding-top:50px;
-}
+.h-align-text{
+    width:500px;
+    margin:0 auto;
 
-.container-padding-20 {
-    padding-top:20px;
-}
+    font-family:playfairdisplay;
+} 
 
-.hide-bp{
-    list-style:none;
-}
-
-.list-padding{
+.container-bg{
+    background-color:#FFF;
+    max-width:1000px;
+    border-radius:20px;
+    margin:0 auto;
     padding-bottom:10px;
+    padding-top:10px;
 }
 
-a.dashboard-links{
-    text-decoration:none !important;
-    color:#0065d1;
+.img-size{
+    max-width: 500px;
+    margin:0 auto;
+    display:block;
 }
 
+.links {
+    text-decoration: none; 
+    color: #4b8282; 
+}
+
+:hover.links{
+    color: #CB997E; 
+}
