@@ -797,8 +797,6 @@ def checkout():
             for book in rent_cart:
                 total_price += float(books_dict[book].get_price()) * 0.1
                 total_price = float(("%.2f" % round(total_price, 2)))
-    else:
-        return redirect(url_for("home"))
     Orderform = OrderForm.OrderForm(request.form)
     return render_template("checkout.html", form=Orderform, total_price=total_price, buy_count=buy_count, rent_count=rent_count, buy_cart=buy_cart, rent_cart=rent_cart, books_dict=books_dict)
 
@@ -853,70 +851,70 @@ def create_checkout_session(total_price):
 @app.route("/orderconfirm")
 def orderconfirm():
     user_id = get_user().get_user_id()
-    # db_order= []
-    # books_dict = {}
-    # db = shelve.open('database')
-    # cart_dict = db['Cart']
-    # db_pending = db['Pending_Order']
-    # books_dict = db['Books']
-    # # in case user hand itchy go and reload the page, bring them back to home page
-    # try:
-    #     new_order = db_pending[user_id]
-    #     cartvalue = cart_dict[user_id]
-    #
-    #     try:
-    #         db_order = db['Order']
-    #     except:
-    #         print("Error while loading data from database")
-    #         # return redirect(url_for("home"))
-    #
-    #     db_order.append(new_order)
-    #
-    #     print("cartvalue:", cartvalue)
-    #     try:
-    #         cartbuy = cartvalue[0]
-    #         print("cartbuy:", cartbuy)
-    #     except:
-    #         pass
-    #     if cartbuy != "":
-    #         for i in books_dict:
-    #             for x, y in zip(list(cartbuy.keys()), list(cartbuy.values())):
-    #                 if i == x:
-    #                     book = books_dict.get(i)
-    #                     print("qty b4", book.get_qty())
-    #                     newqty = int(book.get_qty()) - int(y)
-    #                     book.set_qty(newqty)
-    #                     print("qty aft", book.get_qty())
-    #
-    #     try:
-    #         cartrent = cartvalue[1]
-    #         print("cartrent:", cartrent)
-    #         if cartrent != "":
-    #             for i in books_dict:
-    #                 for x in cartrent:
-    #                     if i == x:
-    #                         book = books_dict.get(i)
-    #                         print("rent qty b4:", book.get_rented())
-    #                         newrented = int(book.get_rented()) + int(1)
-    #                         book.set_rented(newrented)
-    #                         print("rent qty aft:", book.get_rented())
-    #
-    #     except:
-    #         pass
-    #
-    #     del cart_dict[user_id]
-    #     del db_pending[user_id]
-    #     db['Books'] = books_dict
-    #     db['Pending_Order'] = db_pending
-    #     db['Order'] = db_order
-    #     db['Cart'] = cart_dict
-    #     print(db_pending, 'should not have pending order as user already check out')
-    #     print(cart_dict, 'updated database[cart]')
-    #     print(db_order, 'updated databas[order]')
-    # except KeyError:
-    #     return redirect(url_for("home"))
-    #
-    # db.close()
+      db_order= []
+    books_dict = {}
+    db = shelve.open('database')
+    cart_dict = db['Cart']
+    db_pending = db['Pending_Order']
+    books_dict = db['Books']
+    # in case user hand itchy go and reload the page, bring them back to home page
+    try:
+        new_order = db_pending[user_id]
+        cartvalue = cart_dict[user_id]
+
+        try:
+            db_order = db['Order']
+        except:
+            print("Error while loading data from database")
+            # return redirect(url_for("home"))
+
+        db_order.append(new_order)
+
+        print("cartvalue:", cartvalue)
+        try:
+            cartbuy = cartvalue[0]
+            print("cartbuy:", cartbuy)
+        except:
+            pass
+        if cartbuy != "":
+            for i in books_dict:
+                for x, y in zip(list(cartbuy.keys()), list(cartbuy.values())):
+                    if i == x:
+                        book = books_dict.get(i)
+                        print("qty b4", book.get_qty())
+                        newqty = int(book.get_qty()) - int(y)
+                        book.set_qty(newqty)
+                        print("qty aft", book.get_qty())
+
+        try:
+            cartrent = cartvalue[1]
+            print("cartrent:", cartrent)
+            if cartrent != "":
+                for i in books_dict:
+                    for x in cartrent:
+                        if i == x:
+                            book = books_dict.get(i)
+                            print("rent qty b4:", book.get_rented())
+                            newrented = int(book.get_rented()) + int(1)
+                            book.set_rented(newrented)
+                            print("rent qty aft:", book.get_rented())
+
+        except:
+            pass
+
+        del cart_dict[user_id]
+        del db_pending[user_id]
+        db['Books'] = books_dict
+        db['Pending_Order'] = db_pending
+        db['Order'] = db_order
+        db['Cart'] = cart_dict
+        print(db_pending, 'should not have pending order as user already check out')
+        print(cart_dict, 'updated database[cart]')
+        print(db_order, 'updated databas[order]')
+    except KeyError:
+        return redirect(url_for("home"))
+
+    db.close()
     return render_template("order_confirmation.html")
 
 #
