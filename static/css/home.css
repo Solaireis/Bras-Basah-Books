@@ -20,8 +20,13 @@ img:hover{
   color: #4b8282;
 }
 
-.home_quote a p:hover{
-  opacity: 0.8;
+.home_quote h5{
+    padding-bottom: 20px;
+}
+
+.home_quote a:hover{
+    text-decoration: underline;
+    opacity: 0.9;
 }
 
 .padding-15px {
