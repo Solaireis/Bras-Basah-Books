@@ -31,7 +31,11 @@ app.config.from_pyfile("config/app.cfg")  # Load config file
 app.config['UPLOAD_FOLDER'] = BOOK_IMG_UPLOAD_FOLDER  # Set upload folder
 app.config['MAX_CONTENT_LENGTH'] = 4 * 1024 * 1024  # Set maximum file upload limit (4MB)
 app.jinja_env.add_extension("jinja2.ext.do")  # Add do extenstion to jinja environment
-stripe.api_key = 'sk_test_51KPNSMLcZKZGRW8Qkzf58oSvjzX5LxhHQLBPZkmlCijcfXdhdXtXTTDXf3FqMHd1fd3kWcvxktgp7cj0ka4uSmzS00ilLjWTBX' # Stripe API Key
+# testing mode
+#stripe.api_key = 'sk_test_51KPNSMLcZKZGRW8Qkzf58oSvjzX5LxhHQLBPZkmlCijcfXdhdXtXTTDXf3FqMHd1fd3kWcvxktgp7cj0ka4uSmzS00ilLjWTBX' # Stripe API Key
+# live mode
+stripe.api_key = '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'
+
 
 # Serialiser for generating tokens
 url_serialiser = URLSafeTimedSerializer(app.config["SECRET_KEY"])
@@ -849,76 +853,76 @@ def create_checkout_session(total_price):
 @app.route("/orderconfirm")
 def orderconfirm():
     user_id = get_user().get_user_id()
-    db_order= []
-    books_dict = {}
-    db = shelve.open('database')
-    cart_dict = retrieve_db("Cart", db)
-    db_pending = retrieve_db("Pending_Order", db)
-    books_dict = retrieve_db("Books", db)
-    # in case user hand itchy go and reload the page, bring them back to home page
-    try:
-        new_order = db_pending[user_id]
-        cartvalue = cart_dict[user_id]
-
-        try:
-            db_order = db['Order']
-        except:
-            print("Error while loading data from database")
-            # return home2()
-
-        db_order.append(new_order)
-
-        print("cartvalue:", cartvalue)
-        try:
-            cartbuy = cartvalue[0]
-            print("cartbuy:", cartbuy)
-        except:
-            pass
-        if cartbuy != "":
-            for i in books_dict:
-                for x, y in zip(list(cartbuy.keys()), list(cartbuy.values())):
-                    if i == x:
-                        book = books_dict.get(i)
-                        print("qty b4", book.get_qty())
-                        newqty = int(book.get_qty()) - int(y)
-                        book.set_qty(newqty)
-                        print("qty aft", book.get_qty())
-
-        try:
-            cartrent = cartvalue[1]
-            print("cartrent:", cartrent)
-            if cartrent != "":
-                for i in books_dict:
-                    for x in cartrent:
-                        if i == x:
-                            book = books_dict.get(i)
-                            print("rent qty b4:", book.get_rented())
-                            newrented = int(book.get_rented()) + int(1)
-                            book.set_rented(newrented)
-                            print("rent qty aft:", book.get_rented())
-
-        except:
-            pass
-
-        del cart_dict[user_id]
-        del db_pending[user_id]
-        db['Books'] = books_dict
-        db['Pending_Order'] = db_pending
-        db['Order'] = db_order
-        db['Cart'] = cart_dict
-        print(db_pending, 'should not have pending order as user already check out')
-        print(cart_dict, 'updated database[cart]')
-        print(db_order, 'updated databas[order]')
-    except KeyError:
-        return redirect(url_for("home"))
-
-    db.close()
+    # db_order= []
+    # books_dict = {}
+    # db = shelve.open('database')
+    # cart_dict = db['Cart']
+    # db_pending = db['Pending_Order']
+    # books_dict = db['Books']
+    # # in case user hand itchy go and reload the page, bring them back to home page
+    # try:
+    #     new_order = db_pending[user_id]
+    #     cartvalue = cart_dict[user_id]
+    #
+    #     try:
+    #         db_order = db['Order']
+    #     except:
+    #         print("Error while loading data from database")
+    #         # return redirect(url_for("home"))
+    #
+    #     db_order.append(new_order)
+    #
+    #     print("cartvalue:", cartvalue)
+    #     try:
+    #         cartbuy = cartvalue[0]
+    #         print("cartbuy:", cartbuy)
+    #     except:
+    #         pass
+    #     if cartbuy != "":
+    #         for i in books_dict:
+    #             for x, y in zip(list(cartbuy.keys()), list(cartbuy.values())):
+    #                 if i == x:
+    #                     book = books_dict.get(i)
+    #                     print("qty b4", book.get_qty())
+    #                     newqty = int(book.get_qty()) - int(y)
+    #                     book.set_qty(newqty)
+    #                     print("qty aft", book.get_qty())
+    #
+    #     try:
+    #         cartrent = cartvalue[1]
+    #         print("cartrent:", cartrent)
+    #         if cartrent != "":
+    #             for i in books_dict:
+    #                 for x in cartrent:
+    #                     if i == x:
+    #                         book = books_dict.get(i)
+    #                         print("rent qty b4:", book.get_rented())
+    #                         newrented = int(book.get_rented()) + int(1)
+    #                         book.set_rented(newrented)
+    #                         print("rent qty aft:", book.get_rented())
+    #
+    #     except:
+    #         pass
+    #
+    #     del cart_dict[user_id]
+    #     del db_pending[user_id]
+    #     db['Books'] = books_dict
+    #     db['Pending_Order'] = db_pending
+    #     db['Order'] = db_order
+    #     db['Cart'] = cart_dict
+    #     print(db_pending, 'should not have pending order as user already check out')
+    #     print(cart_dict, 'updated database[cart]')
+    #     print(db_order, 'updated databas[order]')
+    # except KeyError:
+    #     return redirect(url_for("home"))
+    #
+    # db.close()
     return render_template("order_confirmation.html")
 
 #
 # Admin manage orders
 #
-@app.route("/manage_orders")
+@app.route("/admin/manage_orders")
 def manage_orders():
     db_order = []
     new_order = []
@@ -959,7 +963,7 @@ def manage_orders():
 #
 # Admin update order status
 #
-@app.route("/manage_orders/edit_status/<order_id>", methods=['GET', 'POST'])
+@app.route("/admin/manage_orders/edit_status/<order_id>", methods=['GET', 'POST'])
 def edit_status(order_id):
     db_order = []
     order_status = request.form['order-status']
