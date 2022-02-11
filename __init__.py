@@ -30,6 +30,7 @@ app = Flask(__name__)
 app.config.from_pyfile("config/app.cfg")  # Load config file
 app.config['UPLOAD_FOLDER'] = BOOK_IMG_UPLOAD_FOLDER  # Set upload folder
 app.config['MAX_CONTENT_LENGTH'] = 4 * 1024 * 1024  # Set maximum file upload limit (4MB)
+app.jinja_env.add_extension("jinja2.ext.do")  # Add do extenstion to jinja environment
 stripe.api_key = 'sk_test_51KPNSMLcZKZGRW8Qkzf58oSvjzX5LxhHQLBPZkmlCijcfXdhdXtXTTDXf3FqMHd1fd3kWcvxktgp7cj0ka4uSmzS00ilLjWTBX' # Stripe API Key
 
 # Serialiser for generating tokens
@@ -105,7 +106,7 @@ def get_last_book_id():
 
     books_dict = {}
     db = shelve.open('database', 'r')
-    books_dict = retrieve_db("Books", db)
+    books_dict = db['Books']
     db.close()
 
     id_list = list(books_dict.keys())
@@ -176,13 +177,8 @@ def before_request():
 
 
 # Home page
-@app.route("/home")
-def home():
-    return render_template("home.html")
-
-# Home page v2
 @app.route("/")
-def home2():
+def home():
 
     try:
         books_dict = {}
@@ -249,11 +245,13 @@ def sign_up():
             # Ensure that email and username are not registered yet
             if username.lower() in username_to_user_id:
                 if DEBUG: print("Sign-up: username already exists")
-                session["DisplayFieldError"] = True
+                session["DisplayFieldError"] = session["SignUpUsernameError"] = True
+                flash("Username taken", "sign-up-username-error")
                 return render_template("user/sign_up.html", form=sign_up_form)
             elif email in email_to_user_id:
                 if DEBUG: print("Sign-up: email already exists")
-                session["DisplayFieldError"] = True
+                session["DisplayFieldError"] = session["SignUpEmailError"] = True
+                flash("Email already registered", "sign-up-email-error")
                 return render_template("user/sign_up.html", form=sign_up_form)
 
             # Create customer
@@ -796,7 +794,7 @@ def checkout():
                 total_price += float(books_dict[book].get_price()) * 0.1
                 total_price = float(("%.2f" % round(total_price, 2)))
     else:
-        return home2()
+        return redirect(url_for("home"))
     Orderform = OrderForm.OrderForm(request.form)
     return render_template("checkout.html", form=Orderform, total_price=total_price, buy_count=buy_count, rent_count=rent_count, buy_cart=buy_cart, rent_cart=rent_cart, books_dict=books_dict)
 
@@ -854,9 +852,9 @@ def orderconfirm():
     db_order= []
     books_dict = {}
     db = shelve.open('database')
-    cart_dict = db['Cart']
-    db_pending = db['Pending_Order']
-    books_dict = db['Books']
+    cart_dict = retrieve_db("Cart", db)
+    db_pending = retrieve_db("Pending_Order", db)
+    books_dict = retrieve_db("Books", db)
     # in case user hand itchy go and reload the page, bring them back to home page
     try:
         new_order = db_pending[user_id]
@@ -912,7 +910,8 @@ def orderconfirm():
         print(cart_dict, 'updated database[cart]')
         print(db_order, 'updated databas[order]')
     except KeyError:
-        return home2()
+        return redirect(url_for("home"))
+
     db.close()
     return render_template("order_confirmation.html")
 
@@ -925,6 +924,7 @@ def manage_orders():
     new_order = []
     prepare_order = []
     fulfilled_order = []
+    books_dict = {}
     try:
         db = shelve.open('database')
         books_dict = db['Books']
@@ -981,6 +981,9 @@ def edit_status(order_id):
     print(order.get_order_status())
     return redirect(request.referrer)
 
+#
+# enquiry page
+#
 #
 # enquiry page
 #
@@ -1381,7 +1384,9 @@ def retrieve_cu_coupons():
                 coupon_list_final.append(coupon_dict.get(key))
 
     return render_template('coupon/retrieve_cust_coupons.html', count=len(coupon_list_final), coupon_list=coupon_list_final)
-
+#
+#End of eden codes
+#    
 lang_list = [('', 'Select'), ('English', 'English'), ('Chinese', 'Chinese'), ('Malay', 'Malay'), ('Tamil', 'Tamil')]
 cat_list = [('', 'Select'), ('Action & Adventure', 'Action & Adventure'), ('Classic', 'Classic'), ('Comic', 'Comic'), ('Detective & Mystery', 'Detective & Mystery')]
 
@@ -1462,8 +1467,8 @@ def inventory():
 
     try:
         books_dict = {}
-        db = shelve.open('database')
-        books_dict = retrieve_db("Books")
+        db = shelve.open('database', 'r')
+        books_dict = db['Books']
         db.close()
 
     except:
@@ -1626,6 +1631,10 @@ def page_not_found(e):
 
 
 # Only during production. To be removed when published.
+# temp home page
+@app.route("/temp-home")
+def temp_home():
+    return render_template("home.html")
 @app.route("/test", methods=["GET", "POST"])  # To go to test page: http://127.0.0.1:5000/test
 def test():
     # Get current (guest) user

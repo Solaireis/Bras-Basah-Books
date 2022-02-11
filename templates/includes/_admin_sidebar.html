@@ -1,0 +1,11 @@
+{% from "includes/_render_sidebar.html" import render_sidebar %}
+{% macro admin_sidebar(active) %}
+  {% set links_dict = {
+    "Dashboard": url_for("home"),
+    "Inventory": url_for("home"),
+    "Manage Accounts": url_for("home"),
+    "Create Coupons": url_for("home")
+  } %}
+  {% do links_dict.update({active: "#"}) %}
+  {{ render_sidebar(links_dict) }}
+{% endmacro %}
