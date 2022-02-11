@@ -54,6 +54,8 @@
                             <th>Enquiry Code Type</th>
                             <th>Enquiry Type</th>
                             <th>Comments</th>
+                            <th>User Type</th>
+                            <th>Reply</th>
                             <th colspan = "2" style="text-align:center;"> Actions</th>
 
                         </tr>
@@ -65,6 +67,7 @@
                             <td>{{enquiry.get_name()}}</td>
                             <td>{{enquiry.get_enquiry_type()}}</td>
                             <td>{{enquiry.get_email()}}</td>
+                            <td>{{enquiry.get_comments()}}</td>
                             <td>{{enquiry.get_UserType()}}</td>
 
                             {% if enquiry.get_enquiry_type() == "B" %}
@@ -76,6 +79,7 @@
 
                             {% endif %}
                             <td>{{enquiry.get_comments()}}</td>
+                            <td>{{enquiry.get_reply()}}</td>
                             <td>
                                 <a href ="/update-enq/{{enquiry.get_count()}}" class="btn btn-warning">Update</a>
                             </td>
