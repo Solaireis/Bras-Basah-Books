@@ -32,6 +32,8 @@
     display: inline;
     margin-right: 1.5rem;
 }
-.nav-link{
-    transition: none;
+
+#profilePic {
+    width: 175px;
+    border-radius: 100%;
 }

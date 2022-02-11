@@ -38,8 +38,7 @@ mail = Mail()  # Mail object for sending emails
 
 
 # Added type hintings as I needed my editor to recognise the type
-def retrieve_db(key, db, value=None) -> Union[\
-    Dict[str, Customer], Dict[str, Admin], GuestDB[str, Guest], Dict[str, Book.Book]]:
+def retrieve_db(key, db, value=None) -> Union[Dict[str, Customer], Dict[str, Admin], GuestDB[str, Guest], Dict[str, Book.Book]]:
     """ Retrieves object from database using key """
     try:
         value = db[key]  # Retrieve object
@@ -457,7 +456,7 @@ def account():
 
                 # If image uploaded, set profile pic
                 if file is not None:
-                    user.profile_pic_set()
+                    user.set_profile_pic()
 
                 # Save changes to database
                 db["Customers"] = customers_db

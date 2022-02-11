@@ -24,9 +24,9 @@
       <hr>
       <form method="POST" enctype="multipart/form-data" action="">
         <div class="mb-3 row">
-          <label for="picture" class="col-md-2 col-form-label text-md-end">Picture</label>
+          <label for="picture" class="col-md-2 col-form-label text-md-end mt-auto">Picture</label>
           <div class="col-md-10">
-            <img src="{{ picture_path }}" alt="" class="form-control" id="profilePic">
+            <img src="{{ picture_path }}" alt="" id="profilePic">
             {{ render_field(form.picture, accept="image/*", class="form-control", id="picture", onchange="document.getElementById('profilePic').src = window.URL.createObjectURL(this.files[0])") }}
           </div>
         </div>
