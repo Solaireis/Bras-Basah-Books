@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}My Account - {{ display_name }}{% endblock %}
+{% block title %}Manage Accounts{% endblock %}
 
 {% block stylesheets %}
 <link rel="stylesheet" href="/static/css/user.css">
@@ -8,20 +8,19 @@
 
 {% block content %}
 {% from "includes/_render_breadcrumb.html" import render_breadcrumb %}
-{% from "includes/_login_render_field.html" import render_field %}
-{% from "includes/_user_sidebar.html" import user_sidebar %}
+{% from "includes/_admin_sidebar.html" import admin_sidebar %}
 
 {# Render breadcrumbs #}
 {{ render_breadcrumb({
   "Home": url_for("home"),
-  "My Account": "#"
+  "Manage Account": "#"
 }) }}
 
 {# Container to contain display for user related things #}
 <div class="container user-container">
   <div class="row">
     {# Render sidebar using dictionary #}
-    {{ user_sidebar("My Account") }}
+    {{ admin_sidebar("Manage Accounts") }}
     <div class="col-lg-10 py-3 px-5">
       <h2>Account settings</h2>
       <hr>

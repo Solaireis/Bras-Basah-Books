@@ -226,6 +226,11 @@ header .nav-link{
 }
 
 /* breadcrumb */
+.breadcrumb {
+  margin-bottom: 0.5rem;
+  margin-left: 0.2rem;
+  font-size: 0.9rem;
+}
 .breadcrumb-item a{
   color:#4b8282;
   text-decoration: none;
