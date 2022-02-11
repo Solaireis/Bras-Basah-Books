@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Accounts{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="/static/css/user.css">
+{% endblock %}
+
+{% block content %}
+{% from "includes/_render_breadcrumb.html" import render_breadcrumb %}
+{% from "includes/_admin_sidebar.html" import admin_sidebar %}
+
+{# Render breadcrumbs #}
+{{ render_breadcrumb({
+  "Home": url_for("home"),
+  "Manage Account": "#"
+}) }}
+
+{# Container to contain display for user related things #}
+<div class="container user-container">
+  <div class="row">
+    {# Render sidebar using dictionary #}
+    {{ admin_sidebar("Manage Accounts") }}
+    <div class="col-lg-10 py-3 px-5">
+      <h2>Account settings</h2>
+      <hr>
+      <form method="POST" enctype="multipart/form-data" action="">
+        <div class="mb-3 row">
+          <label for="picture" class="col-md-2 col-form-label text-md-end mt-auto">Picture</label>
+          <div class="col-md-10">
+            <div class="profile-pic-wrapper align-bottom d-inline-block">
+              <div class="img-wrapper img-1-1">
+                <img src="{{ picture_path }}" alt="" id="profilePic">
+              </div>
+            </div>
+            <label for="picture" tabindex="0" class="profile-pic-input align-bottom">Upload Image</label>
+          </div>
+          {{ render_field(form.picture, accept="image/*", class="d-none", id="picture", onchange="document.getElementById('profilePic').src = window.URL.createObjectURL(this.files[0])") }}
+        </div>
+        <div class="mb-3 row">
+          <label for="username" class="col-md-2 col-form-label text-md-end">Username</label>
+          <div class="col-md-10">
+            <div class="form-control no-format-form" id="username">{{ username }} <a href="#">Change</a></div>
+          </div>
+        </div>
+        <div class="mb-3 row">
+          <label for="name" class="col-md-2 col-form-label text-md-end">Name</label>
+          <div class="col-md-10">
+            {{ render_field(form.name, class="form-control", id="name") }}
+          </div>
+        </div>
+        <div class="mb-3 row">
+          <label for="email" class="col-md-2 col-form-label text-md-end">Email</label>
+          <div class="col-md-10">
+            <div class="form-control no-format-form" id="email">{{ email }} <a href="{{ url_for('verify_send') }}">Verify Email</a></div>
+          </div>
+        </div>
+        <div class="mb-3 row">
+          <label for="password" class="col-md-2 col-form-label text-md-end">Password</label>
+          <div class="col-md-10">
+            <div class="form-control no-format-form" id="password">******  <a href="{{ url_for('password_change') }}">Change</a></div>
+          </div>
+        </div>
+        <div class="mb-3 row">
+          <label for="gender" class="col-md-2 col-form-label text-md-end">Gender</label>
+          <div class="col-md-10">
+            {{ render_field(form.gender, class="form-control no-format-form", id="gender") }}
+          </div>
+        </div>
+        <div class="mb-3 row">
+          <div class="col-md-2 col-form-label"></div>
+          <div class="col-md-10">
+            <input type="submit" value="Save changes" class="btn defaultbtn"/>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<a href="{{ url_for('logout') }}">Logout here</a>
+{% endblock %}
