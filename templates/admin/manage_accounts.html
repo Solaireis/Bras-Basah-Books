@@ -24,8 +24,42 @@
     <div class="col-lg-10 py-3 px-5">
       <h2>User account overview</h2>
       <hr>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Account ID</th>
+              <th scope="col">Type</th>
+              <th scope="col">Username</th>
+              <th scope="col">Email</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user_id, user in users.items() %}
+            <tr>
+              <td>{{ user_id }}</td>
+              <td>{{ user.__class__.__name__ }}</td>
+              <td>{{ user.get_username() }}</td>
+              <td>{{ user.get_email() }}</td>
+              <td>
+                <a href="#">
+                  <i class="fa-solid fa-pen" data-bs-toggle="tooltip" title="Edit"></i>
+                </a>
+                <a href="#">
+                  <i class="fa-solid fa-trash" data-bs-toggle="tooltip" title="Delete"></i>
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
-<a href="{{ url_for('logout') }}">Logout here</a>
+{% endblock %}
+
+{% block scripts %}
+<script>[].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]')).map(trigger => new bootstrap.Tooltip(trigger));</script>
 {% endblock %}
