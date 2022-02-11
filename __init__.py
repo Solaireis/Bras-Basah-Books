@@ -560,6 +560,9 @@ def manage_accounts():
     if not isinstance(user, Admin):
         return redirect(url_for("home"))
 
+    with shelve.open("database") as db:
+        pass
+
     return render_template("admin/manage_accounts.html")
 
 
