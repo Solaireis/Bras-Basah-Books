@@ -1086,7 +1086,7 @@ def count_id(Table):
     the_dict = db[Table]
     db.close()
 
-    count = [0]
+    count = [0] #test
     for key in the_dict:
         count.append(key)
     
