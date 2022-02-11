@@ -102,9 +102,31 @@ class Order_Detail(User_Order):
         return rent_item
     def get_total_price(self):
         return self.total_price
+    def get_buy_count(self):
+        buy_count = 0
+        buy_item = self.get_buy_item()
+        if buy_item == '':
+            buy_count = 0
+        else:
+            for quantity in buy_item:
+                buy_count += buy_item[quantity]
+        return buy_count
+    def get_rent_count(self):
+        rent_item = self.get_rent_item()
+        if rent_item == '':
+            rent_count = 0
+        else:
+            rent_count = len(rent_item)
+        return rent_count
+    def get_item_count(self):
+        buy_count = self.get_buy_count()
+        rent_count = self.get_rent_count()
+        item_count = buy_count + rent_count
+        return item_count
 
     # update order status as an admin
     def set_order_status(self, order_status):
         ship_info = self.get_ship_info()
         ship_info['order_status'] =  order_status
         return order_status
+
