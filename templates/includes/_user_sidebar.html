@@ -1,0 +1,11 @@
+{% from "includes/_render_sidebar.html" import render_sidebar %}
+{% macro user_sidebar(active) %}
+  {% set links_dict = {
+    "My Account": url_for("account"),
+    "My Orders": url_for("home"),
+    "My Wishlist": url_for("home"),
+    "My Coupons": url_for("home")
+  } %}
+  {% do links_dict.update({active: "#"}) %}
+  {{ render_sidebar(links_dict) }}
+{% endmacro %}
