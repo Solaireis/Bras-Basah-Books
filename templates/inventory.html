@@ -30,6 +30,7 @@
         <th>Author</th>
         <th>Price ($)</th>
         <th>Quantity</th>
+        <th>Rented</th>
         <th>Action</th>
         <th></th>
         <th></th>
@@ -58,13 +59,7 @@
         <td>{{ book.get_author() }}</td>
         <td>{{ book.get_price() }}</td>
         <td>{{ book.get_qty() }}</td>
-<!--        {% if book.get_action() == "B" %}-->
-<!--        <td>Buy</td>-->
-<!--        {% elif book.get_action() == "R" %}-->
-<!--        <td>Rent</td>-->
-<!--        {% elif book.get_action() == "BR" %}-->
-<!--        <td>Buy and Rent</td>-->
-<!--        {% endif %}-->
+        <td>{{ book.get_rented() }}</td>
         <td>{{ book.get_action() }}</td>
         <td><a href="/update-book/{{book.get_book_id()}}" class="btn btn-warning">Update</a></td>
         <td>

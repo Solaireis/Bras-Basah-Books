@@ -19,7 +19,7 @@ class Book:
 
     count_id = 0
 
-    def __init__(self, language, category, age, action, title, author, price, qty, desc, img):
+    def __init__(self, language, category, age, action, title, author, price, qty, desc, img, rented):
         Book.count_id += 1
         self.__book_id = Book.count_id
         self.__language = language
@@ -32,6 +32,7 @@ class Book:
         self.__qty = qty
         self.__desc = desc
         self.__img = img
+        self.__rented = rented
 
     # Mutator methods
 
@@ -68,6 +69,9 @@ class Book:
     def set_img(self, img):
         self.__img = img
 
+    def set_rented(self, rented):
+        self.__rented = rented
+
     # Accessor methods
     def get_book_id(self):
         return self.__book_id
@@ -101,3 +105,6 @@ class Book:
 
     def get_img(self):
         return self.__img
+
+    def get_rented(self):
+        return self.__rented

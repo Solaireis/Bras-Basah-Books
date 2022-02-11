@@ -103,7 +103,7 @@ def get_last_book_id():
     """ Return the ID of the last book """
 
     books_dict = {}
-    db = shelve.open('book.db', 'r')
+    db = shelve.open('database', 'r')
     books_dict = db['Books']
     db.close()
 
@@ -185,7 +185,7 @@ def home2():
 
     try:
         books_dict = {}
-        db = shelve.open('book.db', 'r')
+        db = shelve.open('database', 'r')
         books_dict = db['Books']
         db.close()
 
@@ -647,7 +647,7 @@ def cart():
     user_id = get_user().get_user_id()
     cart_dict = {}
     cart_db = shelve.open('database', 'c')
-    book_db = shelve.open('book.db')
+    book_db = shelve.open('database')
     books_dict = book_db['Books']
     book_db.close()
     buy_count = 0
@@ -748,7 +748,7 @@ def checkout():
     user_id = get_user().get_user_id()
     cart_dict = {}
     cart_db = shelve.open('database', 'c')
-    book_db = shelve.open('book.db', 'r')
+    book_db = shelve.open('database', 'r')
     books_dict = book_db['Books']
     book_db.close()
     buy_count = 0
@@ -764,7 +764,7 @@ def checkout():
         db.close()
     except:
         pass
-    print(db_pending, 'should not have pending order as user cancel check out')
+    # print(db_pending, 'should not have pending order as user cancel check out')
 
     try:
         cart_dict = cart_db['Cart']
@@ -851,7 +851,7 @@ def orderconfirm():
     db_order= []
     books_dict = {}
     #cart_db = shelve.open('cart', 'c')
-    book_db = shelve.open('book.db', 'w')
+    book_db = shelve.open('database', 'w')
     db = shelve.open('database', 'c')
     cart_dict = db['Cart']
     db_pending = db['Pending_Order']
@@ -868,18 +868,37 @@ def orderconfirm():
 
         db_order.append(new_order)
 
-        print(cartvalue)
-        for i in cartvalue:
-            cartvalue2 = i
-        print(cartvalue2)
-        for i in books_dict:
-            for x, y in zip(list(cartvalue2.keys()), list(cartvalue2.values())):
-                if i == x:
-                    book = books_dict.get(i)
-                    print("qty b4", book.get_qty())
-                    newqty = int(book.get_qty()) - int(y)
-                    book.set_qty(newqty)
-                    print("qty aft", book.get_qty())
+        print("cartvalue:", cartvalue)
+        try:
+            cartbuy = cartvalue[0]
+            print("cartbuy:", cartbuy)
+        except:
+            pass
+        if cartbuy != "":
+            for i in books_dict:
+                for x, y in zip(list(cartbuy.keys()), list(cartbuy.values())):
+                    if i == x:
+                        book = books_dict.get(i)
+                        print("qty b4", book.get_qty())
+                        newqty = int(book.get_qty()) - int(y)
+                        book.set_qty(newqty)
+                        print("qty aft", book.get_qty())
+
+        try:
+            cartrent = cartvalue[1]
+            print("cartrent:", cartrent)
+            if cartrent != "":
+                for i in books_dict:
+                    for x in cartrent:
+                        if i == x:
+                            book = books_dict.get(i)
+                            print("rent qty b4:", book.get_rented())
+                            newrented = int(book.get_rented()) + int(1)
+                            book.set_rented(newrented)
+                            print("rent qty aft:", book.get_rented())
+
+        except:
+            pass
 
         del cart_dict[user_id]
         del db_pending[user_id]
@@ -977,7 +996,7 @@ def create_faq():
     return render_template("faq/create_faq.html", form=create_faq_form)
 
 #
-# counter for generating id 
+# counter for generating id
 #
 def count_id(Table):
     the_dict = {}
@@ -1203,7 +1222,7 @@ def request_coupons():
     if request.method == 'POST' and request_coupons.validate():
         db = shelve.open('database','c')
         coupon_dict = retrieve_db('Coupon',db)
-        
+
         coupon_list = []
         for key in coupon_dict:
             coupon = coupon_dict.get(key)
@@ -1222,7 +1241,7 @@ def request_coupons():
                     return redirect(url_for('retrieve_cu_coupons'))
             else:
                 print('no match for coupon')
-    
+
     return render_template('coupon/customer_coupons.html', form=request_coupons)
 
 @app.route('/retrieve-customer-coupons', methods=['GET', 'POST'])
@@ -1232,7 +1251,7 @@ def retrieve_cu_coupons():
     customer_dict = retrieve_db('Customers',db)
     db.close()
 
-    
+
     customer = customer_dict.get(session["UserID"])
     coupon_list = customer.get_coupons()
 
@@ -1260,19 +1279,19 @@ def add_book():
     add_book_form.category.choices = cat_list
     if request.method == "POST" and add_book_form.validate():
         books_dict = {}
-        db = shelve.open('book.db', 'c')
+        db = shelve.open('database', 'c')
 
         try:
             books_dict = db['Books']
         except:
-            print("Error in retrieving Books from book.db")
+            print("Error in retrieving Books from database")
 
         try:
             Book.Book.count_id = get_last_book_id()
         except:
             print("First time adding book so last book id not needed")
 
-        book = Book.Book(add_book_form.language.data, add_book_form.category.data, add_book_form.age.data, add_book_form.action.data, add_book_form.title.data, add_book_form.author.data, add_book_form.price.data, add_book_form.qty.data, add_book_form.desc.data, add_book_form.img.data)
+        book = Book.Book(add_book_form.language.data, add_book_form.category.data, add_book_form.age.data, add_book_form.action.data, add_book_form.title.data, add_book_form.author.data, add_book_form.price.data, add_book_form.qty.data, add_book_form.desc.data, add_book_form.img.data, rented=0)
 
         if add_book_form.language2.data != "":
             book.set_language(add_book_form.language2.data)
@@ -1315,7 +1334,7 @@ def add_book():
         # Test codes
         books_dict = db['Books']
         book = books_dict[book.get_book_id()]
-        print(book.get_title(), book.get_price(), "was stored in book.db successfully with book_id==", book.get_book_id())
+        print(book.get_title(), book.get_price(), "was stored in database successfully with book_id==", book.get_book_id())
         db.close()
         flash("Book successfully added!")
         # return redirect(url_for('inventory'))
@@ -1329,7 +1348,7 @@ def inventory():
 
     try:
         books_dict = {}
-        db = shelve.open('book.db', 'r')
+        db = shelve.open('database', 'r')
         books_dict = db['Books']
         db.close()
 
@@ -1352,7 +1371,7 @@ def update_book(id):
     update_book_form.category.choices = cat_list
     if request.method == 'POST' and update_book_form.validate():
         books_dict = {}
-        db = shelve.open('book.db', 'w')
+        db = shelve.open('database', 'w')
         books_dict = db['Books']
 
         book = books_dict.get(id)
@@ -1402,7 +1421,7 @@ def update_book(id):
 
     else:
         books_dict = {}
-        db = shelve.open('book.db', 'r')
+        db = shelve.open('database', 'r')
         books_dict = db['Books']
         db.close()
 
@@ -1427,7 +1446,7 @@ def update_book(id):
 @app.route('/delete-book/<int:id>', methods=['POST'])
 def delete_book(id):
     books_dict = {}
-    db = shelve.open('book.db', 'w')
+    db = shelve.open('database', 'w')
     books_dict = db['Books']
 
     book = books_dict.get(id)
@@ -1450,7 +1469,7 @@ def delete_book(id):
 # Book info page v2
 @app.route('/book/<int:id>', methods=['GET', 'POST'])
 def book_info2(id):
-    book_db = shelve.open('book.db', 'r')
+    book_db = shelve.open('database', 'r')
     books_dict = book_db['Books']
     book_db.close()
 
@@ -1487,8 +1506,8 @@ def about():
 #
 # Error handling page
 #
-@app.errorhandler(404) 
-def page_not_found(e): 
+@app.errorhandler(404)
+def page_not_found(e):
     return render_template("error/404.html")
 
 
