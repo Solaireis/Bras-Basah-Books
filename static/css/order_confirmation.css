@@ -1,0 +1,26 @@
+
+section{
+    margin-top: 60px;
+    background: white;
+    padding: 20px;
+}
+
+section h1{
+    text-align: center;
+    font-size: 2.8em;
+}
+
+section p{
+    padding-top: 20px;
+    text-align: center;
+    font-size: 1.2em;
+}
+
+section p a{
+    color: #4b8282;
+}
+
+section p a:hover{
+    color: #4b8282;
+    opacity: 0.9;
+}
