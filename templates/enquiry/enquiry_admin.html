@@ -80,9 +80,17 @@
                             {% endif %}
                             <td>{{enquiry.get_comments()}}</td>
                             <td>{{enquiry.get_reply()}}</td>
+
+                            {% if enquiry.get_UserType() == "Customer" %}
                             <td>
-                                <a href ="/update-enq/{{enquiry.get_count()}}" class="btn btn-warning">Update</a>
+                                <a href ="/update-enq/{{enquiry.get_count()}}" class="btn btn-warning">Reply</a>
                             </td>
+                            {% elif enquiry.get_UserType() == "Guest" %}
+                            <td>
+                                <a href ="/mail-enq/{{enquiry.get_count()}}" class="btn btn-warning">Reply</a>
+                            </td>
+
+                            {% endif %}
                             <td>
                                 <form action="{{url_for('delete_enq',id=enquiry.get_count())}}" method="POST">
                                     <input type="submit" value="Delete" class="btn btn-danger">

@@ -1114,8 +1114,60 @@ def update_enq(id):
         update_enquiry.email.data = enquiry_id.get_email()
         update_enquiry.enquiry_type.data = enquiry_id.get_enquiry_type()
         update_enquiry.comments.data = enquiry_id.get_comments()
+        update_enquiry.reply.data = enquiry_id.get_reply()
 
         return render_template('enquiry/enquiry_adm_upd.html', form= update_enquiry)
+
+#
+# to mail to guest, creation of forms
+#
+@app.route('/mail-enq/<int:id>/', methods=['GET', 'POST'])
+def mail_enq(id):
+    mail_enquiry = ReplyEnquiry(request.form)
+
+    if request.method == 'POST' and mail_enquiry.validate():
+        users_dict={}
+        db = shelve.open('database','w')
+        enquiry_dict = db['Enquiry']
+
+        #updates the database for admins to see
+        enquiry_id = enquiry_dict.get(id)
+        enquiry_id.set_name(mail_enquiry.name.data)
+        enquiry_id.set_email(mail_enquiry.email.data)
+        enquiry_id.set_enquiry_type(mail_enquiry.enquiry_type.data)
+        enquiry_id.set_comments(mail_enquiry.comments.data)
+        enquiry_id.set_reply(mail_enquiry.reply.data)
+        db['Enquiry'] = enquiry_dict
+        db.close()
+
+        #sends the mail to the guest
+        app.config.from_pyfile("config/noreply_email.cfg")
+        mail.init_app(app)
+
+        msg = Message(subject="Enquiry", 
+                    sender=("BrasBasahBooks", "noreplybbb02@gmail.com"), 
+                    recipients=[enquiry_id.get_email()])
+        msg.body = "Dear " + enquiry_id.get_name() + ",\n\n" + enquiry_id.get_reply() \
+                    + "\n\n" + "Regards,\n" + "BrasBasahBooks"
+        mail.send(msg)
+
+        flash(f"Verification email sent to {enquiry_id.get_email()}")
+        return redirect(url_for('enquiry_retrieve_adm'))
+
+    else:
+        enquiry_dict = {}
+        db = shelve.open('database','w')
+        enquiry_dict = db['Enquiry']
+        db.close()
+
+        enquiry_id = enquiry_dict.get(id)
+        mail_enquiry.name.data = enquiry_id.get_name()
+        mail_enquiry.email.data = enquiry_id.get_email()
+        mail_enquiry.enquiry_type.data = enquiry_id.get_enquiry_type()
+        mail_enquiry.comments.data = enquiry_id.get_comments()
+        mail_enquiry.reply.data = enquiry_id.get_reply()
+
+        return render_template('enquiry/enq_adm_mail.html', form= mail_enquiry)
 
 # delete Enquiry
 @app.route('/delete-enq/<int:id>',methods=['POST'])
