@@ -24,6 +24,7 @@ class Customer(User):
         __gender (str): gender of customer - "M" for male, "F" for female, "O" for other
         __coupons (list): list of the coupons owned by customer
         __orders (list): list of the orders made by customer
+        __enquiry (list): list of enquiry made by the customer
     """
 
     def __init__(self, username, email, password):
@@ -37,6 +38,7 @@ class Customer(User):
         self.__gender = ""
         self.__coupons = []
         self.__orders = []
+        self.__enquiry = []
 
     def __repr__(self):
         return super().__repr__(username=self.__username, email=self.__email)
@@ -108,4 +110,12 @@ class Customer(User):
     # Eden integration
     def add_coupons(self,coupon_code):
         self.__coupons.append(coupon_code)
+
+    def add_enquiry(self,enquiry):
+        self.__enquiry.append(enquiry)
     
+    def get_enquiry(self):
+        return self.__enquiry
+    
+    def set_enquiry(self,enquiry):
+        self.__enquiry = enquiry
