@@ -49,6 +49,23 @@ a:hover{
   width: 100%;
 }
 
+.radio{
+    padding: 10px;
+    margin-bottom: 10px;
+    background: white;
+    border-radius: 5px;
+}
+
+.radio h5{
+    padding: 5px;
+}
+
+.float-right{
+    float: right;
+    font-size: 1.3em;
+    padding-right: 5px;
+}
+
 /* Order Summary */
 .order_summary{
     overflow-y: auto;
