@@ -25,10 +25,20 @@
 <!--          <h5>Self-collection<span>Free</span></h5>-->
 <!--          <p>Reserve online, collect at <a href="#">our store</a>.</p>-->
 <!--        </button>-->
-        <form method="POST" class="row checkout-form" action="/create-checkout-session/{{ total_price }}">
+        <form method="POST" class="row checkout-form" id="checkout" action="/create-checkout-session/{{ total_price }}">
             <h5>Shipping Option</h5>
             <div class="form-group col-12">
-                {{ render_field(form.ship_method, class="form-control", style="list-style-type:none") }}
+<!--                render_field(form.ship_method, class="form-control radio-select") -->
+                <div class="radio">
+                    <input type="radio" id="delivery" onchange="get_radio_value(this)" name="ship-method" value="Standard Delivery" checked="checked">
+                    <label for="delivery"><h5> Standard Delivery (3 - 5 business days)</h5> </label>
+                    <span class="float-right">$5.00</span>
+                </div>
+                <div class="radio">
+                    <input type="radio" id="collection" onchange="get_radio_value(this)" name="ship-method" value="Self-collection">
+                    <label for="collection"><h5> Self-collection </h5></label>
+                    <span class="float-right">FREE</span>
+                </div>
             </div>
             <h5>Shipping Address</h5>
             <div class="form-group col-12">
@@ -85,9 +95,9 @@
           <tr class="bottom-sticky">
               <td colspan="4">
                   <h6>Subtotal <span class="float_right">${{ total_price }}</span></h6>
-                  <h6>Shipping <span class="float_right">$5.0</span></h6>
+                  <h6>Shipping <span class="float_right" id="shipping_fee">$5.00</span></h6>
                   <h6>Coupon Applied <span class="float_right">$-</span></h6>
-                  <h5>Total To Pay <span class="float_right">${{ "%.2f"|format((total_price|float)+5) }}</span></h5>
+                  <h5>Total To Pay <span class="float_right" id="total_pay">${{ "%.2f"|format((total_price|float)+5) }}</span></h5>
               </td>
           </tr>
         </tbody>
@@ -105,54 +115,56 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-    <div class="row">
-      {% if buy_count != 0 %}
-        <p class="cart-label">For buying</p>
-      <div class="buying-cart">
-          <table class="table table-striped">
-            <tbody>
-            {% for key in buy_cart %}
-                <tr>
-                    <form method="POST" action="/update_cart/{{ key }}">
-                        <td class="col-3"><img src="{{ books_dict[key].get_img() }}" alt="book cover"></td>
-                        <td class="col-7"><h4>{{ books_dict[key].get_title() }}</h4>#{{ key }}</td>
-                        <td class="col-1"><h5>${{ books_dict[key].get_price() }}</h5></td>
-                        <td class="col-1"><input type="number" class="quantity-selector" name="quantity" min="0" value={{ buy_cart[key] }}>
-                        <button type="submit" class="btn update-btn" onclick="update_cart()">Update</button></td>
-                    </form>
-                    <form method="POST" action="/delete_buying_cart/{{ key }}">
-                        <td class="col-1"><button type="submit" onclick="delete_buying_cart()" name="button" style="float:right;" class="btn"><i class="fa fa-close"></i></button></td>
-                    </form>
-                </tr>
-            {% endfor %}
-              </tbody>
-          </table>
-      {% endif %}
-      {% if rent_count != 0 %}
-      <p class="cart-label">For renting</p>
-      <div class="renting-cart">
-          <table class="table table-striped">
-            <tbody>
-            {% for book in rent_cart %}
-                <tr>
-                    <td rowspan="col-3"><img src={{ books_dict[book].get_img() }} alt="book cover"></td>
-                    <td class="col-5"><h4>{{ books_dict[book].get_title() }}</h4>#{{ book }}</td>
-                    <td class="col-4"><h5>{{ "$%.2f"|format((books_dict[book].get_price()|float)*0.1) }}</h5></td>
-                    <form method="POST" action="/delete_renting_cart/{{ book }}">
-                        <td class="col-1"><button type="submit" onclick="delete_renting_cart()" name="button" style="float:right;" class="btn"><i class="fa fa-close"></i></button></td>
-                    </form>
-                </tr>
-            {% endfor %}
-            </tbody>
-          </table>
+        <div class="row">
+          {% if buy_count != 0 %}
+            <p class="cart-label">For buying</p>
+          <div class="buying-cart">
+              <table class="table table-striped">
+                <tbody>
+                {% for key in buy_cart %}
+                    <tr>
+                        <form method="POST" action="/update_cart/{{ key }}">
+                            <td class="col-3"><img src="{{ books_dict[key].get_img() }}" alt="book cover"></td>
+                            <td class="col-7"><h4>{{ books_dict[key].get_title() }}</h4>#{{ key }}</td>
+                            <td class="col-1"><h5>${{ books_dict[key].get_price() }}</h5></td>
+                            <td class="col-1"><input type="number" class="quantity-selector" name="quantity" min="0" value={{ buy_cart[key] }}>
+                            <button type="submit" class="btn update-btn" onclick="update_cart()">Update</button></td>
+                        </form>
+                        <form method="POST" action="/delete_buying_cart/{{ key }}">
+                            <td class="col-1"><button type="submit" onclick="delete_buying_cart()" name="button" style="float:right;" class="btn"><i class="fa fa-close"></i></button></td>
+                        </form>
+                    </tr>
+                {% endfor %}
+                  </tbody>
+              </table>
+          {% endif %}
+          {% if rent_count != 0 %}
+          <p class="cart-label">For renting</p>
+          <div class="renting-cart">
+              <table class="table table-striped">
+                <tbody>
+                {% for book in rent_cart %}
+                    <tr>
+                        <td rowspan="col-3"><img src={{ books_dict[book].get_img() }} alt="book cover"></td>
+                        <td class="col-5"><h4>{{ books_dict[book].get_title() }}</h4>#{{ book }}</td>
+                        <td class="col-4"><h5>{{ "$%.2f"|format((books_dict[book].get_price()|float)*0.1) }}</h5></td>
+                        <form method="POST" action="/delete_renting_cart/{{ book }}">
+                            <td class="col-1"><button type="submit" onclick="delete_renting_cart()" name="button" style="float:right;" class="btn"><i class="fa fa-close"></i></button></td>
+                        </form>
+                    </tr>
+                {% endfor %}
+                </tbody>
+              </table>
 
-      </div>
-      {% endif %}
-      </div>
+          </div>
+          {% endif %}
+          </div>
 <!--      <div class="modal-footer">-->
 <!--        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
 <!--        <button type="button" class="btn btn-primary">Save changes</button>-->
 <!--      </div>-->
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -160,5 +172,26 @@
 {% endblock %}
 
 {% block scripts %}
-<!-- put js here -->
+<script>
+
+    function get_radio_value(method) {
+        if (method.value == 'Standard Delivery'){
+            shipping_fee = 5;
+            display = '$5.00';
+        }else{
+            shipping_fee = 0;
+            display = 'FREE';
+        };
+        document.getElementById('shipping_fee').innerHTML = display;
+        total = {{ total_price }};
+        var total_price = shipping_fee + total
+        total_price = total_price.toFixed(2)
+        total_price = total_price.toString()
+        displayT = '$' + total_price
+        document.getElementById('total_pay').innerHTML = displayT;
+      }
+
+
+</script>
 {% endblock %}
+
