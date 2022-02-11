@@ -9,6 +9,7 @@
 .slide .card{
     max-height: 500px;
     color: black;
+    overflow-y: auto;
 }
 
 .slide .card img{
