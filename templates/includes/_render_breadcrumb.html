@@ -1,0 +1,13 @@
+{% macro render_breadcrumb(name_to_target_dict) %}
+  <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      {% for name, target in name_to_target_dict.items() %}
+        {% if target == "#" %}
+          <li class="breadcrumb-item active" aria-current="page">{{ name }}</li>
+        {% else %}
+          <li class="breadcrumb-item"><a href="{{ target }}">{{ name }}</a></li>
+        {% endif %}
+      {% endfor %}
+    </ol>
+  </nav>
+{% endmacro %}

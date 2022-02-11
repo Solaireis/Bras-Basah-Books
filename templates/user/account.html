@@ -7,8 +7,16 @@
 {% endblock %}
 
 {% block content %}
+{% from "includes/_render_breadcrumb.html" import render_breadcrumb %}
 {% from "includes/_login_render_field.html" import render_field %}
 {% from "includes/_render_sidebar.html" import render_sidebar %}
+
+{# Render breadcrumbs #}
+{{ render_breadcrumb({
+  "Home": url_for("home"),
+  "Account": "#"
+}) }}
+
 {# Container to contain display for user related things #}
 <div class="container user-container">
   <div class="row">
