@@ -1799,7 +1799,15 @@ def temp_home():
 @app.route("/test", methods=["GET", "POST"])  # To go to test page: http://127.0.0.1:5000/test
 def test():
     # Get current (guest) user
-    user = get_user()
+    current_user = get_user()
+
+
+
+
+
+
+
+
 
     sign_up_form = SignUpForm(request.form)
 
