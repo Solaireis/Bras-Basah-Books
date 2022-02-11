@@ -40,7 +40,14 @@ stripe.api_key = 'sk_live_51KPNSMLcZKZGRW8Qjhs0Mb816MPxlE2uGak5LR8QrjdP682d9ytfA
 # Serialiser for generating tokens
 url_serialiser = URLSafeTimedSerializer(app.config["SECRET_KEY"])
 
-mail = Mail()  # Mail object for sending emails
+app.config["MAIL_SERVER"] = "smtp.gmail.com" # using gmail
+app.config["MAIL_PORT"] = 587
+app.config["MAIL_USE_TLS"] = True
+app.config["MAIL_USERNAME"] = "noreplybbb02@gmail.com" # using gmail
+app.config["MAIL_PASSWORD"] = "Hs!3ck;qnCSyyz^8-p"
+mail = Mail(app)
+
+#mail = Mail()  # Mail object for sending emails
 
 
 """|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|"""
@@ -372,8 +379,8 @@ def verify_send():
         return redirect(url_for("home"))
 
     # Configure noreplybbb02@gmail.com
-    app.config.from_pyfile("config/noreply_email.cfg")
-    mail.init_app(app)
+    # app.config.from_pyfile("config/noreply_email.cfg")
+    # mail.init_app(app)
 
     # Get email
     email = user.get_email()
@@ -1141,8 +1148,8 @@ def mail_enq(id):
         db.close()
 
         #sends the mail to the guest
-        app.config.from_pyfile("config/noreply_email.cfg")
-        mail.init_app(app)
+        # app.config.from_pyfile("config/noreply_email.cfg")
+        # mail.init_app(app)
 
         msg = Message(subject="Enquiry", 
                     sender=("BrasBasahBooks", "noreplybbb02@gmail.com"), 
