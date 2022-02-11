@@ -524,13 +524,15 @@ def manage_accounts():
     if not isinstance(user, Admin):
         return redirect(url_for("home"))
 
+    # Get users database
     with shelve.open("database") as db:
-        customers_db = retrieve_db("Customers", db)
-        admins_db = retrieve_db("Admins", db)
-        users = customers_db
-        # users.update(admins_db)
+        users = tuple(retrieve_db("Customers", db).values())
 
-    return render_template("admin/manage_accounts.html", users=users)
+        # If is master admin
+        if user.is_master():
+            users += tuple(retrieve_db("Admins", db).values())
+
+    return render_template("admin/manage_accounts.html", users=users, is_master=user.is_master())
 
 
 """|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|"""
