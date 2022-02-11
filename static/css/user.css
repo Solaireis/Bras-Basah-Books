@@ -25,7 +25,7 @@
 }
 
 
-/* Account Page */
+/* Account Settings Page */
 .no-format-form {
     border: none;
     background-color: transparent;
@@ -66,4 +66,18 @@
 #gender > li {
     display: inline;
     margin-right: 1.5rem;
+}
+
+
+/* Manage Accounts Page */
+.account-actions a{
+    text-decoration: none;
+}
+
+.account-actions .fa-pen {
+    color: #588B8B;
+}
+
+.account-actions .fa-trash {
+    color: #dc3545;
 }

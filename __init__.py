@@ -321,7 +321,10 @@ def logout():
 @app.route("/user/forget-password", methods=["GET", "POST"])
 def password_forget():
     pass
-
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 # Change password page
 @app.route("/user/change-password", methods=["GET", "POST"])
@@ -390,8 +393,8 @@ def verify_send():
 
     # Send message to email entered
     msg = Message(subject="Verify Email",
-                sender=("BrasBasahBooks", "noreplybbb02@gmail.com"),
-                recipients=[email])
+                  sender=("BrasBasahBooks", "noreplybbb02@gmail.com"),
+                  recipients=[email])
     link = url_for("verify", token=token, _external=True)
     msg.html = f"Click <a href='{link}'>here</a> to verify your email.<br />(Link expires after 15 minutes)"
     mail.send(msg)
@@ -520,7 +523,7 @@ def account():
 """    Admin Pages    """
 
 # Manage accounts page
-@app.route("/admin/manage-accounts")
+@app.route("/admin/manage-accounts", methods=["GET", "POST"])
 def manage_accounts():
     user = get_user()
 
@@ -528,10 +531,15 @@ def manage_accounts():
     if not isinstance(user, Admin):
         return redirect(url_for("home"))
 
+    # Get users database
     with shelve.open("database") as db:
-        pass
+        users = tuple(retrieve_db("Customers", db).values())
 
-    return render_template("admin/manage_accounts.html")
+        # If is master admin
+        if user.is_master():
+            users += tuple(retrieve_db("Admins", db).values())
+
+    return render_template("admin/manage_accounts.html", users=users, is_master=user.is_master())
 
 
 """|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|"""
@@ -539,13 +547,20 @@ def manage_accounts():
 """|____________________________________________|"""
 
 
+#
+# Start of Chee Qing's Codes
+#
+
+#
 # allbooks
+#
 @app.route("/allbooks")
 def allbooks():
     return render_template("allbooks.html")
 
-
+#
 # add to buying cart
+#
 @app.route("/addtocart/<int:id>", methods=['GET', 'POST'])
 def add_to_buy(id):
     user_id = get_user().get_user_id()
@@ -586,7 +601,9 @@ def add_to_buy(id):
     print(cart_dict, "final database")
     return redirect(request.referrer)
 
+#
 # add to renting cart
+#
 @app.route("/addtorent/<int:id>", methods=['GET', 'POST'])
 def add_to_rent(id):
     user_id = get_user().get_user_id()
@@ -628,7 +645,9 @@ def add_to_rent(id):
     print(cart_dict, 'updated database')
     return redirect(request.referrer)
 
+#
 # view shopping cart
+#
 @app.route('/shopping_cart')
 def cart():
     user_id = get_user().get_user_id()
@@ -676,7 +695,9 @@ def cart():
                 total_price = float(("%.2f" % round(total_price, 2)))
     return render_template('cart.html', buy_count=buy_count, rent_count=rent_count, buy_cart=buy_cart, rent_cart=rent_cart, books_dict=books_dict, total_price=total_price)
 
+#
 # update quantity in buying cart
+#
 @app.route('/update_cart/<int:id>', methods=['GET', 'POST'])
 def update_cart(id):
     user_id = get_user().get_user_id()
@@ -696,8 +717,9 @@ def update_cart(id):
         cart_db.close()
     return redirect(request.referrer)
 
-
+#
 # delete item in buying cart
+#
 @app.route("/delete_buying_cart/<int:id>", methods=['GET', 'POST'])
 def delete_buying_cart(id):
     user_id = get_user().get_user_id()
@@ -718,8 +740,9 @@ def delete_buying_cart(id):
     cart_db.close()
     return redirect(request.referrer)
 
-
+#
 # delete item in renting cart
+#
 @app.route("/delete_renting_cart/<int:id>", methods=['GET', 'POST'])
 def delete_renting_cart(id):
     user_id = get_user().get_user_id()
@@ -737,8 +760,9 @@ def delete_renting_cart(id):
     cart_db.close()
     return redirect(request.referrer)
 
-
-# Checkout
+#
+# Checkout Form (for shipping address etc)
+#
 @app.route("/checkout", methods=['GET', 'POST'])
 def checkout():
     user_id = get_user().get_user_id()
@@ -787,7 +811,9 @@ def checkout():
     Orderform = OrderForm.OrderForm(request.form)
     return render_template("checkout.html", form=Orderform, total_price=total_price, buy_count=buy_count, rent_count=rent_count, buy_cart=buy_cart, rent_cart=rent_cart, books_dict=books_dict)
 
-
+#
+# Create Check out session with Stripe
+#
 @app.route('/create-checkout-session/<total_price>', methods=['POST'])
 def create_checkout_session(total_price):
     user_id = get_user().get_user_id()
@@ -970,6 +996,11 @@ def edit_status(order_id):
     db.close()
     print(order.get_order_status())
     return redirect(request.referrer)
+
+#
+# End of Chee Qing's Codes
+#
+
 
 #
 # Eden Pages

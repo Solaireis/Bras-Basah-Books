@@ -24,8 +24,49 @@
     <div class="col-lg-10 py-3 px-5">
       <h2>User account overview</h2>
       <hr>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Username</th>
+              <th scope="col">Name</th>
+              <th scope="col">Email</th>
+              {% if is_master %}
+              <th scope="col">Type</th>
+              {% endif %}
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in users %}
+            {% if is_master %} {% set name = none %}
+            {% else %} {% set name = user.get_name() %}
+            {% endif %}
+            <tr>
+              <td>{{ user.get_username() }}</td>
+              <td>{{ name if name else "-" }}</td>
+              <td>{{ user.get_email() }}</td>
+              {% if is_master %}
+              <td>{{ user.__class__.__name__ }}</td>
+              {% endif %}
+              <td class="account-actions">
+                <a href="#">
+                  <i class="fa-solid fa-pen" data-bs-toggle="tooltip" title="Edit"></i>
+                </a>
+                <a href="#">
+                  <i class="fa-solid fa-trash" data-bs-toggle="tooltip" title="Delete"></i>
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
-<a href="{{ url_for('logout') }}">Logout here</a>
+{% endblock %}
+
+{% block scripts %}
+<script>[].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]')).map(trigger => new bootstrap.Tooltip(trigger));</script>
 {% endblock %}
