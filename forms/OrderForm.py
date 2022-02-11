@@ -159,20 +159,3 @@ class Order_Detail(User_Order):
             return_status = 'Not Returned'
         return return_status
 
-user_id = 1
-name = 'chiobu'
-email = "testing@gmail.com"
-contact_num = '12341234'
-ship_address = "my house"
-ship_method = 'Standard Delivery'
-
-order_item = [{1:5, 4:3}, [1,4,4]]
-total_price = 300
-
-order = Order_Detail(user_id, name, email, contact_num, ship_address, ship_method, order_item, total_price)
-print(order.get_user_order())
-print(order.get_order_item())
-
-print(order.get_today_date())
-
-
