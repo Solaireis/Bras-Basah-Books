@@ -646,8 +646,14 @@ def add_to_rent(id):
 def cart():
     user_id = get_user().get_user_id()
     cart_dict = {}
+    books_dict = {}
     cart_db = shelve.open('database', 'c')
-    books_dict = retrieve_db("Books", cart_db)
+    book_db = shelve.open('database')
+    try:
+        books_dict = book_db['Books']
+        book_db.close()
+    except:
+        print("There is no books in the database currently.")
     buy_count = 0
     rent_count = 0
     total_price = 0
@@ -656,6 +662,8 @@ def cart():
     try:
         cart_dict = cart_db['Cart']
         print(cart_dict)
+        books_dict = book_db['Books']
+        book_db.close()
     except:
         print("Error while retrieving data from cart.db")
 
@@ -745,14 +753,14 @@ def delete_renting_cart(id):
 def checkout():
     user_id = get_user().get_user_id()
     cart_dict = {}
-    cart_db = shelve.open('database', 'c')
-    books_dict = retrieve_db("Books", cart_db)
+    db = shelve.open('database', 'c')
     buy_count = 0
     rent_count = 0
     total_price = 0
     buy_cart = {}
     rent_cart = []
     try:
+        books_dict = db['Books']
         db = shelve.open('database', 'c')
         db_pending = db['Pending_Order']
         del db_pending[user_id]
@@ -760,13 +768,12 @@ def checkout():
         db.close()
     except:
         pass
-    # print(db_pending, 'should not have pending order as user cancel check out')
 
     try:
-        cart_dict = cart_db['Cart']
+        cart_dict = db['Cart']
         print(cart_dict)
     except:
-        print("Error while retrieving data from cart.db")
+        print("Error while retrieving data from database")
 
     if user_id in cart_dict:
         user_cart = cart_dict[user_id]
@@ -774,7 +781,6 @@ def checkout():
             print('This user has nothing in the buying cart')
         else:
             buy_cart = user_cart[0]
-            # buy_count = len(user_cart[0])
             for key in buy_cart:
                 buy_count += buy_cart[key]
                 total_price = float(total_price)
@@ -846,11 +852,10 @@ def orderconfirm():
     user_id = get_user().get_user_id()
     db_order= []
     books_dict = {}
-    #cart_db = shelve.open('cart', 'c')
     db = shelve.open('database')
     cart_dict = db['Cart']
     db_pending = db['Pending_Order']
-    books_dict = retrieve_db("Books")
+    books_dict = db['Books']
     # in case user hand itchy go and reload the page, bring them back to home page
     try:
         new_order = db_pending[user_id]
@@ -859,7 +864,8 @@ def orderconfirm():
         try:
             db_order = db['Order']
         except:
-            print("Error while extracting data from database")
+            print("Error while loading data from database")
+            # return home2()
 
         db_order.append(new_order)
 
@@ -902,11 +908,10 @@ def orderconfirm():
         db['Order'] = db_order
         db['Cart'] = cart_dict
         print(db_pending, 'should not have pending order as user already check out')
-        print(cart_dict, 'updated database')
-        print(db_order, 'updated database')
+        print(cart_dict, 'updated database[cart]')
+        print(db_order, 'updated databas[order]')
     except KeyError:
         return home2()
-    #db.close()
     db.close()
     return render_template("order_confirmation.html")
 
@@ -921,12 +926,10 @@ def manage_orders():
     fulfilled_order = []
     try:
         db = shelve.open('database')
+        books_dict = db['Books']
         db_order = db['Order']
         print(db_order, "orders in database")
-        book_db = shelve.open('book.db', 'w')
-        books_dict = book_db['Books']
         db.close()
-        book_db.close()
     except:
         print("There might not have any orders as of now.")
     for order in db_order:
@@ -938,6 +941,7 @@ def manage_orders():
             fulfilled_order.append(order)
         else:
             print(order, "Wrong order status")
+
     # display from most recent to the least
     db_order = list(reversed(db_order))
     new_order = list(reversed(new_order))
