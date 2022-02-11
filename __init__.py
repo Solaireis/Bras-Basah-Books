@@ -551,6 +551,12 @@ def verify_fail():
     render_template("user/verify/fail.html")
 
 
+# Manage accounts page
+@app.route("/admin/manage-accounts")
+def manage_accounts():
+    return render_template("admin/manage_accounts.html")
+
+
 # allbooks
 @app.route("/allbooks")
 def allbooks():
