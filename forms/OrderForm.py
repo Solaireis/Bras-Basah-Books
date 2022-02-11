@@ -102,3 +102,9 @@ class Order_Detail(User_Order):
         return rent_item
     def get_total_price(self):
         return self.total_price
+
+    # update order status as an admin
+    def set_order_status(self, order_status):
+        ship_info = self.get_ship_info()
+        ship_info['order_status'] =  order_status
+        return order_status
