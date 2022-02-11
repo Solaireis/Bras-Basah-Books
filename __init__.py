@@ -851,7 +851,7 @@ def create_checkout_session(total_price):
 @app.route("/orderconfirm")
 def orderconfirm():
     user_id = get_user().get_user_id()
-      db_order= []
+    db_order= []
     books_dict = {}
     db = shelve.open('database')
     cart_dict = db['Cart']
