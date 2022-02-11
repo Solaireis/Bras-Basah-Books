@@ -1182,11 +1182,17 @@ def mail_enq(id):
         # app.config.from_pyfile("config/noreply_email.cfg")
         # mail.init_app(app)
 
-        msg = Message(subject="Enquiry", 
+        msg = Message(subject="Enquiry Ticket No:" + enquiry_id.get_count(),
                     sender=("BrasBasahBooks", "noreplybbb02@gmail.com"), 
                     recipients=[enquiry_id.get_email()])
-        msg.body = "Dear " + enquiry_id.get_name() + ",\n\n" + enquiry_id.get_reply() \
-                    + "\n\n" + "Regards,\n" + "BrasBasahBooks"
+                    
+        msg.body = "Dear " + enquiry_id.get_name() + ",\n\n" \
+                    + "here are your enquiry details: " + "\n\n" \
+                    + "Enquiry Type: " + enquiry_id.get_enquiry_type() + "\n\n" \
+                    + "Comments: " + "\n\n" + enquiry_id.get_comments() + "\n\n" \
+                    + "Reply: " + "\n\n" + enquiry_id.get_reply() \
+                    + "Regards,\n" + "BrasBasahBooks"
+
         mail.send(msg)
 
         flash(f"Verification email sent to {enquiry_id.get_email()}")
