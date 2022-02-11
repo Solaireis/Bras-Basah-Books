@@ -17,9 +17,9 @@ class OrderForm(Form):
     contact_num = IntegerField("Contact Number", [contact_num_check, validators.DataRequired()])
     email = EmailField("Email", [validators.Email(), validators.DataRequired()])
     address = TextAreaField("Address", [validators.DataRequired()])
-    ship_method = RadioField('Shipping Method', choices=[('Standard Delivery', 'Standard Delivery (3 - 5 business days)'), \
-                                                         ('Self-collection', 'Self-collect (Pick up at our store)')], \
-                             default='Standard Delivery')
+    # ship_method = RadioField('Shipping Method', choices=[('Standard Delivery', 'Standard Delivery (3 - 5 business days)'), \
+    #                                                      ('Self-collection', 'Self-collect (Reserve online, pick up at our store)')], \
+    #                          default='Standard Delivery')
 
 class User_Order():
     user_order = {}
