@@ -1093,6 +1093,21 @@ def delete_faq(id):
     db.close()
     return redirect(url_for('faq_dashboard'))
 
+#view faq
+@app.route('/faq', methods=['GET', 'POST'])
+def faq():
+    db = shelve.open('database','c')
+    faq_dict = retrieve_db('Faq',db)
+    db.close()
+
+    faq_list = []
+    for key in faq_dict:
+        faq = faq_dict.get(key)
+        faq_list.append(faq)
+        print(faq_list)
+
+    return render_template("faq/faq.html", count=len(faq_list), faq_list=faq_list)
+
 # Create coupon
 @app.route('/coupon', methods =['GET','POST'])
 def coupon_adm():
