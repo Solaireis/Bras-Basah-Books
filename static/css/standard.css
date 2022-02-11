@@ -147,23 +147,25 @@ header .nav-link{
 .dropdown-content {
   display: none;
   position: absolute;
-  background-color: #f1f1f1;
-  min-width: 160px;
+  background-color: white;
+  min-width: 200px;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 1;
+  padding: 0px;
 }
 
 /* Links inside the dropdown */
 .dropdown-content a {
   color: #4b8282;
-  padding: 1px 1px;
+  padding: 5px 15px;
   text-decoration: none;
   display: block;
 }
 
 /* Change color of dropdown links on hover */
 .dropdown-content a:hover {
-  background-color: white;
+  background-color: #4b8282;
+  color: white;
 }
 
 /* Show the dropdown menu on hover */
