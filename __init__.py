@@ -1006,7 +1006,7 @@ def enquiry_cust():
             user_id = session["UserID"]
             user_type = session["UserType"]
             
-            if session["UserType"] == "Customer":
+            if session["UserType"] == "Customer": #session for user
                 customer_dict = retrieve_db('Customers',db)
                 customer = customer_dict.get(session["UserID"])
                 print(customer)
@@ -1112,7 +1112,7 @@ def update_enq(id):
         enquiry_id.set_email(update_enquiry.email.data)
         enquiry_id.set_enquiry_type(update_enquiry.enquiry_type.data)
         enquiry_id.set_comments(update_enquiry.comments.data)
-        enquiry_id.set_reply(update_enquiry.reply.data)
+        enquiry_id.set_reply(update_enquiry.reply.data)#allows for reply to be updated
 
         db['Enquiry'] = enquiry_dict
         db.close()
@@ -1144,8 +1144,9 @@ def delete_enq(id):
     db.close()
     return redirect(url_for('enquiry_retrieve_adm'))
 
+#view faq
 @app.route('/view-enq',methods=['GET', 'POST'])
-def view_enq():
+def view_enq():#allows the viewing of faq
     db = shelve.open('database','w')
     customer_dict = retrieve_db('Customers',db)
     db.close()
@@ -1170,7 +1171,7 @@ def view_enq():
     return render_template('enquiry/view_enq.html', count=len(enquiry_list_final), enquiry_list=enquiry_list_final)
 
 # retrieve enquiry
-@app.route('/faq-dashboard')
+@app.route('/faq-dashboard')#retrieve faq
 def faq_dashboard():
     db = shelve.open('database','c')
     faq_dict = retrieve_db('Faq',db)
