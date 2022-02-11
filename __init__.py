@@ -984,8 +984,7 @@ def edit_status(order_id):
     return redirect(request.referrer)
 
 #
-# enquiry page
-#
+# Eden Pages
 #
 # enquiry page
 #
@@ -1386,6 +1385,21 @@ def retrieve_cu_coupons():
                 coupon_list_final.append(coupon_dict.get(key))
 
     return render_template('coupon/retrieve_cust_coupons.html', count=len(coupon_list_final), coupon_list=coupon_list_final)
+
+#
+# about page static
+#
+@app.route("/about", methods=["GET", "POST"])
+def about():
+    return render_template("about.html")
+
+#
+# Error handling page
+#
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template("error/404.html")
+
 #
 #End of eden codes
 #    
@@ -1615,21 +1629,6 @@ def book_info2(id):
     print(currentbook, book.get_title())
 
     return render_template('book_info2.html', currentbook=currentbook)
-
-
-#
-# about page static
-#
-@app.route("/about", methods=["GET", "POST"])
-def about():
-    return render_template("about.html")
-
-#
-# Error handling page
-#
-@app.errorhandler(404)
-def page_not_found(e):
-    return render_template("error/404.html")
 
 
 # Only during production. To be removed when published.
