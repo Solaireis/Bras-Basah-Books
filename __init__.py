@@ -12,8 +12,9 @@ import stripe
 import Book, Cart as c
 from users import GuestDB, Guest, Customer, Admin
 from forms import SignUpForm, LoginForm, AccountPageForm, ChangePasswordForm, \
-                  Enquiry, UserEnquiry, Faq, FaqEntry, Reply, AddBookForm, \
-                  Coupon, CreateCoupon, OrderForm, RequestCoupon
+                  Enquiry, UserEnquiry, Faq, FaqEntry, AddBookForm, \
+                  Coupon, CreateCoupon, OrderForm, RequestCoupon, ReplyEnquiry \
+
 
 # CONSTANTS
 DEBUG = True         # Debug flag (True when debugging)
@@ -1078,7 +1079,7 @@ def count_id(Table):
 #
 @app.route('/update-enq/<int:id>/', methods=['GET', 'POST'])
 def update_enq(id):
-    update_enquiry = Enquiry(request.form)
+    update_enquiry = ReplyEnquiry(request.form)
 
     if request.method == 'POST' and update_enquiry.validate():
         users_dict={}
@@ -1090,6 +1091,7 @@ def update_enq(id):
         enquiry_id.set_email(update_enquiry.email.data)
         enquiry_id.set_enquiry_type(update_enquiry.enquiry_type.data)
         enquiry_id.set_comments(update_enquiry.comments.data)
+        enquiry_id.set_reply(update_enquiry.reply.data)
 
         db['Enquiry'] = enquiry_dict
         db.close()

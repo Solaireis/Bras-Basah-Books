@@ -8,6 +8,7 @@ class Enquiry(Form):
     comments = TextAreaField('Comments', [validators.Optional()])
 
 
+
 class UserEnquiry:
     count = 0
     def __init__(self, name, email, enquiry_type, comments, UserID, UserType):
@@ -28,6 +29,7 @@ class UserEnquiry:
         self.__comments = comments
         self.__UserID = UserID
         self.__UserType = UserType
+        self.__reply = None
 
 
     # setting mutators and assessor methods
@@ -78,5 +80,15 @@ class UserEnquiry:
     def set_UserType(self, UserType):
         self.__UserType = UserType
 
+    def get_reply(self):
+        return self.__reply
+    
+    def set_reply(self, reply):
+        self.__reply = reply
 
-
+class ReplyEnquiry(Form):
+    name = StringField('Name', [validators.Length(min=1, max=100), validators.DataRequired()])
+    email = EmailField('Email', [validators.Email(), validators.DataRequired()])
+    enquiry_type = SelectField('Enquiry Type', [validators.DataRequired()], choices=[('', 'Select'), ('B', 'Question about Books'), ('F', 'Feedback'),('R','Report site vulnerability')], default='')
+    comments = TextAreaField('Comments', [validators.Optional()])
+    reply = TextAreaField('Reply', [validators.DataRequired()])
