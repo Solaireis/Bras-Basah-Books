@@ -20,6 +20,9 @@
 .sidebar .nav-pills .nav-link.active {
     background-color: #4b8282;
 }
+.sidebar a {
+    padding: 0.5rem 0.5rem;
+}
 
 
 /* Account Page */
@@ -34,7 +37,7 @@
     height: 175px;
 }
 .profile-pic-wrapper #profilePic {
-    border-radius: 100%;
+    border-radius: 50%;
 }
 
 .profile-pic-input {

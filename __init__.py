@@ -495,6 +495,21 @@ def verify_fail():
     render_template("user/verify/fail.html")
 
 
+# Manage accounts page
+@app.route("/admin/manage-accounts")
+def manage_accounts():
+    user = get_user()
+
+    # If user is not admin
+    if not isinstance(user, Admin):
+        return redirect(url_for("home"))
+
+    with shelve.open("database") as db:
+        pass
+
+    return render_template("admin/manage_accounts.html")
+
+
 # allbooks
 @app.route("/allbooks")
 def allbooks():
