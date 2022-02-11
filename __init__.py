@@ -43,6 +43,13 @@ url_serialiser = URLSafeTimedSerializer(app.config["SECRET_KEY"])
 mail = Mail()  # Mail object for sending emails
 
 
+"""|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|"""
+"""|---------- Jabriel's Codes ----------|"""
+"""|_____________________________________|"""
+
+
+"""    General Funtions    """
+
 # Added type hintings as I needed my editor to recognise the type
 def retrieve_db(key, db, value=None) -> Union[
     Dict[str, Customer], Dict[str, Admin], GuestDB[str, Guest], Dict[str, Book.Book]]:
@@ -105,6 +112,8 @@ def create_guest():
     return guest
 
 
+"""    Before Request    """
+
 # Before first request
 @app.before_first_request
 def before_first_request():
@@ -150,6 +159,8 @@ def before_request():
     if "UserID" not in session:
         create_guest()
 
+
+"""    Login/Sign-up Pages    """
 
 # Sign up page
 @app.route("/user/sign-up", methods=["GET", "POST"])
@@ -297,6 +308,8 @@ def logout():
     return redirect(url_for("home"))
 
 
+"""    Account Pages    """
+
 # Forgot password page
 @app.route("/user/forget-password", methods=["GET", "POST"])
 def password_forget():
@@ -345,78 +358,6 @@ def password_change():
                     return redirect(url_for("account"))
 
     return render_template("user/password_change.html", form=change_password_form)
-
-
-# View account page
-@app.route("/user/account", methods=["GET", "POST"])
-def account():
-    # Get current user
-    user = get_user()
-
-    # If user is not logged in
-    if session["UserType"] == "Guest":
-        return redirect(url_for("login"))
-
-    # Get account page form
-    account_page_form = AccountPageForm(request.form)
-
-    # Validate account page form if request is post
-    if request.method == "POST":
-
-        if not account_page_form.validate():
-            name = account_page_form.name
-            gender = account_page_form.gender
-            picture = account_page_form.picture
-
-            # Flash error message (only flash the 1st error)
-            error = name.errors[0] if name.errors else picture.errors[0] if picture.errors else gender.errors[0]
-            flash(error, "error")
-        else:
-            # Flash success message
-            flash("Account settings updated successfully")
-
-            # Extract email and password from sign up form
-            name = " ".join(account_page_form.name.data.split())
-            gender = account_page_form.gender.data
-
-            # Check files submitted for profile pic
-            if "picture" in request.files:
-                file = request.files["picture"]
-                if file and allowed_file(file.filename):
-                    file.save(os.path.join(PROFILE_PIC_UPLOAD_FOLDER, user.get_user_id()+".png"))
-                else:
-                    file = None
-            else:
-                file = None
-
-            with shelve.open("database") as db:
-                # Get Customers
-                customers_db = retrieve_db("Customers", db)
-                user = customers_db[session["UserID"]]
-
-                # Set name and gender
-                user.set_name(name)
-                user.set_gender(gender)
-
-                # If image uploaded, set profile pic
-                if file is not None:
-                    user.set_profile_pic()
-
-                # Save changes to database
-                db["Customers"] = customers_db
-
-        # Redirect to prevent form resubmission
-        return redirect(url_for("account"))
-
-    # Set username and gender to display
-    account_page_form.name.data = user.get_name()
-    account_page_form.gender.data = user.get_gender()
-    return render_template("user/account.html",
-                           form=account_page_form,
-                           display_name=user.get_display_name(),
-                           picture_path=user.get_profile_pic(),
-                           username=user.get_username(),
-                           email=user.get_email())
 
 
 # Send verification link page
@@ -495,6 +436,82 @@ def verify_fail():
     render_template("user/verify/fail.html")
 
 
+"""    User Pages    """
+
+# View account page
+@app.route("/user/account", methods=["GET", "POST"])
+def account():
+    # Get current user
+    user = get_user()
+
+    # If user is not logged in
+    if session["UserType"] == "Guest":
+        return redirect(url_for("login"))
+
+    # Get account page form
+    account_page_form = AccountPageForm(request.form)
+
+    # Validate account page form if request is post
+    if request.method == "POST":
+
+        if not account_page_form.validate():
+            name = account_page_form.name
+            gender = account_page_form.gender
+            picture = account_page_form.picture
+
+            # Flash error message (only flash the 1st error)
+            error = name.errors[0] if name.errors else picture.errors[0] if picture.errors else gender.errors[0]
+            flash(error, "error")
+        else:
+            # Flash success message
+            flash("Account settings updated successfully")
+
+            # Extract email and password from sign up form
+            name = " ".join(account_page_form.name.data.split())
+            gender = account_page_form.gender.data
+
+            # Check files submitted for profile pic
+            if "picture" in request.files:
+                file = request.files["picture"]
+                if file and allowed_file(file.filename):
+                    file.save(os.path.join(PROFILE_PIC_UPLOAD_FOLDER, user.get_user_id()+".png"))
+                else:
+                    file = None
+            else:
+                file = None
+
+            with shelve.open("database") as db:
+                # Get Customers
+                customers_db = retrieve_db("Customers", db)
+                user = customers_db[session["UserID"]]
+
+                # Set name and gender
+                user.set_name(name)
+                user.set_gender(gender)
+
+                # If image uploaded, set profile pic
+                if file is not None:
+                    user.set_profile_pic()
+
+                # Save changes to database
+                db["Customers"] = customers_db
+
+        # Redirect to prevent form resubmission
+        return redirect(url_for("account"))
+
+    # Set username and gender to display
+    account_page_form.name.data = user.get_name()
+    account_page_form.gender.data = user.get_gender()
+    return render_template("user/account.html",
+                           form=account_page_form,
+                           display_name=user.get_display_name(),
+                           picture_path=user.get_profile_pic(),
+                           username=user.get_username(),
+                           email=user.get_email())
+
+
+"""    Admin Pages    """
+
 # Manage accounts page
 @app.route("/admin/manage-accounts")
 def manage_accounts():
@@ -508,6 +525,11 @@ def manage_accounts():
         pass
 
     return render_template("admin/manage_accounts.html")
+
+
+"""|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|"""
+"""|---------- End of Jabriel's Codes ----------|"""
+"""|____________________________________________|"""
 
 
 # allbooks
