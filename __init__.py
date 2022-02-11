@@ -30,7 +30,7 @@ app = Flask(__name__)
 app.config.from_pyfile("config/app.cfg")  # Load config file
 app.config['UPLOAD_FOLDER'] = BOOK_IMG_UPLOAD_FOLDER  # Set upload folder
 app.config['MAX_CONTENT_LENGTH'] = 4 * 1024 * 1024  # Set maximum file upload limit (4MB)
-app.jinja_env.add_extension("jinja2.ext.do")  # Add do extenstion to jinja environment
+app.jinja_env.add_extension("jinja2.ext.do")  # Add do extension to jinja environment
 # testing mode
 #stripe.api_key = 'sk_test_51KPNSMLcZKZGRW8Qkzf58oSvjzX5LxhHQLBPZkmlCijcfXdhdXtXTTDXf3FqMHd1fd3kWcvxktgp7cj0ka4uSmzS00ilLjWTBX' # Stripe API Key
 # live mode
@@ -105,35 +105,6 @@ def create_guest():
     return guest
 
 
-def get_last_book_id():
-    """ Return the ID of the last book """
-
-    books_dict = {}
-    db = shelve.open('database', 'r')
-    books_dict = db['Books']
-    db.close()
-
-    id_list = list(books_dict.keys())
-    last_id = max(id_list)
-    return int(last_id)
-
-    # count_dict = {}
-    # db = shelve.open('database.db', 'c')
-    #
-    # try:
-    #     count_dict = db['Count']
-    # except:
-    #     print("Error in retrieving count from database.db")
-    #
-    # count_dict[last_id] = last_id
-    # db['Count'] = count_dict
-
-
-# Check if file extension is valid
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
 # Before first request
 @app.before_first_request
 def before_first_request():
@@ -178,37 +149,6 @@ def before_request():
     # Run get user if user_id not in session
     if "UserID" not in session:
         create_guest()
-
-
-# Home page
-@app.route("/")
-def home():
-
-    try:
-        books_dict = {}
-        db = shelve.open('database', 'r')
-        books_dict = db['Books']
-        db.close()
-
-    except:
-        print("There are no books")
-
-
-    english = []
-    chinese = []
-    for key in books_dict:
-        book = books_dict.get(key)
-        if book.get_language() == "English":
-            english.append(book)
-        elif book.get_language() == "Chinese":
-            chinese.append(book)
-
-    # books_list = []
-    # for key in books_dict:
-    #     book = books_dict.get(key)
-    #     books_list.append(book)
-
-    return render_template("home2.html", english=english, chinese=chinese)  # optional: books_list=books_list
 
 
 # Sign up page
@@ -712,6 +652,7 @@ def update_cart(id):
         cart_db.close()
     return redirect(request.referrer)
 
+
 # delete item in buying cart
 @app.route("/delete_buying_cart/<int:id>", methods=['GET', 'POST'])
 def delete_buying_cart(id):
@@ -733,6 +674,7 @@ def delete_buying_cart(id):
     cart_db.close()
     return redirect(request.referrer)
 
+
 # delete item in renting cart
 @app.route("/delete_renting_cart/<int:id>", methods=['GET', 'POST'])
 def delete_renting_cart(id):
@@ -750,6 +692,7 @@ def delete_renting_cart(id):
     cart_db['Cart'] = cart_dict
     cart_db.close()
     return redirect(request.referrer)
+
 
 # Checkout
 @app.route("/checkout", methods=['GET', 'POST'])
@@ -799,6 +742,7 @@ def checkout():
                 total_price = float(("%.2f" % round(total_price, 2)))
     Orderform = OrderForm.OrderForm(request.form)
     return render_template("checkout.html", form=Orderform, total_price=total_price, buy_count=buy_count, rent_count=rent_count, buy_cart=buy_cart, rent_cart=rent_cart, books_dict=books_dict)
+
 
 @app.route('/create-checkout-session/<total_price>', methods=['POST'])
 def create_checkout_session(total_price):
@@ -1402,11 +1346,79 @@ def page_not_found(e):
 
 #
 #End of eden codes
-#    
+#
+
+
+#
+# luqman's codes
+#
+
+# Function to return id of last book to set ID for newly added books
+def get_last_book_id():
+    """ Return the ID of the last book """
+
+    books_dict = {}
+    db = shelve.open('database', 'r')
+    books_dict = db['Books']
+    db.close()
+
+    id_list = list(books_dict.keys())
+    last_id = max(id_list)
+    return int(last_id)
+
+    # count_dict = {}
+    # db = shelve.open('database.db', 'c')
+    #
+    # try:
+    #     count_dict = db['Count']
+    # except:
+    #     print("Error in retrieving count from database.db")
+    #
+    # count_dict[last_id] = last_id
+    # db['Count'] = count_dict
+
+
+# Check if file extension is valid
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+# Home page
+@app.route("/")
+def home():
+
+    try:
+        books_dict = {}
+        db = shelve.open('database', 'r')
+        books_dict = db['Books']
+        db.close()
+
+    except:
+        print("There are no books")
+
+
+    english = []
+    chinese = []
+    for key in books_dict:
+        book = books_dict.get(key)
+        if book.get_language() == "English":
+            english.append(book)
+        elif book.get_language() == "Chinese":
+            chinese.append(book)
+
+    # books_list = []
+    # for key in books_dict:
+    #     book = books_dict.get(key)
+    #     books_list.append(book)
+
+    return render_template("home2.html", english=english, chinese=chinese)  # optional: books_list=books_list
+
+
+# Add Book
 lang_list = [('', 'Select'), ('English', 'English'), ('Chinese', 'Chinese'), ('Malay', 'Malay'), ('Tamil', 'Tamil')]
 cat_list = [('', 'Select'), ('Action & Adventure', 'Action & Adventure'), ('Classic', 'Classic'), ('Comic', 'Comic'), ('Detective & Mystery', 'Detective & Mystery')]
 
-# Add Book
+
 @app.route('/add-book', methods=['GET', 'POST'])
 def add_book():
     add_book_form = AddBookForm(request.form)
@@ -1629,6 +1641,30 @@ def book_info2(id):
     print(currentbook, book.get_title())
 
     return render_template('book_info2.html', currentbook=currentbook)
+
+
+# My Orders for customer
+@app.route('/my-orders')
+def my_orders():
+
+    try:
+        orders_list = []
+        db = shelve.open('database', 'r')
+        orders_list = db['Order']
+        db.close()
+
+    except:
+        print("There are no orders")
+
+    print("orders_list:", orders_list)
+    for i in orders_list:
+        print(i.get_name())
+
+    return render_template('my_orders.html', count=len(orders_list), books_list=orders_list)
+
+#
+# end of luqman's codes
+#
 
 
 # Only during production. To be removed when published.
