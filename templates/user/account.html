@@ -26,9 +26,14 @@
         <div class="mb-3 row">
           <label for="picture" class="col-md-2 col-form-label text-md-end mt-auto">Picture</label>
           <div class="col-md-10">
-            <img src="{{ picture_path }}" alt="" id="profilePic">
-            {{ render_field(form.picture, accept="image/*", class="form-control", id="picture", onchange="document.getElementById('profilePic').src = window.URL.createObjectURL(this.files[0])") }}
+            <div class="profile-pic-wrapper align-bottom d-inline-block">
+              <div class="img-wrapper img-1-1">
+                <img src="{{ picture_path }}" alt="" id="profilePic">
+              </div>
+            </div>
+            <label for="picture" tabindex="0" class="profile-pic-input align-bottom">Upload Image</label>
           </div>
+          {{ render_field(form.picture, accept="image/*", class="d-none", id="picture", onchange="document.getElementById('profilePic').src = window.URL.createObjectURL(this.files[0])") }}
         </div>
         <div class="mb-3 row">
           <label for="username" class="col-md-2 col-form-label text-md-end">Username</label>
