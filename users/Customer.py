@@ -108,4 +108,3 @@ class Customer(User):
     # Eden integration
     def add_coupons(self,coupon_code):
         self.__coupons.append(coupon_code)
-    
