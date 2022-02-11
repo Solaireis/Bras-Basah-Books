@@ -1109,6 +1109,7 @@ def faq():
 
     return render_template("faq/faq.html", count=len(faq_list), faq_list=faq_list)
 
+# is this helpful function for FAQ
 @app.route('/helpful-faq/<int:id>', methods=['GET', 'POST'])
 def helpful_faq(id):
     db = shelve.open('database','c')
