@@ -809,7 +809,8 @@ def checkout():
                 total_price += float(books_dict[book].get_price()) * 0.1
                 total_price = float(("%.2f" % round(total_price, 2)))
     Orderform = OrderForm.OrderForm(request.form)
-    return render_template("checkout.html", form=Orderform, total_price=total_price, buy_count=buy_count, rent_count=rent_count, buy_cart=buy_cart, rent_cart=rent_cart, books_dict=books_dict)
+    return render_template("checkout.html", form=Orderform, total_price=total_price, buy_count=buy_count,\
+                           rent_count=rent_count, buy_cart=buy_cart, rent_cart=rent_cart, books_dict=books_dict)
 
 #
 # Create Check out session with Stripe
@@ -818,8 +819,9 @@ def checkout():
 def create_checkout_session(total_price):
     user_id = get_user().get_user_id()
     order_dict = {}
+    ship_method = request.form['ship-method']
     print("creating checkout session...")
-    total_price = float(total_price)+5
+    total_price = float(total_price)
     try:
         db = shelve.open('database')
         cart_dict = db['Cart']
@@ -829,8 +831,10 @@ def create_checkout_session(total_price):
         user_cart = []
     Orderform = OrderForm.OrderForm(request.form)
     if request.method == 'POST' and Orderform.validate():
+        if ship_method == 'Standard Delivery':
+            total_price += 5
         new_order = OrderForm.Order_Detail(user_id, Orderform.name.data, Orderform.email.data, str(Orderform.contact_num.data), \
-                   Orderform.address.data, Orderform.ship_method.data, user_cart, total_price)
+                   Orderform.address.data, ship_method, user_cart, total_price)
         order_dict[user_id] = new_order
         db['Pending_Order'] = order_dict
         total_price *= 100
