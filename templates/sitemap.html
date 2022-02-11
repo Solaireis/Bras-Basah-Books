@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+
+{%block Stylesheets %}
+<link rel="stylesheet" href="/static/css/about.css">
+{%endblock%}
+
+
+<div class="container overflow-hidden">
+    <div class="container-bg">
+        
+        <div class="row gy-5">
+            <div class="col-12">
+                <div class="p-3">
+                    <h1>enquiry</h1>
+                        <ul>
+                            <li>
+                                <a href="/enquiry">/enquiry</a>
+                            </li>
+                            <li>
+                                <a href="/enquiry-adm">/enquiry-adm</a>
+                            </li>
+                            <li>
+                                <a href="/view-enq">/view-enq</a>
+                            </li>
+                        </ul>
+                    
+                    <h1>FAQ</h1>
+                        <ul>
+                            <li>
+                                <a href="/faq-dashboard">/faq-dashboard</a>
+                            </li>
+                            <li>
+                                <a href="/faq">/faq</a>
+                            </li>
+                        </ul>
+                    <h1>Coupons</h1>
+                        <ul>
+                            <li>
+                                <a  href="/coupon">/coupon</a>
+                            </li>
+                            <li>
+                                <a  href="/retrieve-coupons">/retrieve-coupons</a>
+                            </li>
+                            <li>
+                                <a href="/retrieve-customer-coupons">/retrieve-customer-coupons</a>
+                            </li>
+                        </ul>
+                </div>
+            </div>
+        </div>
+        
+
+</div>
+
+{% endblock %}
