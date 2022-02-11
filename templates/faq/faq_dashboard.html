@@ -64,7 +64,7 @@
                                 <td>{{faq.get_title()}}</td>
                                 <td>{{faq.get_desc()}}</td>
                                 <td>
-                                    <a href ="/faq-adm-upd/{{faq.get_count()}}" class="btn btn-warning">Update</a>
+                                    <a href ="/update-faq/{{faq.get_count()}}" class="btn btn-warning">Update</a>
                                 </td>
                                 <td>
                                     <form action="{{url_for('delete_faq',id= faq.get_count())}}" method="POST">

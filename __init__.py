@@ -948,8 +948,8 @@ def enquiry_retrieve_adm():
 #
 # faq Admin create
 #
-@app.route("/faq-adm", methods=['GET', 'POST'])
-def faq_adm():
+@app.route("/create-faq", methods=['GET', 'POST'])
+def create_faq():
     create_faq_form = Faq(request.form)
     if request.method == 'POST' and create_faq_form.validate():
         faq_dict = {}
@@ -973,9 +973,11 @@ def faq_adm():
         db.close()
 
         return redirect(url_for('home'))
-    return render_template("faq/faq_adm.html", form=create_faq_form)
+    return render_template("faq/create_faq.html", form=create_faq_form)
 
-
+#
+# counter for generating id 
+#
 def count_id(Table):
     the_dict = {}
     db = shelve.open('database','c')
@@ -986,6 +988,9 @@ def count_id(Table):
     highest_id = max(count)
     return int(highest_id)
 
+#
+# Update the enquiry
+#
 @app.route('/update-enq/<int:id>/', methods=['GET', 'POST'])
 def update_enq(id):
     update_enquiry = Enquiry(request.form)
@@ -1033,8 +1038,8 @@ def delete_enq(id):
 
 # retrieve enquiry
 
-@app.route('/faq-adm-retrieve')
-def faq():
+@app.route('/faq-dashboard')
+def faq_dashboard():
     db = shelve.open('database','c')
     faq_dict = retrieve_db('Faq',db)
     db.close()
@@ -1045,12 +1050,12 @@ def faq():
         faq_list.append(faq)
         print(faq_list)
 
-    return render_template("faq/faq.html", count=len(faq_list), faq_list=faq_list)
+    return render_template("faq/faq_dashboard.html", count=len(faq_list), faq_list=faq_list)
 
 
 # update faq
 
-@app.route('/faq-adm-upd/<int:id>/',methods=['GET','POST'])
+@app.route('/update-faq/<int:id>/',methods=['GET','POST'])
 def update_faq(id):
     update_faq = Faq(request.form)
     if request.method == 'POST' and update_faq.validate():
@@ -1064,7 +1069,7 @@ def update_faq(id):
 
         db['Faq'] = faq_dict
         db.close()
-        return redirect(url_for('faq'))
+        return redirect(url_for('faq_dashboard'))
 
     else:
         faq_dict = {}
@@ -1075,7 +1080,7 @@ def update_faq(id):
         faq = faq_dict.get(id)
         update_faq.title.data = faq.get_title()
         update_faq.desc.data = faq.get_desc()
-        return render_template('faq/faq_adm_upd.html', form=update_faq)
+        return render_template('faq/update_faq.html', form=update_faq)
 
 # delete enquiry
 @app.route('/delete-faq/<int:id>', methods=['POST'])
@@ -1086,7 +1091,7 @@ def delete_faq(id):
     faq_dict.pop(id)
     db['Faq'] = faq_dict
     db.close()
-    return redirect(url_for('faq'))
+    return redirect(url_for('faq_dashboard'))
 
 # Create coupon
 @app.route('/coupon', methods =['GET','POST'])
