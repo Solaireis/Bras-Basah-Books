@@ -916,6 +916,71 @@ def orderconfirm():
     db.close()
     return render_template("order_confirmation.html")
 
+#
+# Admin manage orders
+#
+@app.route("/manage_orders")
+def manage_orders():
+    db_order = []
+    new_order = []
+    prepare_order = []
+    fulfilled_order = []
+    try:
+        db = shelve.open('database')
+        db_order = db['Order']
+        print(db_order, "orders in database")
+        book_db = shelve.open('book.db', 'w')
+        books_dict = book_db['Books']
+        db.close()
+        book_db.close()
+    except:
+        print("There might not have any orders as of now.")
+    for order in db_order:
+        if order.get_order_status() == 'Ordered':
+            new_order.append(order)
+        elif order.get_order_status() == 'Preparing':
+            prepare_order.append(order)
+        elif order.get_order_status() == 'Fulfilled':
+            fulfilled_order.append(order)
+        else:
+            print(order, "Wrong order status")
+    # display from most recent to the least
+    db_order = list(reversed(db_order))
+    new_order = list(reversed(new_order))
+    prepare_order = list(reversed(prepare_order))
+    fulfilled_order = list(reversed(fulfilled_order))
+
+    print('new order', new_order)
+    print('prepare order', prepare_order)
+    print('fulfilled order',fulfilled_order)
+
+    return render_template('admin/manage_orders.html', all_order=db_order, new_order=new_order, \
+                           prepare_order=prepare_order, fulfilled_order=fulfilled_order, books_dict=books_dict)
+
+#
+# Admin update order status
+#
+@app.route("/manage_orders/edit_status/<order_id>", methods=['GET', 'POST'])
+def edit_status(order_id):
+    db_order = []
+    order_status = request.form['order-status']
+    print(order_status)
+    try:
+        db = shelve.open('database')
+        db_order = db['Order']
+        print(db_order, "orders in database")
+    except:
+        print("Error while loading data from database")
+    print(order_id)
+    for order in db_order:
+        if order.get_order_id() == order_id:
+            order.set_order_status(order_status)
+            flash('Order status for ' + order_id + ' has been updated.')
+    db['Order'] = db_order
+    print(db_order, 'updated database')
+    db.close()
+    print(order.get_order_status())
+    return redirect(request.referrer)
 
 #
 # enquiry page
