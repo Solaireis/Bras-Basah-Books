@@ -27,10 +27,13 @@
         <button class="nav-link" id="new-order-tab" data-bs-toggle="tab" data-bs-target="#new-order" type="button" role="tab" aria-controls="new-order" aria-selected="false">New</button>
       </li>
       <li class="nav-item" role="presentation">
-        <button class="nav-link" id="prepare-order-tab" data-bs-toggle="tab" data-bs-target="#prepare-order" type="button" role="tab" aria-controls="prepare-order" aria-selected="false">Preparing</button>
+        <button class="nav-link" id="Confirmed-order-tab" data-bs-toggle="tab" data-bs-target="#Confirmed-order" type="button" role="tab" aria-controls="Confirmed-order" aria-selected="false">Confirmed</button>
       </li>
       <li class="nav-item" role="presentation">
-        <button class="nav-link" id="fulfilled-order-tab" data-bs-toggle="tab" data-bs-target="#fulfilled-order" type="button" role="tab" aria-controls="fulfilled-order" aria-selected="false">Fulfilled</button>
+        <button class="nav-link" id="Shipped-order-tab" data-bs-toggle="tab" data-bs-target="#Shipped-order" type="button" role="tab" aria-controls="Shipped-order" aria-selected="false">Shipped</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="delivered-order-tab" data-bs-toggle="tab" data-bs-target="#delivered-order" type="button" role="tab" aria-controls="delivered-order" aria-selected="false">Delivered</button>
       </li>
     </ul>
 
@@ -48,7 +51,7 @@
                   <h2 class="order-id" title="Order ID">#{{ order.get_order_id() }}</h2>
 
                   <form action="/admin/manage_orders/edit_status/{{ order.get_order_id() }}" class="row" method="POST">
-                      <div class="col-md-3 col-12 form-check">
+                      <div class="col-md-2 col-12 form-check">
                           {% if order.get_order_status() == "Ordered" %}
                           <input type="radio" id="Ordered" name="order-status" value="Ordered" checked="checked">
                           <label for="Ordered">&nbsp; New</label>
@@ -58,24 +61,33 @@
                           {% endif %}
                       </div>
                       <div class="col-md-3 col-12 form-check">
-                          {% if order.get_order_status() == "Preparing" %}
-                          <input type="radio" id="Preparing" name="order-status" value="Preparing" checked="checked">
-                          <label for="Preparing">&nbsp; Preparing</label>
+                          {% if order.get_order_status() == "Confirmed" %}
+                          <input type="radio" id="Confirmed" name="order-status" value="Confirmed" checked="checked">
+                          <label for="Confirmed">&nbsp; Confirmed</label>
                           {% else %}
-                          <input type="radio" id="Preparing2" name="order-status" value="Preparing">
-                          <label for="Preparing2">&nbsp; Preparing</label>
+                          <input type="radio" id="Confirmed2" name="order-status" value="Confirmed">
+                          <label for="Confirmed2">&nbsp; Confirmed</label>
+                          {% endif %}
+                      </div>
+                      <div class="col-md-2 col-12 form-check">
+                          {% if order.get_order_status() == "Shipped" %}
+                          <input type="radio" id="Shipped" name="order-status" value="Shipped" checked="checked">
+                          <label for="Shipped">&nbsp; Shipped</label>
+                          {% else %}
+                          <input type="radio" id="Shipped2" name="order-status" value="Shipped">
+                          <label for="Shipped2">&nbsp; Shipped</label>
                           {% endif %}
                       </div>
                       <div class="col-md-3 col-12 form-check">
-                          {% if order.get_order_status() == "Fulfilled" %}
-                          <input type="radio" id="Fulfilled" name="order-status" value="Fulfilled" checked="checked">
-                          <label for="Fulfilled">&nbsp; Fulfilled</label>
+                          {% if order.get_order_status() == "Delivered" %}
+                          <input type="radio" id="Delivered" name="order-status" value="Delivered" checked="checked">
+                          <label for="Shipped">&nbsp; Delivered</label>
                           {% else %}
-                          <input type="radio" id="Fulfilled2" name="order-status" value="Fulfilled">
-                          <label for="Fulfilled2">&nbsp; Fulfilled</label>
+                          <input type="radio" id="Delivered2" name="order-status" value="Delivered">
+                          <label for="Shipped2">&nbsp; Delivered</label>
                           {% endif %}
                       </div>
-                      <div class="col-md-3 col-12">
+                      <div class="col-md-2 col-12">
                           <input class="btn" title="Update Order Status" type="submit" value="Update Status">
                       </div>
                   </form>
@@ -153,7 +165,7 @@
                   <h2 class="order-id" title="Order ID">#{{ order.get_order_id() }}</h2>
 
                   <form action="/admin/manage_orders/edit_status/{{ order.get_order_id() }}" class="row" method="POST">
-                      <div class="col-md-3 col-12 form-check">
+                      <div class="col-md-2 col-12 form-check">
                           {% if order.get_order_status() == "Ordered" %}
                           <input type="radio" id="Ordered3" name="order-status" value="Ordered" checked="checked">
                           <label for="Ordered3">&nbsp; New</label>
@@ -163,24 +175,33 @@
                           {% endif %}
                       </div>
                       <div class="col-md-3 col-12 form-check">
-                          {% if order.get_order_status() == "Preparing" %}
-                          <input type="radio" id="Preparing3" name="order-status" value="Preparing" checked="checked">
-                          <label for="Preparing3">&nbsp; Preparing</label>
+                          {% if order.get_order_status() == "Confirmed" %}
+                          <input type="radio" id="Confirmed3" name="order-status" value="Confirmed" checked="checked">
+                          <label for="Confirmed3">&nbsp; Confirmed</label>
                           {% else %}
-                          <input type="radio" id="Preparing4" name="order-status" value="Preparing">
-                          <label for="Preparing4">&nbsp; Preparing</label>
+                          <input type="radio" id="Confirmed4" name="order-status" value="Confirmed">
+                          <label for="Confirmed4">&nbsp; Confirmed</label>
+                          {% endif %}
+                      </div>
+                      <div class="col-md-2 col-12 form-check">
+                          {% if order.get_order_status() == "Shipped" %}
+                          <input type="radio" id="Shipped3" name="order-status" value="Shipped" checked="checked">
+                          <label for="Shipped3">&nbsp; Shipped</label>
+                          {% else %}
+                          <input type="radio" id="Shipped4" name="order-status" value="Shipped">
+                          <label for="Shipped4">&nbsp; Shipped</label>
                           {% endif %}
                       </div>
                       <div class="col-md-3 col-12 form-check">
-                          {% if order.get_order_status() == "Fulfilled" %}
-                          <input type="radio" id="Fulfilled3" name="order-status" value="Fulfilled" checked="checked">
-                          <label for="Fulfilled3">&nbsp; Fulfilled</label>
+                          {% if order.get_order_status() == "Delivered" %}
+                          <input type="radio" id="Delivered3" name="order-status" value="Delivered" checked="checked">
+                          <label for="Shipped3">&nbsp; Delivered</label>
                           {% else %}
-                          <input type="radio" id="Fulfilled4" name="order-status" value="Fulfilled">
-                          <label for="Fulfilled4">&nbsp; Fulfilled</label>
+                          <input type="radio" id="Delivered4" name="order-status" value="Delivered">
+                          <label for="Shipped4">&nbsp; Delivered</label>
                           {% endif %}
                       </div>
-                      <div class="col-md-3 col-12">
+                      <div class="col-md-2 col-12">
                           <input class="btn" title="Update Order Status" type="submit" value="Update Status">
                       </div>
                   </form>
@@ -245,19 +266,19 @@
           {% endif %}
       </div>
 
-      <div class="tab-pane fade" id="prepare-order" role="tabpanel" aria-labelledby="prepare-order-tab">
-          {% if prepare_order|length == 0 %}
+      <div class="tab-pane fade" id="Confirmed-order" role="tabpanel" aria-labelledby="Confirmed-order-tab">
+          {% if confirm_order|length == 0 %}
           <br>
-          <h4>None of the orders are preparing.</h4>
+          <h4>None of the orders are confirmed.</h4>
           {% else %}
-          {% for order in prepare_order %}
+          {% for order in confirm_order %}
           <div class="row">
               <div class="order-card col-md-9 col-12">
                   <p class="order-date" title="Order Date">{{ order.get_order_date() }}</p>
                   <h2 class="order-id" title="Order ID">#{{ order.get_order_id() }}</h2>
 
                   <form action="/admin/manage_orders/edit_status/{{ order.get_order_id() }}" class="row" method="POST">
-                      <div class="col-md-3 col-12 form-check">
+                      <div class="col-md-2 col-12 form-check">
                           {% if order.get_order_status() == "Ordered" %}
                           <input type="radio" id="Ordered5" name="order-status" value="Ordered" checked="checked">
                           <label for="Ordered5">&nbsp; New</label>
@@ -267,24 +288,33 @@
                           {% endif %}
                       </div>
                       <div class="col-md-3 col-12 form-check">
-                          {% if order.get_order_status() == "Preparing" %}
-                          <input type="radio" id="Preparing5" name="order-status" value="Preparing" checked="checked">
-                          <label for="Preparing5">&nbsp; Preparing</label>
+                          {% if order.get_order_status() == "Confirmed" %}
+                          <input type="radio" id="Confirmed5" name="order-status" value="Confirmed" checked="checked">
+                          <label for="Confirmed5">&nbsp; Confirmed</label>
                           {% else %}
-                          <input type="radio" id="Preparing6" name="order-status" value="Preparing">
-                          <label for="Preparing6">&nbsp; Preparing</label>
+                          <input type="radio" id="Confirmed6" name="order-status" value="Confirmed">
+                          <label for="Confirmed6">&nbsp; Confirmed</label>
+                          {% endif %}
+                      </div>
+                      <div class="col-md-2 col-12 form-check">
+                          {% if order.get_order_status() == "Shipped" %}
+                          <input type="radio" id="Shipped5" name="order-status" value="Shipped" checked="checked">
+                          <label for="Shipped5">&nbsp; Shipped</label>
+                          {% else %}
+                          <input type="radio" id="Shipped6" name="order-status" value="Shipped">
+                          <label for="Shipped6">&nbsp; Shipped</label>
                           {% endif %}
                       </div>
                       <div class="col-md-3 col-12 form-check">
-                          {% if order.get_order_status() == "Fulfilled" %}
-                          <input type="radio" id="Fulfilled5" name="order-status" value="Fulfilled" checked="checked">
-                          <label for="Fulfilled5">&nbsp; Fulfilled</label>
+                          {% if order.get_order_status() == "Delivered" %}
+                          <input type="radio" id="Delivered5" name="order-status" value="Delivered" checked="checked">
+                          <label for="Delivered5">&nbsp; Delivered</label>
                           {% else %}
-                          <input type="radio" id="Fulfilled6" name="order-status" value="Fulfilled">
-                          <label for="Fulfilled6">&nbsp; Fulfilled</label>
+                          <input type="radio" id="Delivered6" name="order-status" value="Delivered">
+                          <label for="Delivered6">&nbsp; Delivered</label>
                           {% endif %}
                       </div>
-                      <div class="col-md-3 col-12">
+                      <div class="col-md-2 col-12">
                           <input class="btn" title="Update Order Status" type="submit" value="Update Status">
                       </div>
                   </form>
@@ -349,19 +379,19 @@
           {% endif %}
       </div>
 
-      <div class="tab-pane fade" id="fulfilled-order" role="tabpanel" aria-labelledby="fulfilled-order-tab">
-          {% if fulfilled_order|length == 0 %}
+      <div class="tab-pane fade" id="Shipped-order" role="tabpanel" aria-labelledby="Shipped-order-tab">
+          {% if ship_order|length == 0 %}
           <br>
-          <h4>None of the orders have been fulfilled.</h4>
+          <h4>None of the orders have been shipped.</h4>
           {% else %}
-          {% for order in fulfilled_order %}
+          {% for order in ship_order %}
           <div class="row">
               <div class="order-card col-md-9 col-12">
                   <p class="order-date" title="Order Date">{{ order.get_order_date() }}</p>
                   <h2 class="order-id" title="Order ID">#{{ order.get_order_id() }}</h2>
 
                   <form action="/admin/manage_orders/edit_status/{{ order.get_order_id() }}" class="row" method="POST">
-                      <div class="col-md-3 col-12 form-check">
+                      <div class="col-md-2 col-12 form-check">
                           {% if order.get_order_status() == "Ordered" %}
                           <input type="radio" id="Ordered7" name="order-status" value="Ordered" checked="checked">
                           <label for="Ordered7">&nbsp; New</label>
@@ -371,24 +401,146 @@
                           {% endif %}
                       </div>
                       <div class="col-md-3 col-12 form-check">
-                          {% if order.get_order_status() == "Preparing" %}
-                          <input type="radio" id="Preparing7" name="order-status" value="Preparing" checked="checked">
-                          <label for="Preparing7">&nbsp; Preparing</label>
+                          {% if order.get_order_status() == "Confirmed" %}
+                          <input type="radio" id="Confirmed7" name="order-status" value="Confirmed" checked="checked">
+                          <label for="Confirmed7">&nbsp; Confirmed</label>
                           {% else %}
-                          <input type="radio" id="Preparing8" name="order-status" value="Preparing">
-                          <label for="Preparing8">&nbsp; Preparing</label>
+                          <input type="radio" id="Confirmed8" name="order-status" value="Confirmed">
+                          <label for="Confirmed8">&nbsp; Confirmed</label>
+                          {% endif %}
+                      </div>
+                      <div class="col-md-2 col-12 form-check">
+                          {% if order.get_order_status() == "Shipped" %}
+                          <input type="radio" id="Shipped7" name="order-status" value="Shipped" checked="checked">
+                          <label for="Shipped7">&nbsp; Shipped</label>
+                          {% else %}
+                          <input type="radio" id="Shipped8" name="order-status" value="Shipped">
+                          <label for="Shipped8">&nbsp; Shipped</label>
                           {% endif %}
                       </div>
                       <div class="col-md-3 col-12 form-check">
-                          {% if order.get_order_status() == "Fulfilled" %}
-                          <input type="radio" id="Fulfilled7" name="order-status" value="Fulfilled" checked="checked">
-                          <label for="Fulfilled7">&nbsp; Fulfilled</label>
+                          {% if order.get_order_status() == "Delivered" %}
+                          <input type="radio" id="Delivered7" name="order-status" value="Delivered" checked="checked">
+                          <label for="Shipped7">&nbsp; Delivered</label>
                           {% else %}
-                          <input type="radio" id="Fulfilled8" name="order-status" value="Fulfilled">
-                          <label for="Fulfilled8">&nbsp; Fulfilled</label>
+                          <input type="radio" id="Delivered8" name="order-status" value="Delivered">
+                          <label for="Shipped8">&nbsp; Delivered</label>
                           {% endif %}
                       </div>
-                      <div class="col-md-3 col-12">
+                      <div class="col-md-2 col-12">
+                          <input class="btn" title="Update Order Status" type="submit" value="Update Status">
+                      </div>
+                  </form>
+                  <div class="row user-info">
+                      <p>Name: {{ order.get_name() }} <span title="User ID">({{ order.get_user_id() }})</span></p>
+                      <div class="col-6">
+                          <h5>Contact</h5>
+                          <p>Contact Number: {{ order.get_contact_num() }}</p>
+                          <p>Email: {{ order.get_email() }}</p>
+                      </div>
+                      <div class="col-6">
+                          <h5>Shipping</h5>
+                          <p>Shipping Method: {{ order.get_ship_method() }}</p>
+                          <p>Shipping Address: {{ order.get_ship_address() }}</p>
+                      </div>
+                  </div>
+              </div>
+              <br>
+              <div class="col-md-3 col-12 order_summary">
+                  <table>
+                    <thead>
+                      <tr>
+                          <th colspan="4"><h5>Order Summary</h5></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {% if order.get_buy_item() != '' %}
+                        <tr class="label">
+                            <td colspan="4"><h6>Buy</h6></td>
+                        </tr>
+                        {% for book in order.get_buy_item() %}
+                        <tr class="products">
+                            <td><img src={{ books_dict[book].get_img() }}></td>
+                            <td style="text-align:left;">{{ books_dict[book].get_title() }}</td>
+                            <td>X{{ order.get_buy_item()[book] }}</td>
+                            <td>${{ books_dict[book].get_price() }}</td>
+                        {% endfor %}
+                    {% endif %}
+                    {% if order.get_rent_item() != '' %}
+                        <tr class="label">
+                            <td colspan="4"><h6>Rent</h6></td>
+                        </tr>
+                        {% for book in order.get_rent_item() %}
+                        <tr class="products">
+                            <td><img src={{ books_dict[book].get_img() }}></td>
+                            <td colspan="2" style="text-align:left;">{{ books_dict[book].get_title() }}</td>
+                            <td>{{ "$%.2f"|format((books_dict[book].get_price()|float)*0.1) }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% endif %}
+                      <tr class="bottom-sticky">
+                          <td colspan="4">
+                              <h5>Total Price <span class="float_right">{{ "$%.2f"|format(order.get_total_price()) }}</span></h5>
+                          </td>
+                      </tr>
+                    </tbody>
+                  </table>
+              </div>
+          </div>
+          <hr>
+          {% endfor %}
+          {% endif %}
+      </div>
+
+        <div class="tab-pane fade" id="delivered-order" role="tabpanel" aria-labelledby="delivered-order-tab">
+          {% if deliver_order|length == 0 %}
+          <br>
+          <h4>None of the orders have been delivered.</h4>
+          {% else %}
+          {% for order in deliver_order %}
+          <div class="row">
+              <div class="order-card col-md-9 col-12">
+                  <p class="order-date" title="Order Date">{{ order.get_order_date() }}</p>
+                  <h2 class="order-id" title="Order ID">#{{ order.get_order_id() }}</h2>
+
+                  <form action="/admin/manage_orders/edit_status/{{ order.get_order_id() }}" class="row" method="POST">
+                      <div class="col-md-2 col-12 form-check">
+                          {% if order.get_order_status() == "Ordered" %}
+                          <input type="radio" id="Ordered9" name="order-status" value="Ordered" checked="checked">
+                          <label for="Ordered7">&nbsp; New</label>
+                          {% else %}
+                          <input type="radio" id="Ordered0" name="order-status" value="Ordered">
+                          <label for="Ordered8">&nbsp; New</label>
+                          {% endif %}
+                      </div>
+                      <div class="col-md-3 col-12 form-check">
+                          {% if order.get_order_status() == "Confirmed" %}
+                          <input type="radio" id="Confirmed9" name="order-status" value="Confirmed" checked="checked">
+                          <label for="Confirmed7">&nbsp; Confirmed</label>
+                          {% else %}
+                          <input type="radio" id="Confirmed0" name="order-status" value="Confirmed">
+                          <label for="Confirmed8">&nbsp; Confirmed</label>
+                          {% endif %}
+                      </div>
+                      <div class="col-md-2 col-12 form-check">
+                          {% if order.get_order_status() == "Shipped" %}
+                          <input type="radio" id="Shipped9" name="order-status" value="Shipped" checked="checked">
+                          <label for="Shipped7">&nbsp; Shipped</label>
+                          {% else %}
+                          <input type="radio" id="Shipped0" name="order-status" value="Shipped">
+                          <label for="Shipped8">&nbsp; Shipped</label>
+                          {% endif %}
+                      </div>
+                      <div class="col-md-3 col-12 form-check">
+                          {% if order.get_order_status() == "Delivered" %}
+                          <input type="radio" id="Delivered9" name="order-status" value="Delivered" checked="checked">
+                          <label for="Shipped9">&nbsp; Delivered</label>
+                          {% else %}
+                          <input type="radio" id="Delivered0" name="order-status" value="Delivered">
+                          <label for="Shipped0">&nbsp; Delivered</label>
+                          {% endif %}
+                      </div>
+                      <div class="col-md-2 col-12">
                           <input class="btn" title="Update Order Status" type="submit" value="Update Status">
                       </div>
                   </form>
