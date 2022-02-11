@@ -1,5 +1,5 @@
 import uuid
-from datetime import date
+import datetime
 from wtforms import Form, StringField, IntegerField, TextAreaField, EmailField, RadioField, validators
 
 def contact_num_check(form, field):
@@ -41,7 +41,7 @@ class Order_Detail(User_Order):
         self.order_id = str(uuid.uuid4())
         self.ship_info = {'name': name, 'email': email, 'contact_num': contact_num,\
                           'ship_address': ship_address, 'ship_method': ship_method, \
-                          'order_date': str(date.today()), 'order_status': 'Ordered'}
+                          'order_date': str(datetime.date.today()), 'order_status': 'Ordered'}
         self.order_info = [order_item, total_price]
         self.user_order = {user_id: self.ship_info, self.order_id: self.order_info}
         #print(self.user_order)
@@ -129,4 +129,50 @@ class Order_Detail(User_Order):
         ship_info = self.get_ship_info()
         ship_info['order_status'] =  order_status
         return order_status
+
+    # for returning of rented book
+    def get_return_date(self):
+        order_date = self.get_order_date()
+        order_date = datetime.datetime.strptime(order_date, '%Y-%m-%d').date()
+        return_date = order_date + datetime.timedelta(days=14)
+        return return_date
+    def get_today_date(self):
+        today = datetime.date.today()
+        return today
+    def set_returned_status(self, returned):
+        returned = returned.upper()
+        rent_item = self.get_rent_item()
+        if returned == "YES":
+            return_status = 'Returned'
+            rent_item.append(return_status)
+            print(rent_item)
+        else:
+            return_status = 'Not Returned'
+            rent_item.pop(-1)
+            print(rent_item)
+        return return_status
+    def get_returned_status(self):
+        rent_item = self.get_rent_item()
+        if rent_item[-1] == 'Returned':
+            return_status = 'Returned'
+        else:
+            return_status = 'Not Returned'
+        return return_status
+
+user_id = 1
+name = 'chiobu'
+email = "testing@gmail.com"
+contact_num = '12341234'
+ship_address = "my house"
+ship_method = 'Standard Delivery'
+
+order_item = [{1:5, 4:3}, [1,4,4]]
+total_price = 300
+
+order = Order_Detail(user_id, name, email, contact_num, ship_address, ship_method, order_item, total_price)
+print(order.get_user_order())
+print(order.get_order_item())
+
+print(order.get_today_date())
+
 
