@@ -1005,148 +1005,153 @@ def edit_status(order_id):
 #
 # Eden Pages
 #
-# enquiry page
+# Start of enquiry pages
+#
+#
+# Create Enquiry/Contact Us (customer/guest)
 #
 @app.route("/enquiry", methods=['GET', 'POST'])
 def enquiry_cust():
-    create_enquiry_form = Enquiry(request.form)
-    if request.method == 'POST' and create_enquiry_form.validate():
-        enquiry_dict = {}
+    create_enquiry_form = Enquiry(request.form) #create enquiry form
+    if request.method == 'POST' and create_enquiry_form.validate(): #if form is submitted and validated
+        enquiry_dict = {} #empty dictionary to store enquiry details
         db = shelve.open('database', 'c')
 
         try:
-            enquiry_dict = db['Enquiry']
+            enquiry_dict = db['Enquiry'] #load enquiry details from database
         except:
-            print("Error in retrieving enquiries ")
+            print("Error in retrieving enquiries ") #if no enquiries found in database
 
         try: # check if user already has an enquiry id
-            UserEnquiry.count = count_id('Enquiry')
+            UserEnquiry.count = count_id('Enquiry') #get the count of enquiry id
             
         except:
-            print("No database found")
+            print("No database found") #flags out for debugging
         
         try:
-            user_id = session["UserID"]
-            user_type = session["UserType"]
+            user_id = session["UserID"] #get user id from session
+            user_type = session["UserType"] #get user type from session
             
             if session["UserType"] == "Customer": #session for user
-                customer_dict = retrieve_db('Customers',db)
-                customer = customer_dict.get(session["UserID"])
+                customer_dict = retrieve_db('Customers',db) #load customer details from database
+                customer = customer_dict.get(session["UserID"]) #get customer details from database
                 print(customer)
-                count = count_id('Enquiry') + 1
-                customer.add_enquiry(count)
-                customer_dict[session["UserID"]] = customer
-                db['Customers'] = customer_dict
+                count = count_id('Enquiry') + 1 #get the count of enquiry id
+                customer.add_enquiry(count) #add enquiry id to customer
+                customer_dict[session["UserID"]] = customer #update customer details in database
+                db['Customers'] = customer_dict #update customer details in database
         except:
-            print("No database found for session")
+            print("No database found for session") 
 
 
         enquiry = UserEnquiry(create_enquiry_form.name.data, create_enquiry_form.email.data,\
-             create_enquiry_form.enquiry_type.data, create_enquiry_form.comments.data, user_id, user_type)
-        enquiry_dict[enquiry.get_count()] = enquiry
-        db['Enquiry'] = enquiry_dict
+             create_enquiry_form.enquiry_type.data, create_enquiry_form.comments.data, user_id, user_type) # submit form details
+        enquiry_dict[enquiry.get_count()] = enquiry #add enquiry details to dictionary
+        db['Enquiry'] = enquiry_dict #save to database
 
-        db.close()
+        db.close() #close database
 
-        return redirect(url_for('home'))
+        return redirect(url_for('home')) #redirect to home page
 
-    return render_template("enquiry/create_enquiry.html", form=create_enquiry_form)
+    return render_template("enquiry/create_enquiry.html", form=create_enquiry_form) #render template
 
 #
-# retrieve customers
+# retrieve customers(admin)
 #
 
-@app.route("/enquiry-adm")
+@app.route("/enquiry-adm") #admin dashboard
 def enquiry_retrieve_adm():
-    db = shelve.open('database','c')
+    db = shelve.open('database','c') #open database
     enquiry_dict = retrieve_db('Enquiry', db )  # refer to the retrieve_db function
     db.close()
 
-    enquiry_list = []
-    for key in enquiry_dict:
-        enquiry = enquiry_dict.get(key)
-        enquiry_list.append(enquiry)
-        print(enquiry_list)
+    enquiry_list = [] #empty list to store enquiry details
+    for key in enquiry_dict: #loop through the dictionary
+        enquiry = enquiry_dict.get(key) #get the enquiry details
+        enquiry_list.append(enquiry) #add to list
+        print(enquiry_list) #print for debugging
 
-    return render_template("enquiry/enquiry_admin.html", count=len(enquiry_list), enquiry_list=enquiry_list)
+    return render_template("enquiry/enquiry_admin.html", count=len(enquiry_list), enquiry_list=enquiry_list) #render template
 
 #
 # faq Admin create
 #
-@app.route("/create-faq", methods=['GET', 'POST'])
+@app.route("/create-faq", methods=['GET', 'POST']) 
 def create_faq():
-    create_faq_form = Faq(request.form)
-    if request.method == 'POST' and create_faq_form.validate():
+    create_faq_form = Faq(request.form) #create faq form
+    if request.method == 'POST' and create_faq_form.validate(): #if form is submitted and validated
         faq_dict = {}
-        db = shelve.open('database','c')
+        db = shelve.open('database','c') #open database
 
         try:
-            faq_dict = db['Faq']
+            faq_dict = db['Faq'] #load faq details from database
         except:
-            print("Error in retrieving faq queries from faq.db")
+            print("Error in retrieving faq queries from faq.db") #if no faq queries found in database
 
 
         try:
-            FaqEntry.count = count_id('Faq')
+            FaqEntry.count = count_id('Faq') #retrieve counter
         except:
-            print("No Database found")
+            print("No Database found") #flags out for debugging
 
-        faq = FaqEntry(create_faq_form.title.data, create_faq_form.desc.data)
-        faq_dict[faq.get_count()] = faq
-        db['Faq'] = faq_dict
+        faq = FaqEntry(create_faq_form.title.data, create_faq_form.desc.data) #submit form details
+        faq_dict[faq.get_count()] = faq #add faq details to dictionary
+        db['Faq'] = faq_dict # save to database
 
-        db.close()
+        db.close()  #close database
 
-        return redirect(url_for('home'))
-    return render_template("faq/create_faq.html", form=create_faq_form)
+        return redirect(url_for('home')) #redirect to home page
+    return render_template("faq/create_faq.html", form=create_faq_form) #render template
 
 #
 # counter for generating id
 #
-def count_id(Table):
-    the_dict = {}
-    db = shelve.open('database','c')
-    the_dict = db[Table]
-    db.close()
+def count_id(Table): 
+    the_dict = {} #empty dictionary
+    db = shelve.open('database','c') #open database
+    the_dict = db[Table] #load table details from database
+    db.close() #close database
 
     count = [0] #test
-    for key in the_dict:
-        count.append(key)
+    for key in the_dict: #loop through the dictionary
+        count.append(key) #add to list
     
-    highest_id = max(count)
+    highest_id = max(count) #gets the highest id
 
 
-    return int(highest_id)
+    return int(highest_id) #return highest id
 
 #
-# Update the enquiry
+# Update the enquiry, Reply to Customer enquiry
 #
 @app.route('/update-enq/<int:id>/', methods=['GET', 'POST'])
 def update_enq(id):
-    update_enquiry = ReplyEnquiry(request.form)
+    update_enquiry = ReplyEnquiry(request.form) #create update enquiry form
 
-    if request.method == 'POST' and update_enquiry.validate():
-        users_dict={}
-        db = shelve.open('database','w')
-        enquiry_dict = db['Enquiry']
+    if request.method == 'POST' and update_enquiry.validate(): #if form is submitted and validated
+        users_dict={} #empty dictionary to store user details
+        db = shelve.open('database','w') #open database
+        enquiry_dict = db['Enquiry'] #load enquiry details from database
 
-        enquiry_id = enquiry_dict.get(id)
+        # replying to  customer enquiry
+        enquiry_id = enquiry_dict.get(id) #retrieve enquiry details from database
         enquiry_id.set_name(update_enquiry.name.data)
         enquiry_id.set_email(update_enquiry.email.data)
         enquiry_id.set_enquiry_type(update_enquiry.enquiry_type.data)
         enquiry_id.set_comments(update_enquiry.comments.data)
         enquiry_id.set_reply(update_enquiry.reply.data)#allows for reply to be updated
 
-        db['Enquiry'] = enquiry_dict
-        db.close()
+        db['Enquiry'] = enquiry_dict #saves to db
+        db.close() #close database
         return redirect(url_for('enquiry_retrieve_adm'))
 
     else:
-        enquiry_dict = {}
-        db = shelve.open('database','w')
-        enquiry_dict = db['Enquiry']
-        db.close()
+        enquiry_dict = {} #empty dictionary to store enquiry details
+        db = shelve.open('database','w') #open database
+        enquiry_dict = db['Enquiry'] #load enquiry details from database
+        db.close() #close database
 
+        #places the customer enquiries into the update form, which will be rendered
         enquiry_id = enquiry_dict.get(id)
         update_enquiry.name.data = enquiry_id.get_name()
         update_enquiry.email.data = enquiry_id.get_email()
@@ -1157,13 +1162,13 @@ def update_enq(id):
         return render_template('enquiry/enquiry_adm_upd.html', form= update_enquiry)
 
 #
-# to mail to guest, creation of forms
+# to mail to guest enquiry, alternative reply to enquiry based on UserType
 #
 @app.route('/mail-enq/<int:id>/', methods=['GET', 'POST'])
 def mail_enq(id):
-    mail_enquiry = ReplyEnquiry(request.form)
+    mail_enquiry = ReplyEnquiry(request.form) #create mail enquiry form
 
-    if request.method == 'POST' and mail_enquiry.validate():
+    if request.method == 'POST' and mail_enquiry.validate(): #if form is submitted and validated
         users_dict={}
         db = shelve.open('database','w')
         enquiry_dict = db['Enquiry']
@@ -1182,10 +1187,13 @@ def mail_enq(id):
         # app.config.from_pyfile("config/noreply_email.cfg")
         # mail.init_app(app)
 
+        # crafting of mail
+        # message subj, sender, recipient
         msg = Message(subject="Enquiry Ticket No:" + enquiry_id.get_count(),
                     sender=("BrasBasahBooks", "noreplybbb02@gmail.com"), 
                     recipients=[enquiry_id.get_email()])
-                    
+
+        #message contents
         msg.body = "Dear " + enquiry_id.get_name() + ",\n\n" \
                     + "here are your enquiry details: " + "\n\n" \
                     + "Enquiry Type: " + enquiry_id.get_enquiry_type() + "\n\n" \
@@ -1193,17 +1201,19 @@ def mail_enq(id):
                     + "Reply: " + "\n\n" + enquiry_id.get_reply() \
                     + "Regards,\n" + "BrasBasahBooks"
 
+        # send the mail
         mail.send(msg)
 
-        flash(f"Verification email sent to {enquiry_id.get_email()}")
+        flash(f"Verification email sent to {enquiry_id.get_email()}") #flash message
         return redirect(url_for('enquiry_retrieve_adm'))
 
     else:
-        enquiry_dict = {}
-        db = shelve.open('database','w')
-        enquiry_dict = db['Enquiry']
-        db.close()
+        enquiry_dict = {} #empty dictionary to store enquiry details
+        db = shelve.open('database','w') #open database
+        enquiry_dict = db['Enquiry'] #load enquiry details from database
+        db.close() #close database
 
+        #places the guest enquiries into the update form, which will be rendered and be able to be updated
         enquiry_id = enquiry_dict.get(id)
         mail_enquiry.name.data = enquiry_id.get_name()
         mail_enquiry.email.data = enquiry_id.get_email()
@@ -1213,47 +1223,54 @@ def mail_enq(id):
 
         return render_template('enquiry/enq_adm_mail.html', form= mail_enquiry)
 
+#
 # delete Enquiry
-@app.route('/delete-enq/<int:id>',methods=['POST'])
+#
+@app.route('/delete-enq/<int:id>',methods=['POST']) 
 def delete_enq(id):
-    enquiry_dict = {}
-    db = shelve.open('database','w')
-    enquiry_dict = db['Enquiry']
+    enquiry_dict = {} #empty dictionary to store enquiry details
+    db = shelve.open('database','w') #open database
+    enquiry_dict = db['Enquiry'] #load enquiry details from database
 
-    enquiry_dict.pop(id)
-    db['Enquiry'] = enquiry_dict
-    db.close()
+    enquiry_dict.pop(id) #delete enquiry from database
+    db['Enquiry'] = enquiry_dict #save to db
+    db.close() #close database
     return redirect(url_for('enquiry_retrieve_adm'))
 
-#view faq
+#
+#view faq , customer to view enquiries
+#
 @app.route('/view-enq',methods=['GET', 'POST'])
 def view_enq():#allows the viewing of faq
-    db = shelve.open('database','w')
-    customer_dict = retrieve_db('Customers',db)
-    db.close()
+    db = shelve.open('database','w') #open database
+    customer_dict = retrieve_db('Customers',db) #retrieve customer details from database
+    db.close() #close database
 
-    customer = customer_dict.get(session["UserID"])
-    enquiry_list = customer.get_enquiry()
-    print(enquiry_list)
+    customer = customer_dict.get(session["UserID"]) #retrieve customer id from database
+    enquiry_list = customer.get_enquiry() #retrieve enquiry details from database
+    print(enquiry_list) #print enquiry details
 
-    db = shelve.open('database','w')
-    enquiry_dict = retrieve_db('Enquiry',db)
-    db.close()
+    db = shelve.open('database','w') #open database
+    enquiry_dict = retrieve_db('Enquiry',db) #retrieve enquiry details from database
+    db.close() #close database
 
+    #retrieve enquiry details from database, to match with customer enquiry
     enquiry_list_final = []
-    for enquiry in enquiry_list:
-        print(enquiry)
-        for key in enquiry_dict:
-            print(key)
-            if enquiry == key:
-                enquiry_list_final.append(enquiry_dict.get(key))
-                print('enquiry',enquiry_list_final)
+    for enquiry in enquiry_list: #for each enquiry in the customer enquiry list
+        print(enquiry) #print enquiry list from customer database  - debugging purposes
+        for key in enquiry_dict: #for each enquiry in the enquiry dictionary
+            print(key) #print enquiry key  - debugging purposes
+            if enquiry == key: #if the enquiry id from the customer list matches the enquiry id from the enquiry dictionary
+                enquiry_list_final.append(enquiry_dict.get(key)) #append the enquiry details to the final list
+                print('enquiry',enquiry_list_final) #print enquiry final list - debugging purposes
     
     return render_template('enquiry/view_enq.html', count=len(enquiry_list_final), enquiry_list=enquiry_list_final)
 
-# retrieve enquiry
+#
+# retrieve enquiry from admin side
+#
 @app.route('/faq-dashboard')#retrieve faq
-def faq_dashboard():
+def faq_dashboard(): #allows the viewing of faq adm
     db = shelve.open('database','c')
     faq_dict = retrieve_db('Faq',db)
     db.close()
@@ -1266,9 +1283,9 @@ def faq_dashboard():
 
     return render_template("faq/faq_dashboard.html", count=len(faq_list), faq_list=faq_list)
 
-
-# update faq
-
+#
+# update faq from the admin side
+#
 @app.route('/update-faq/<int:id>/',methods=['GET','POST'])
 def update_faq(id):
     update_faq = Faq(request.form)
@@ -1296,7 +1313,9 @@ def update_faq(id):
         update_faq.desc.data = faq.get_desc()
         return render_template('faq/update_faq.html', form=update_faq)
 
+#
 # delete enquiry
+#
 @app.route('/delete-faq/<int:id>', methods=['POST'])
 def delete_faq(id):
     faq_dict={}
@@ -1354,6 +1373,7 @@ def coupon_adm():
 
     return render_template("coupon/create_coupons.html", form=create_coupon)
 
+# retrieve coupons as an admin
 @app.route('/retrieve-coupons')
 def retrieve_coupons():
     coupon_dict = {}
@@ -1368,6 +1388,7 @@ def retrieve_coupons():
 
     return render_template('coupon/retrieve_coupons.html', count=len(coupon_list), coupon_list=coupon_list)
 
+# update coupons
 @app.route('/update-coupon/<int:id>/',methods=['GET','POST'])
 def update_coupons(id):
     coupon_form = CreateCoupon(request.form)
@@ -1401,6 +1422,7 @@ def update_coupons(id):
 
         return render_template('coupon/update_coupons.html', form=coupon_form)
 
+#delete the coupons
 @app.route('/delete-coupon/<int:id>',methods=['GET', 'POST'])
 def delete_coupons(id):
     coupon_dict = {}
@@ -1411,6 +1433,7 @@ def delete_coupons(id):
     db.close()
     return redirect(url_for('retrieve_coupons'))
 
+#customer retrieve coupons
 @app.route('/request-coupon', methods=['GET', 'POST'])
 def request_coupons():
     request_coupons = RequestCoupon(request.form)
@@ -1439,6 +1462,7 @@ def request_coupons():
 
     return render_template('coupon/customer_coupons.html', form=request_coupons)
 
+# retrieve coupons as a customer
 @app.route('/retrieve-customer-coupons', methods=['GET', 'POST'])
 def retrieve_cu_coupons():
     customer_dict = {}
