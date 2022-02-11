@@ -47,7 +47,7 @@
                   <p class="order-date" title="Order Date">{{ order.get_order_date() }}</p>
                   <h2 class="order-id" title="Order ID">#{{ order.get_order_id() }}</h2>
 
-                  <form action="/manage_orders/edit_status/{{ order.get_order_id() }}" class="row" method="POST">
+                  <form action="/admin/manage_orders/edit_status/{{ order.get_order_id() }}" class="row" method="POST">
                       <div class="col-md-3 col-12 form-check">
                           {% if order.get_order_status() == "Ordered" %}
                           <input type="radio" id="Ordered" name="order-status" value="Ordered" checked="checked">
@@ -152,7 +152,7 @@
                   <p class="order-date" title="Order Date">{{ order.get_order_date() }}</p>
                   <h2 class="order-id" title="Order ID">#{{ order.get_order_id() }}</h2>
 
-                  <form action="/manage_orders/edit_status/{{ order.get_order_id() }}" class="row" method="POST">
+                  <form action="/admin/manage_orders/edit_status/{{ order.get_order_id() }}" class="row" method="POST">
                       <div class="col-md-3 col-12 form-check">
                           {% if order.get_order_status() == "Ordered" %}
                           <input type="radio" id="Ordered3" name="order-status" value="Ordered" checked="checked">
@@ -256,7 +256,7 @@
                   <p class="order-date" title="Order Date">{{ order.get_order_date() }}</p>
                   <h2 class="order-id" title="Order ID">#{{ order.get_order_id() }}</h2>
 
-                  <form action="/manage_orders/edit_status/{{ order.get_order_id() }}" class="row" method="POST">
+                  <form action="/admin/manage_orders/edit_status/{{ order.get_order_id() }}" class="row" method="POST">
                       <div class="col-md-3 col-12 form-check">
                           {% if order.get_order_status() == "Ordered" %}
                           <input type="radio" id="Ordered5" name="order-status" value="Ordered" checked="checked">
@@ -360,7 +360,7 @@
                   <p class="order-date" title="Order Date">{{ order.get_order_date() }}</p>
                   <h2 class="order-id" title="Order ID">#{{ order.get_order_id() }}</h2>
 
-                  <form action="/manage_orders/edit_status/{{ order.get_order_id() }}" class="row" method="POST">
+                  <form action="/admin/manage_orders/edit_status/{{ order.get_order_id() }}" class="row" method="POST">
                       <div class="col-md-3 col-12 form-check">
                           {% if order.get_order_status() == "Ordered" %}
                           <input type="radio" id="Ordered7" name="order-status" value="Ordered" checked="checked">
