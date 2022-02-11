@@ -4,18 +4,16 @@
 
 {% block stylesheets %}
 
-<link rel="stylesheet" href="/static/css/cart.css">
+<link rel="stylesheet" href="/static/css/order_confirmation.css">
 
 {% endblock %}
 
 {% block content %}
   <section>
+    <h1>Thank you for shopping with us!</h1>
     <p>
-      Thank you for shopping with us! If you have any questions, please email
-      <a href="mailto:orders@example.com">orders@example.com</a>.
-    </p>
-    <p>
-      You will be redirected to the home page after <span id="seconds">5</span> seconds.
+      You will be redirected to the home page after <span id="seconds">5</span> seconds. Please do not refresh the page.<br>
+      Should you have any enquiries, please do not hesitate to <a href="/enquiry">contact us</a>.
     </p>
   </section>
 </body>
@@ -24,21 +22,5 @@
 {% endblock %}
 
 {% block scripts %}
-    <script>
-        timeLeft = 5;
 
-        function countdown() {
-            timeLeft--;
-            document.getElementById("seconds").innerHTML = String( timeLeft );
-            if (timeLeft > 0) {
-                setTimeout(countdown, 1000);
-            }
-        };
-
-       setTimeout(countdown, 1000);
-
-       setTimeout(function(){
-          window.location.href = '/';
-       }, 5000);
-</script>
 {% endblock %}
