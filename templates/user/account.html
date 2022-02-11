@@ -9,24 +9,19 @@
 {% block content %}
 {% from "includes/_render_breadcrumb.html" import render_breadcrumb %}
 {% from "includes/_login_render_field.html" import render_field %}
-{% from "includes/_render_sidebar.html" import render_sidebar %}
+{% from "includes/_user_sidebar.html" import user_sidebar %}
 
 {# Render breadcrumbs #}
 {{ render_breadcrumb({
   "Home": url_for("home"),
-  "Account": "#"
+  "My Account": "#"
 }) }}
 
 {# Container to contain display for user related things #}
 <div class="container user-container">
   <div class="row">
     {# Render sidebar using dictionary #}
-    {{ render_sidebar({
-      "My Account": "#",
-      "My Orders": url_for("home"),
-      "My Wishlist": url_for("home"),
-      "My Coupons": url_for("home")
-      }) }}
+    {{ user_sidebar("My Account") }}
     <div class="col-lg-10 py-3 px-5">
       <h2>Account settings</h2>
       <hr>
