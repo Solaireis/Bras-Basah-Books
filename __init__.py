@@ -554,6 +554,12 @@ def verify_fail():
 # Manage accounts page
 @app.route("/admin/manage-accounts")
 def manage_accounts():
+    user = get_user()
+
+    # If user is not admin
+    if not isinstance(user, Admin):
+        return redirect(url_for("home"))
+
     return render_template("admin/manage_accounts.html")
 
 
