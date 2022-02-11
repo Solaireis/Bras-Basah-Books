@@ -1109,6 +1109,20 @@ def faq():
 
     return render_template("faq/faq.html", count=len(faq_list), faq_list=faq_list)
 
+@app.route('/helpful-faq/<int:id>', methods=['GET', 'POST'])
+def helpful_faq(id):
+    db = shelve.open('database','c')
+    faq_dict = retrieve_db('Faq',db)
+
+
+    faq = faq_dict.get(id)
+    faq.set_helpful(faq.get_helpful() + 1)
+
+    db['Faq'] = faq_dict
+    db.close()
+
+    return redirect(url_for('faq'))
+
 # Create coupon
 @app.route('/coupon', methods =['GET','POST'])
 def coupon_adm():

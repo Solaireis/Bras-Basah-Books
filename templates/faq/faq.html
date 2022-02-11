@@ -45,6 +45,15 @@
                                         <div class="">
                                             {{faq.get_desc()}}
                                         </div>
+                                        
+                                        <div>
+                                            <form action="{{url_for('helpful_faq',id= faq.get_count())}}" method="POST">
+                                                <input type="submit" value="Is This Helpful?" class="btn btn-warning">
+                                            </form>
+                                            <p>
+                                               Number of people who found this guide helpful {{faq.get_helpful()}}
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

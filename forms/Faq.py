@@ -13,6 +13,7 @@ class FaqEntry():
         self.__faq_id = str(uuid.uuid4())  # faq_id: unique id of the enquiry which is needed for matching ids together
         self.__title = title
         self.__desc = desc
+        self.__helpful = 0
 
     def get_count(self):
         return self.__count
@@ -37,4 +38,10 @@ class FaqEntry():
 
     def set_desc(self,desc):
         self.__desc = desc
+
+    def get_helpful(self):
+        return self.__helpful
+    
+    def set_helpful(self,helpful):
+        self.__helpful = helpful
 
