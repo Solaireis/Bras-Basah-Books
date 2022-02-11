@@ -104,7 +104,7 @@ def get_last_book_id():
 
     books_dict = {}
     db = shelve.open('database', 'r')
-    books_dict = db['Books']
+    books_dict = retrieve_db("Books", db)
     db.close()
 
     id_list = list(books_dict.keys())
@@ -647,9 +647,7 @@ def cart():
     user_id = get_user().get_user_id()
     cart_dict = {}
     cart_db = shelve.open('database', 'c')
-    book_db = shelve.open('database')
-    books_dict = book_db['Books']
-    book_db.close()
+    books_dict = retrieve_db("Books", cart_db)
     buy_count = 0
     rent_count = 0
     total_price = 0
@@ -748,9 +746,7 @@ def checkout():
     user_id = get_user().get_user_id()
     cart_dict = {}
     cart_db = shelve.open('database', 'c')
-    book_db = shelve.open('database', 'r')
-    books_dict = book_db['Books']
-    book_db.close()
+    books_dict = retrieve_db("Books", cart_db)
     buy_count = 0
     rent_count = 0
     total_price = 0
@@ -851,11 +847,10 @@ def orderconfirm():
     db_order= []
     books_dict = {}
     #cart_db = shelve.open('cart', 'c')
-    book_db = shelve.open('database', 'w')
-    db = shelve.open('database', 'c')
+    db = shelve.open('database')
     cart_dict = db['Cart']
     db_pending = db['Pending_Order']
-    books_dict = book_db['Books']
+    books_dict = retrieve_db("Books")
     # in case user hand itchy go and reload the page, bring them back to home page
     try:
         new_order = db_pending[user_id]
@@ -902,7 +897,7 @@ def orderconfirm():
 
         del cart_dict[user_id]
         del db_pending[user_id]
-        book_db['Books'] = books_dict
+        db['Books'] = books_dict
         db['Pending_Order'] = db_pending
         db['Order'] = db_order
         db['Cart'] = cart_dict
@@ -911,7 +906,6 @@ def orderconfirm():
         print(db_order, 'updated database')
     except KeyError:
         return home2()
-    book_db.close()
     #db.close()
     db.close()
     return render_template("order_confirmation.html")
@@ -1414,8 +1408,8 @@ def inventory():
 
     try:
         books_dict = {}
-        db = shelve.open('database', 'r')
-        books_dict = db['Books']
+        db = shelve.open('database')
+        books_dict = retrieve_db("Books")
         db.close()
 
     except:
