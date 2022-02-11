@@ -646,8 +646,14 @@ def add_to_rent(id):
 def cart():
     user_id = get_user().get_user_id()
     cart_dict = {}
+    books_dict = {}
     cart_db = shelve.open('database', 'c')
-    books_dict = retrieve_db("Books", cart_db)
+    book_db = shelve.open('database')
+    try:
+        books_dict = book_db['Books']
+        book_db.close()
+    except:
+        print("There is no books in the database currently.")
     buy_count = 0
     rent_count = 0
     total_price = 0
@@ -656,6 +662,8 @@ def cart():
     try:
         cart_dict = cart_db['Cart']
         print(cart_dict)
+        books_dict = book_db['Books']
+        book_db.close()
     except:
         print("Error while retrieving data from cart.db")
 
@@ -745,14 +753,14 @@ def delete_renting_cart(id):
 def checkout():
     user_id = get_user().get_user_id()
     cart_dict = {}
-    cart_db = shelve.open('database', 'c')
-    books_dict = retrieve_db("Books", cart_db)
+    db = shelve.open('database', 'c')
     buy_count = 0
     rent_count = 0
     total_price = 0
     buy_cart = {}
     rent_cart = []
     try:
+        books_dict = db['Books']
         db = shelve.open('database', 'c')
         db_pending = db['Pending_Order']
         del db_pending[user_id]
@@ -760,13 +768,12 @@ def checkout():
         db.close()
     except:
         pass
-    # print(db_pending, 'should not have pending order as user cancel check out')
 
     try:
-        cart_dict = cart_db['Cart']
+        cart_dict = db['Cart']
         print(cart_dict)
     except:
-        print("Error while retrieving data from cart.db")
+        print("Error while retrieving data from database")
 
     if user_id in cart_dict:
         user_cart = cart_dict[user_id]
@@ -774,7 +781,6 @@ def checkout():
             print('This user has nothing in the buying cart')
         else:
             buy_cart = user_cart[0]
-            # buy_count = len(user_cart[0])
             for key in buy_cart:
                 buy_count += buy_cart[key]
                 total_price = float(total_price)
@@ -846,11 +852,10 @@ def orderconfirm():
     user_id = get_user().get_user_id()
     db_order= []
     books_dict = {}
-    #cart_db = shelve.open('cart', 'c')
     db = shelve.open('database')
     cart_dict = db['Cart']
     db_pending = db['Pending_Order']
-    books_dict = retrieve_db("Books")
+    books_dict = db['Books']
     # in case user hand itchy go and reload the page, bring them back to home page
     try:
         new_order = db_pending[user_id]
@@ -859,7 +864,8 @@ def orderconfirm():
         try:
             db_order = db['Order']
         except:
-            print("Error while extracting data from database")
+            print("Error while loading data from database")
+            # return home2()
 
         db_order.append(new_order)
 
@@ -902,11 +908,10 @@ def orderconfirm():
         db['Order'] = db_order
         db['Cart'] = cart_dict
         print(db_pending, 'should not have pending order as user already check out')
-        print(cart_dict, 'updated database')
-        print(db_order, 'updated database')
+        print(cart_dict, 'updated database[cart]')
+        print(db_order, 'updated databas[order]')
     except KeyError:
         return home2()
-    #db.close()
     db.close()
     return render_template("order_confirmation.html")
 
@@ -921,12 +926,10 @@ def manage_orders():
     fulfilled_order = []
     try:
         db = shelve.open('database')
+        books_dict = db['Books']
         db_order = db['Order']
         print(db_order, "orders in database")
-        book_db = shelve.open('book.db', 'w')
-        books_dict = book_db['Books']
         db.close()
-        book_db.close()
     except:
         print("There might not have any orders as of now.")
     for order in db_order:
@@ -938,6 +941,7 @@ def manage_orders():
             fulfilled_order.append(order)
         else:
             print(order, "Wrong order status")
+
     # display from most recent to the least
     db_order = list(reversed(db_order))
     new_order = list(reversed(new_order))
@@ -991,12 +995,30 @@ def enquiry_cust():
         except:
             print("Error in retrieving enquiries ")
 
-        try:
+        try: # check if user already has an enquiry id
             UserEnquiry.count = count_id('Enquiry')
+            
         except:
             print("No database found")
+        
+        try:
+            user_id = session["UserID"]
+            user_type = session["UserType"]
+            
+            if session["UserType"] == "Customer":
+                customer_dict = retrieve_db('Customers',db)
+                customer = customer_dict.get(session["UserID"])
+                print(customer)
+                count = count_id('Enquiry') + 1
+                customer.add_enquiry(count)
+                customer_dict[session["UserID"]] = customer
+                db['Customers'] = customer_dict
+        except:
+            print("No database found for session")
 
-        enquiry = UserEnquiry(create_enquiry_form.name.data, create_enquiry_form.email.data, create_enquiry_form.enquiry_type.data, create_enquiry_form.comments.data)
+
+        enquiry = UserEnquiry(create_enquiry_form.name.data, create_enquiry_form.email.data,\
+             create_enquiry_form.enquiry_type.data, create_enquiry_form.comments.data, user_id, user_type)
         enquiry_dict[enquiry.get_count()] = enquiry
         db['Enquiry'] = enquiry_dict
 
@@ -1004,7 +1026,7 @@ def enquiry_cust():
 
         return redirect(url_for('home'))
 
-    return render_template("enquiry/enquiry_customer.html", form=create_enquiry_form)
+    return render_template("enquiry/create_enquiry.html", form=create_enquiry_form)
 
 #
 # retrieve customers
@@ -1063,8 +1085,13 @@ def count_id(Table):
     the_dict = db[Table]
     db.close()
 
-    count = list(the_dict.keys())
+    count = [0]
+    for key in the_dict:
+        count.append(key)
+    
     highest_id = max(count)
+
+
     return int(highest_id)
 
 #
@@ -1115,8 +1142,32 @@ def delete_enq(id):
     db.close()
     return redirect(url_for('enquiry_retrieve_adm'))
 
-# retrieve enquiry
+@app.route('/view-enq',methods=['GET', 'POST'])
+def view_enq():
+    db = shelve.open('database','w')
+    customer_dict = retrieve_db('Customers',db)
+    db.close()
 
+    customer = customer_dict.get(session["UserID"])
+    enquiry_list = customer.get_enquiry()
+    print(enquiry_list)
+
+    db = shelve.open('database','w')
+    enquiry_dict = retrieve_db('Enquiry',db)
+    db.close()
+
+    enquiry_list_final = []
+    for enquiry in enquiry_list:
+        print(enquiry)
+        for key in enquiry_dict:
+            print(key)
+            if enquiry == key:
+                enquiry_list_final.append(enquiry_dict.get(key))
+                print('enquiry',enquiry_list_final)
+    
+    return render_template('enquiry/view_enq.html', count=len(enquiry_list_final), enquiry_list=enquiry_list_final)
+
+# retrieve enquiry
 @app.route('/faq-dashboard')
 def faq_dashboard():
     db = shelve.open('database','c')
