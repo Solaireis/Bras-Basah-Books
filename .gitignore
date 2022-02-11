@@ -6,3 +6,6 @@ __pycache__/
 
 # database files
 database.*
+
+# profile pic images
+static/img/profile-pic/*
