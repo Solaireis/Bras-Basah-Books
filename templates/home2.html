@@ -25,7 +25,7 @@
                           <h3 class="card-title">{{ english[0].get_title() }}</h3>
                           <p class="card-text">{{ english[0].get_desc() }}</p>
                           <h5 class="card-text">${{ english[0].get_price() }}</h5>
-                          <p class="card-text"><a href="">Find out more ></a></p>
+                          <p class="card-text"><a href="/book/{{ english[0].get_book_id() }}">Find out more ></a></p>
                       </div>
                     </div>
                     <div class="col-4"><a href="/book/{{english[0].get_book_id()}}">
@@ -47,7 +47,7 @@
                               <h3 class="card-title">{{ english[book].get_title() }}</h3>
                               <p class="card-text">{{ english[book].get_desc() }}</p>
                               <p class="card-text">${{ english[book].get_price() }}</p>
-                              <p class="card-text"><a href="">Find out more ></a></p>
+                              <p class="card-text"><a href="/book/{{ english[book].get_book_id() }}">Find out more ></a></p>
                           </div>
                         </div>
                         <div class="col-4">
