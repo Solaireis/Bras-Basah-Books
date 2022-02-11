@@ -984,6 +984,9 @@ def edit_status(order_id):
 #
 # enquiry page
 #
+#
+# enquiry page
+#
 @app.route("/enquiry", methods=['GET', 'POST'])
 def enquiry_cust():
     create_enquiry_form = Enquiry(request.form)
@@ -996,12 +999,30 @@ def enquiry_cust():
         except:
             print("Error in retrieving enquiries ")
 
-        try:
+        try: # check if user already has an enquiry id
             UserEnquiry.count = count_id('Enquiry')
+            
         except:
             print("No database found")
+        
+        try:
+            user_id = session["UserID"]
+            user_type = session["UserType"]
+            
+            if session["UserType"] == "Customer": #session for user
+                customer_dict = retrieve_db('Customers',db)
+                customer = customer_dict.get(session["UserID"])
+                print(customer)
+                count = count_id('Enquiry') + 1
+                customer.add_enquiry(count)
+                customer_dict[session["UserID"]] = customer
+                db['Customers'] = customer_dict
+        except:
+            print("No database found for session")
 
-        enquiry = UserEnquiry(create_enquiry_form.name.data, create_enquiry_form.email.data, create_enquiry_form.enquiry_type.data, create_enquiry_form.comments.data)
+
+        enquiry = UserEnquiry(create_enquiry_form.name.data, create_enquiry_form.email.data,\
+             create_enquiry_form.enquiry_type.data, create_enquiry_form.comments.data, user_id, user_type)
         enquiry_dict[enquiry.get_count()] = enquiry
         db['Enquiry'] = enquiry_dict
 
@@ -1009,7 +1030,7 @@ def enquiry_cust():
 
         return redirect(url_for('home'))
 
-    return render_template("enquiry/enquiry_customer.html", form=create_enquiry_form)
+    return render_template("enquiry/create_enquiry.html", form=create_enquiry_form)
 
 #
 # retrieve customers
@@ -1068,8 +1089,13 @@ def count_id(Table):
     the_dict = db[Table]
     db.close()
 
-    count = list(the_dict.keys())
+    count = [0] #test
+    for key in the_dict:
+        count.append(key)
+    
     highest_id = max(count)
+
+
     return int(highest_id)
 
 #
@@ -1089,7 +1115,7 @@ def update_enq(id):
         enquiry_id.set_email(update_enquiry.email.data)
         enquiry_id.set_enquiry_type(update_enquiry.enquiry_type.data)
         enquiry_id.set_comments(update_enquiry.comments.data)
-        enquiry_id.set_reply(update_enquiry.reply.data)
+        enquiry_id.set_reply(update_enquiry.reply.data)#allows for reply to be updated
 
         db['Enquiry'] = enquiry_dict
         db.close()
@@ -1121,9 +1147,34 @@ def delete_enq(id):
     db.close()
     return redirect(url_for('enquiry_retrieve_adm'))
 
-# retrieve enquiry
+#view faq
+@app.route('/view-enq',methods=['GET', 'POST'])
+def view_enq():#allows the viewing of faq
+    db = shelve.open('database','w')
+    customer_dict = retrieve_db('Customers',db)
+    db.close()
 
-@app.route('/faq-dashboard')
+    customer = customer_dict.get(session["UserID"])
+    enquiry_list = customer.get_enquiry()
+    print(enquiry_list)
+
+    db = shelve.open('database','w')
+    enquiry_dict = retrieve_db('Enquiry',db)
+    db.close()
+
+    enquiry_list_final = []
+    for enquiry in enquiry_list:
+        print(enquiry)
+        for key in enquiry_dict:
+            print(key)
+            if enquiry == key:
+                enquiry_list_final.append(enquiry_dict.get(key))
+                print('enquiry',enquiry_list_final)
+    
+    return render_template('enquiry/view_enq.html', count=len(enquiry_list_final), enquiry_list=enquiry_list_final)
+
+# retrieve enquiry
+@app.route('/faq-dashboard')#retrieve faq
 def faq_dashboard():
     db = shelve.open('database','c')
     faq_dict = retrieve_db('Faq',db)
@@ -1333,7 +1384,9 @@ def retrieve_cu_coupons():
                 coupon_list_final.append(coupon_dict.get(key))
 
     return render_template('coupon/retrieve_cust_coupons.html', count=len(coupon_list_final), coupon_list=coupon_list_final)
-
+#
+#End of eden codes
+#    
 lang_list = [('', 'Select'), ('English', 'English'), ('Chinese', 'Chinese'), ('Malay', 'Malay'), ('Tamil', 'Tamil')]
 cat_list = [('', 'Select'), ('Action & Adventure', 'Action & Adventure'), ('Classic', 'Classic'), ('Comic', 'Comic'), ('Detective & Mystery', 'Detective & Mystery')]
 
