@@ -314,7 +314,10 @@ def logout():
 @app.route("/user/forget-password", methods=["GET", "POST"])
 def password_forget():
     pass
-
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 # Change password page
 @app.route("/user/change-password", methods=["GET", "POST"])
@@ -383,8 +386,8 @@ def verify_send():
 
     # Send message to email entered
     msg = Message(subject="Verify Email",
-                sender=("BrasBasahBooks", "noreplybbb02@gmail.com"),
-                recipients=[email])
+                  sender=("BrasBasahBooks", "noreplybbb02@gmail.com"),
+                  recipients=[email])
     link = url_for("verify", token=token, _external=True)
     msg.html = f"Click <a href='{link}'>here</a> to verify your email.<br />(Link expires after 15 minutes)"
     mail.send(msg)
@@ -513,7 +516,7 @@ def account():
 """    Admin Pages    """
 
 # Manage accounts page
-@app.route("/admin/manage-accounts")
+@app.route("/admin/manage-accounts", methods=["GET", "POST"])
 def manage_accounts():
     user = get_user()
 
@@ -521,10 +524,15 @@ def manage_accounts():
     if not isinstance(user, Admin):
         return redirect(url_for("home"))
 
+    # Get users database
     with shelve.open("database") as db:
-        pass
+        users = tuple(retrieve_db("Customers", db).values())
 
-    return render_template("admin/manage_accounts.html")
+        # If is master admin
+        if user.is_master():
+            users += tuple(retrieve_db("Admins", db).values())
+
+    return render_template("admin/manage_accounts.html", users=users, is_master=user.is_master())
 
 
 """|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|"""
