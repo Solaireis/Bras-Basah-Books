@@ -264,7 +264,7 @@ footer{
   margin-left: 65px;
 }
 
-.fa:hover, .footer-link:hover, .footer-link2:hover{
+footer .fa-brands:hover, .footer-link:hover, .footer-link2:hover{
   opacity: 0.8;
   text-decoration: none;
   color: white;
