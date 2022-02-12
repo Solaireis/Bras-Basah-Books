@@ -1198,10 +1198,14 @@ def orderconfirm():
 @app.route("/admin/manage_orders")
 def manage_orders():
     db_order = []
+    delivery_method = []
+    collection_method =[]
     new_order = []
     confirm_order = []
     ship_order = []
     deliver_order = []
+    canceled_order = []
+    not_returned_order  = []
     books_dict = {}
     try:
         db = shelve.open('database')
@@ -1211,33 +1215,45 @@ def manage_orders():
         db.close()
     except:
         print("There might not have any orders as of now.")
+
     for order in db_order:
-        print(order.get_name(), order.get_rent_item())
-        if order.get_order_status() == 'Ordered':
-            new_order.append(order)
-        elif order.get_order_status() == 'Confirmed':
-            confirm_order.append(order)
-        elif order.get_order_status() == 'Shipped':
-            ship_order.append(order)
-        elif order.get_order_status() == 'Delivered':
-            deliver_order.append(order)
+        print(order.get_order_id(),  order.get_order_status())
+        # if order has been cancel, do not show in other tab
+        if order.get_order_status() == 'Canceled':
+            canceled_order.append(order)
         else:
-            print(order, "Wrong order status")
+        # filter by shipping method
+            if order.get_ship_method() == 'Standard Delivery':
+                delivery_method.append(order)
+            else:
+                collection_method.append(order)
+
+            # filter by order status
+            if order.get_order_status() == 'Ordered':
+                new_order.append(order)
+            elif order.get_order_status() == 'Confirmed':
+                confirm_order.append(order)
+            elif order.get_order_status() == 'Shipped':
+                ship_order.append(order)
+            else:
+                deliver_order.append(order)
+                # filter by return status of rented books (only delivered orders can see this)
+                if order.get_returned_status() == 'Not Returned':
+                    not_returned_order.append(order)
 
     # display from most recent to the least
     db_order = list(reversed(db_order))
+    delivery_method = list(reversed(delivery_method))
+    collection_method = list(reversed(collection_method))
     new_order = list(reversed(new_order))
     confirm_order = list(reversed(confirm_order))
     ship_order = list(reversed(ship_order))
     deliver_order = list(reversed(deliver_order))
-    # print('new order', new_order)
-    # print('confirm order', confirm_order)
-    # print('ship order',ship_order)
-    # print('deliver order',deliver_order)
+    canceled_order = list(reversed(canceled_order))
 
-    return render_template('admin/manage_orders.html', all_order=db_order, new_order=new_order, \
-                           confirm_order=confirm_order, ship_order=ship_order, deliver_order=deliver_order, \
-                           books_dict=books_dict)
+    return render_template('admin/manage_orders.html', all_order=db_order, delivery_method=delivery_method, collection_method=collection_method, \
+                           new_order=new_order, confirm_order=confirm_order, ship_order=ship_order, deliver_order=deliver_order, \
+                           canceled_order=canceled_order, not_returned_order=not_returned_order, books_dict=books_dict)
 
 #
 # Admin update order status
@@ -1262,6 +1278,32 @@ def edit_status(order_id):
     return redirect(request.referrer)
 
 #
+# Admin Cancel Order
+#
+@app.route("/admin/manage_orders/cancel_order/<order_id>", methods=['GET', 'POST'])
+def cancel_order(order_id):
+    db_order = []
+    try:
+        db = shelve.open('database')
+        db_order = db['Order']
+        books_dict = db['Books']
+    except:
+        print("Error while loading data from database")
+    for order in db_order:
+        if order.get_order_id() == order_id:
+            order.set_order_status('Canceled')
+            rent_item = order.get_rent_item()
+            for book in rent_item:
+                rented_number = books_dict[book].get_rented()
+                new_rented_number = rented_number - 1
+                books_dict[book].set_rented(new_rented_number)
+            flash(order_id + ' has been canceled.')
+    db['Order'] = db_order
+    db['Books'] = books_dict
+    db.close()
+    return redirect(request.referrer)
+
+#
 # Edit return status for rented books
 #
 @app.route("/admin/manage_orders/edit_return/<order_id>", methods=['GET', 'POST'])
@@ -1277,16 +1319,12 @@ def edit_return(order_id):
     for order in db_order:
         if order.get_order_id() == order_id:
             rent_item = order.get_rent_item()
-            print(rent_item, 'rent item___________')
             # for returned orders [1, 2, 'Returned']
             # set to not returned, rented book increase by 1
             if order.get_returned_status() == 'Returned':
                 order.set_returned_status('No')
                 for book in rent_item:
-                    print("came in")
                     rented_number = books_dict[book].get_rented()
-                    print(rented_number, book, 'has been rented')
-                    print('rented number [before]', rented_number)
                     new_rented_number = rented_number+1
                     books_dict[book].set_rented(new_rented_number)
                 flash('Return status for rented books in ' + order_id + ' has changed to "Not Returned".')
@@ -1294,17 +1332,13 @@ def edit_return(order_id):
             # set to returned, rented book decrease by 1
             else:
                 for book in rent_item:
-                    print(books_dict[book], 'books_dict[book]')
                     rented_number = books_dict[book].get_rented()
-                    print(rented_number, book, 'has been rented')
-                    print('rented number [before]', rented_number)
                     new_rented_number = rented_number-1
                     books_dict[book].set_rented(new_rented_number)
                 order.set_returned_status('yes')
                 flash('Rented books in ' + order_id + ' has been returned.')
     db['Order'] = db_order
     db['Books'] = books_dict
-    print('rented number [after]', rented_number)
     db.close()
     print(order.get_returned_status())
     return redirect(request.referrer)
