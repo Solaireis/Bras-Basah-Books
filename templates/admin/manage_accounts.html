@@ -65,10 +65,10 @@
               {% endif %}
               <td class="account-actions d-flex">
                 <button class="btn me-auto p-0" data-bs-toggle="tooltip" title="View" onclick="viewUser('{{ user.__class__.__name__ if is_master }}', '{{ user.get_username() }}', '{{ name }}', '{{ user.get_email() }}', '{{ gender }}', '{{ user.get_profile_pic() }}');">
-                  <i class="fa-solid fa-eye"></i>
+                  <i class="fa fa-eye"></i>
                 </button>
                 <button class="btn me-auto p-0" data-bs-toggle="tooltip" title="Delete" onclick="selectAccount('{{ user.get_user_id() }}', '{{ user.get_username() }}', 'deleteUserButton');">
-                  <i class="fa-solid fa-trash"></i>
+                  <i class="fa fa-trash"></i>
                 </button>
               </td>
             </tr>
