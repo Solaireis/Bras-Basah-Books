@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}TEST{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="/static/css/user.css">
+<style>
+div.sidebar {
+  padding: 2rem 2rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container user-container">
+  <div class="sidebar d-flex row">
+    <ul class="nav nav-pills nav-justified my-auto">
+      {% for type in type_list %}
+        <li class="nav-item px-3">
+          <a href="{{ url_for('test2', user_type=type) }}" class="nav-link {% if type == current_type %}active disabled{% else %}bg-white{% endif %} text-lg-start">
+            {{ type }}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}
