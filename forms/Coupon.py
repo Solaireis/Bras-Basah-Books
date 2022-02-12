@@ -21,8 +21,10 @@ class CreateCoupon(Form):
     #valid_date = DateTimeField('Valid Till', [validators.data_required()], format='%Y-%m-%d %H:%M:%S')
     #valid_date = IntegerField("Days before expiry",[validators.data_required()])
     coupon_code = StringField('Coupon Code', [validators.data_required()])  # please validate if there is a overwrite code
-    startdate = DateField('Start Date' , [validators.data_required()], format='%Y-%m-%d')
-    enddate = DateField('End Date' , [validators.data_required()], format='%Y-%m-%d')
+    # startdate = DateField('Start Date' , [validators.data_required()], format='%Y-%m-%d')
+    # enddate = DateField('End Date' , [validators.data_required()], format='%Y-%m-%d')
+    startdate = StringField('Start Date' , [validators.data_required()])
+    enddate = StringField('End Date' , [validators.data_required()])
 
 class Coupon:
     today = datetime.datetime.now()

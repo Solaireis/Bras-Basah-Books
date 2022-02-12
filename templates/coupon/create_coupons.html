@@ -40,3 +40,39 @@
 <div class="container-padding-20"></div>
 
 {% endblock %}
+
+
+{% block scripts %}
+<script>
+  
+  $(document).ready(function() { 
+  ///////
+  var startDate;
+  var endDate;
+  let today = new Date();
+
+   $( "#startdate" ).datepicker({
+  dateFormat: 'yy/mm/dd',
+  minDate: today,
+  });
+  ///////
+  ///////
+   $( "#enddate" ).datepicker({
+  dateFormat: 'yy/mm/dd',
+  });
+  ///////
+  $('#startdate').change(function() {
+  startDate = $(this).datepicker('getDate');
+  $("#enddate").datepicker("option", "minDate", startDate );
+  })
+  
+  ///////
+  $('#enddate').change(function() {
+  endDate = $(this).datepicker('getDate');
+  $("#startdate").datepicker("option", "maxDate", endDate );
+  $("#startdate").datepicker("option", "minDate", today );
+  })
+  ////////////////
+  })
+  </script>
+{% endblock %}
