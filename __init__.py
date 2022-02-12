@@ -553,38 +553,42 @@ def manage_accounts():
         # Create new user
         with shelve.open("database") as db:
 
-            # Get Customers, UsernameToUserID, EmailToUserID, Guests
-            customers_db = retrieve_db("Customers", db)
+            # Get UsersDB, UsernameToUserID, EmailToUserID, Guests
+            db_key = {"C":"Customers", "A":"Admins"}[user_type]
+            users_db = retrieve_db(db_key, db)
             username_to_user_id = retrieve_db("UsernameToUserID", db)
             email_to_user_id = retrieve_db("EmailToUserID", db)
 
 
             # Ensure that email and username are not registered yet
             if username.lower() in username_to_user_id:
-                if DEBUG: print("Create Customer: username already exists")
+                if DEBUG: print("Create User: username already exists")
                 session["DisplayFieldError"] = session["CreateUserUsernameError"] = True
                 flash("Username taken", "create-user-username-error")
                 return render_template("admin/manage_accounts.html", create_user_form=create_user_form)
             elif email in email_to_user_id:
-                if DEBUG: print("Create Customer: email already exists")
+                if DEBUG: print("Create User: email already exists")
                 session["DisplayFieldError"] = session["CreateUserEmailError"] = True
                 flash("Email already registered", "create-user-email-error")
                 return render_template("admin/manage_accounts.html", create_user_form=create_user_form)
 
             # Create customer
-            customer = Customer(username, email, password)
-            if DEBUG: print(f"Created: {customer}")
+            created_user = {"C":Customer, "A":Admin}[user_type](username, email, password)
+            if DEBUG: print(f"Created: {created_user}")
 
             # Store customer into database
-            user_id = customer.get_user_id()
-            customers_db[user_id] = customer
+            user_id = created_user.get_user_id()
+            users_db[user_id] = created_user
             username_to_user_id[username.lower()] = user_id
             email_to_user_id[email] = user_id
 
             # Save changes to database
             db["UsernameToUserID"] = username_to_user_id
             db["EmailToUserID"] = email_to_user_id
-            db["Customers"] = customers_db
+            db[db_key] = users_db
+        
+        flash(f"New user created: {username}")
+        return redirect(url_for("manage_accounts"))
 
     # Get users database
     with shelve.open("database") as db:
