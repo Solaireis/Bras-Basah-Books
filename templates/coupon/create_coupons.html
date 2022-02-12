@@ -44,30 +44,38 @@
 
 {% block scripts %}
 <script>
-  
+  //Datepicker function
   $(document).ready(function() { 
   ///////
+
+  //Datepicker variables
   var startDate;
   var endDate;
   let today = new Date();
 
+  //user picks start date, default date is today
    $( "#startdate" ).datepicker({
   dateFormat: 'yy/mm/dd',
   minDate: today,
   });
   ///////
   ///////
+
+  //user picks end date, default date is today
    $( "#enddate" ).datepicker({
   dateFormat: 'yy/mm/dd',
   minDate: today,
   });
   ///////
+
+  //if start date is picked, end date minimum is set to start date
   $('#startdate').change(function() {
   startDate = $(this).datepicker('getDate');
-  $("#enddate").datepicker("option", "minDate", today );
+  $("#enddate").datepicker("option", "minDate", startDate );
   })
   
   ///////
+  //if end date is picked, maximum date  is set to end date , minimum date is default to be still today date
   $('#enddate').change(function() {
   endDate = $(this).datepicker('getDate');
   $("#startdate").datepicker("option", "maxDate", endDate );
