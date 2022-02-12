@@ -46,10 +46,10 @@
         {% endif %}
         <div class="show-payment">
           <p>Accepted Payment Method</p>
-          <i class="fa-brands fa-cc-visa"></i>
-          <i class="fa-brands fa-cc-mastercard"></i>
+          <i class="fab fa-cc-visa"></i>
+          <i class="fab fa-cc-mastercard"></i>
           <i class="fa-brands fa-cc-amex"></i>
-          <i class="fa-brands fa-google-pay"></i>
+          <i class="fas fa-times"></i>
         </div>
       </div>
 
@@ -74,7 +74,7 @@
                     </form>
                     <form method="POST" action="/delete_buying_cart/{{ key }}">
                         <input type="number" name="book_id" class="book_id" style="display:none;" value={{ books_dict[key] }} readonly></td>
-                        <td class="col-1"><button type="submit" onclick="delete_buying_cart()" name="button" style="float:right;" class="btn"><i class="fa fa-close"></i></button></td>
+                        <td class="col-1"><button type="submit" onclick="delete_buying_cart()" name="button" style="float:right;" class="btn"><i class="fas fa-times"></i></button></td>
                     </form>
                 </tr>
                 <tr class="d-block d-md-none">
@@ -87,7 +87,7 @@
                     </form>
                     <form method="POST" action="/delete_buying_cart/{{ key }}">
                         <input type="number" name="book_id" class="book_id" style="display:none;" value={{ books_dict[key] }} readonly></td>
-                        <td class="col-1"><button type="submit" onclick="delete_buying_cart()" name="button" style="float:right;" class="btn"><i class="fa fa-close"></i></button></td>
+                        <td class="col-1"><button type="submit" onclick="delete_buying_cart()" name="button" style="float:right;" class="btn"><i class="fas fa-times"></i></button></td>
                     </form>
                 </tr>
             {% endfor %}
@@ -121,10 +121,10 @@
         {% endif %}
         <div class="show-payment">
           <p>Accepted Payment Method</p>
-          <i class="fa-brands fa-cc-visa"></i>
-          <i class="fa-brands fa-cc-mastercard"></i>
-          <i class="fa-brands fa-cc-amex"></i>
-          <i class="fa-brands fa-google-pay"></i>
+          <i class="fab fa-cc-visa"></i>
+          <i class="fab fa-cc-mastercard"></i>
+          <i class="fab fa-cc-amex"></i>
+          <i class="fab fa-google-pay"></i>
         </div>
       </div>
 
@@ -147,7 +147,7 @@
                     <td class="col-5"><a href="/book/{{ book }}"><h4>{{ books_dict[book].get_title() }}</h4></a>#{{ book }}</td>
                     <td class="col-4"><h5>{{ "$%.2f"|format((books_dict[book].get_price()|float)*0.1) }}</h5></td>
                     <form method="POST" action="/delete_renting_cart/{{ book }}">
-                        <td class="col-1"><button type="submit" onclick="delete_renting_cart()" name="button" style="float:right;" class="btn"><i class="fa fa-close"></i></button></td>
+                        <td class="col-1"><button type="submit" onclick="delete_renting_cart()" name="button" style="float:right;" class="btn"><i class="fas fa-times"></i></button></td>
                     </form>
                 </tr>
                 <tr class="d-block d-md-none">
@@ -155,7 +155,7 @@
                     <td class="col-6"><a href="/book/{{ book }}"><p>{{ books_dict[book].get_title() }}</p></a>#{{ book }}</td>
                     <td class="col-2"><p>{{ "$%.2f"|format((books_dict[book].get_price()|float)*0.1) }}</p></td>
                     <form method="POST" action="/delete_renting_cart/{{ book }}">
-                        <td class="col-1"><button type="submit" onclick="delete_renting_cart()" name="button" style="float:right;" class="btn"><i class="fa fa-close"></i></button></td>
+                        <td class="col-1"><button type="submit" onclick="delete_renting_cart()" name="button" style="float:right;" class="btn"><i class="fas fa-times"></i></button></td>
                     </form>
                 </tr>
             {% endfor %}
