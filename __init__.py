@@ -1494,15 +1494,20 @@ def update_coupons(id):
         return render_template('coupon/update_coupons.html', form=coupon_form)
 
 #delete the coupons
-@app.route('/delete-coupon/<int:id>',methods=['GET', 'POST'])
+@app.route('/delete-coupon/<id>',methods=['GET', 'POST'])
 def delete_coupons(id):
     coupon_dict = {}
     db = shelve.open('database','w')
     coupon_dict = db['Coupon']
-    coupon_dict.pop(id)
-    db['Coupon'] = coupon_dict
-    db.close()
-    return redirect(url_for('retrieve_coupons'))
+    for key in coupon_dict:
+        coupon = coupon_dict.get(key)
+        print(coupon.get_coupon_code_id())
+        if coupon.get_coupon_code_id() == id:
+            coupon_dict.pop(key)
+            db['Coupon'] = coupon_dict
+            db.close()
+            return redirect(url_for('retrieve_coupons'))
+    
 
 #customer retrieve coupons
 @app.route('/request-coupon', methods=['GET', 'POST'])
