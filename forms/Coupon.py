@@ -29,6 +29,7 @@ class CreateCoupon(Form):
 class Coupon:
     today = datetime.datetime.now()
     count = 0
+    expired = ['Expired', 'Active']
     def __init__(self, name, discount, coupon_code_id, start_date, end_date):
         self.__count = Coupon.count + 1
         self.__name = name
@@ -37,7 +38,8 @@ class Coupon:
         self.__coupon_code_id = coupon_code_id
         self.__start_date = start_date
         self.__end_date = end_date
-        self.__created_date = Coupon.today.strftime("%d/%m/%Y %H:%M:%S")
+        self.__created_date = Coupon.today.strftime("%Y-%m-%d ")
+        self.__expired = Coupon.expired[1]
 
     def get_count(self):
         return self.__count
@@ -83,6 +85,13 @@ class Coupon:
     
     def set_end_date(self, date):
         self.__end_date = date
+    
+    def get_expired(self):
+        return self.__expired
+    
+    def set_expired(self, expired):
+        self.__expired = expired
 
 class RequestCoupon(Form):
     coupon_code = StringField('Coupon Code', [validators.data_required()])
+
