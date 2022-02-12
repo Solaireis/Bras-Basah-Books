@@ -4,6 +4,7 @@ from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, BadData
 from werkzeug.utils import secure_filename
 from typing import Union, Dict
+import math
 import shelve
 import os
 import stripe
@@ -17,8 +18,9 @@ from forms import SignUpForm, LoginForm, AccountPageForm, ChangePasswordForm, Cr
 
 
 # CONSTANTS
-DEBUG = True         # Debug flag (True when debugging)
-TOKEN_MAX_AGE = 900  # Max age of token (15 mins)
+DEBUG = True            # Debug flag (True when debugging)
+TOKEN_MAX_AGE = 900     # Max age of token (15 mins)
+ACCOUNTS_PER_PAGE = 10  # Number of accounts to display per page (manage account page)
 
 # For image file upload
 BOOK_IMG_UPLOAD_FOLDER = 'static/img/books'
@@ -592,18 +594,29 @@ def manage_accounts():
 
     # Get users database
     with shelve.open("database") as db:
-        users = tuple(retrieve_db("Customers", db).values())
+        all_users = list(retrieve_db("Customers", db).values())
 
         # If is master admin
         if user.is_master():
-            users = tuple(retrieve_db("Admins", db).values()) + users
+            all_users = list(retrieve_db("Admins", db).values()) + all_users
 
     # Get page number
-    page = request.args.get("page", default=1, type=int)
+    active_page = request.args.get("page", default=1, type=int)
+    last_page = math.ceil(len(all_users)/ACCOUNTS_PER_PAGE)
+    if active_page < 1:
+        active_page = 1
+    elif active_page > last_page:
+        active_page = last_page
+
+    first_index = (active_page-1)*ACCOUNTS_PER_PAGE
+    display_users = all_users[first_index:first_index+10]
 
     return render_template("admin/manage_accounts.html",
-                           users=users, is_master=user.is_master(),
-                           active_page=page, page_list=[1,2,3],
+                           display_users=display_users, is_master=user.is_master(),
+                           active_page=active_page, page_list=[1,2,3,4,5],
+                           prev_page=1, next_page=1,
+                           first_page=1, last_page=last_page,
+                           entries_range=1, total_entries=0,
                            create_user_form=create_user_form)
 
 

@@ -20,6 +20,9 @@
 {% from "includes/_render_breadcrumb.html" import render_breadcrumb %}
 {% from "includes/_admin_sidebar.html" import admin_sidebar %}
 {% set display_word = "User" if is_master else "Customer" %}
+{% macro generate_link(page_num) %}
+  {{ url_for("manage_accounts") }}?page={{ page_num }}
+{% endmacro %}
 
 {# Render breadcrumbs #}
 {{ render_breadcrumb({
@@ -52,7 +55,7 @@
             </tr>
           </thead>
           <tbody>
-            {% for user in users %}
+            {% for user in display_users %}
             {% if user.__class__.__name__ != "Admin" or not user.is_master() %} {# Don't display master #}
             {% if user.__class__.__name__ == "Admin" %}
               {% set name = none %}
@@ -81,17 +84,25 @@
         </table>
       </div>
       <div class="clearfix">
-        <div class="hint-text">Showing <b>10</b> out of <b>n</b> entries</div>
+        <div class="hint-text">Showing <b>1-n</b> out of <b>n</b> entries</div>
         <ul class="pagination">
-          <li class="page-item"><a class="page-link" href="#"><span>&laquo;</span></i></a></li>
-          <li class="page-item"><a class="page-link" href="#"><span>&lsaquo;</span></a></li>
+          <li class="page-item {{ 'disabled' if first_page == active_page }}">
+            <a class="page-link" href="{{ generate_link(first_page) }}"><span>&laquo;</span></i></a>
+          </li>
+          <li class="page-item {{ 'disabled' if prev_page == active_page }}">
+            <a class="page-link" href="{{ generate_link(prev_page) }}"><span>&lsaquo;</span></a>
+          </li>
           {% for page_num in page_list %}
-          <li class="page-item {{ 'active' if page_num == active_page else '' }}">
-            <a class="page-link" href="{{ url_for('manage_accounts') }}?page={{ page_num }}">{{ page_num }}</a>
+          <li class="page-item {{ 'active' if page_num == active_page }}">
+            <a class="page-link" href="{{ generate_link(page_num) }}">{{ page_num }}</a>
           </li>
           {% endfor %}
-          <li class="page-item"><a class="page-link" href="#"><span>&rsaquo;</span></a></li>
-          <li class="page-item"><a class="page-link" href="#"><span>&raquo;</span></i></a></li>
+          <li class="page-item {{ 'disabled' if next_page == active_page }}">
+            <a class="page-link" href="{{ generate_link(next_page) }}"><span>&rsaquo;</span></a>
+          </li>
+          <li class="page-item {{ 'disabled' if last_page == active_page }}">
+            <a class="page-link" href="{{ generate_link(last_page) }}"><span>&raquo;</span></i></a>
+          </li>
         </ul>
       </div>
     </div>
