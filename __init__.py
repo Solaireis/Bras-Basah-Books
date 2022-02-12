@@ -1800,6 +1800,66 @@ def temp_home():
 def test():
     # Get current (guest) user
     current_user = get_user()
+    current_user_type = session["UserType"]
+    flash(f"Currently logged in as: {current_user}")
+
+    with shelve.open("database") as db:
+        # Get DB
+        guests_db = retrieve_db("Guests", db, GuestDB())
+        customers_db = retrieve_db("Customers", db)
+        admins_db = retrieve_db("Admins", db)
+        username_to_user_id = retrieve_db("UsernameToUserID", db)
+        email_to_user_id = retrieve_db("EmailToUserID", db)
+
+        # Guest
+        if current_user_type == "Guest":
+            guest = current_user
+        else:
+            guest = Guest()
+
+            # Add guest and clean guest database
+            guests_db.add(guest.get_user_id(), guest)
+            guests_db.clean()
+        
+        # Customer
+        if current_user_type == "Customer":
+            customer = current_user
+        elif "quick_switch_customer" in username_to_user_id:
+            customer = customers_db[username_to_user_id["quick_switch_customer"]]
+        elif "quick@switch.customer" in email_to_user_id:
+            customer = customers_db[email_to_user_id["quick@switch.customer"]]
+        else:
+            # Create customer
+            customer = Customer("quick_switch_customer", "quick@switch.customer", "Password1")
+
+            # Store customer into database
+            customers_db[customer.get_user_id()] = customer
+            username_to_user_id["quick_switch_customer"] = customer.get_user_id()
+            email_to_user_id["quick@switch.customer"] = customer.get_user_id()
+
+        # Admin
+        if current_user_type == "Admin" and not current_user.is_master():
+            admin = current_user
+        elif "quick_switch_admin" in username_to_user_id:
+            admin = customers_db[username_to_user_id["quick_switch_admin"]]
+        elif "quick@switch.admin" in email_to_user_id:
+            admin = customers_db[email_to_user_id["quick@switch.admin"]]
+        else:
+            admin = Admin("quick_switch_admin", "quick@switch.admin", "Password1")
+            admins_db[admin.get_user_id()] = admin
+            username_to_user_id["quick_switch_admin"] = admin.get_user_id()
+            email_to_user_id["quick@switch.admin"] = admin.get_user_id()
+
+        # Master
+        master = admins_db[username_to_user_id["admin"]]
+
+        # Save changes
+        db["Guests"] = guests_db
+        db["Customers"] = customers_db
+        db["Admins"] = admins_db
+        db["UsernameToUserID"] = username_to_user_id
+        db["EmailToUserID"] = email_to_user_id
+
 
 
 
