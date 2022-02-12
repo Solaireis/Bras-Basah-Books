@@ -4,12 +4,40 @@
 
 {% block stylesheets %}
 <link rel="stylesheet" href="/static/css/user.css">
+<style>
+  .hint-text {
+      float: left;
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+  }
+  .pagination {
+      float: right;
+  }
+  .page-item .page-link {
+      border-width: 0;
+      border-radius: 0.25rem;
+      color: #4b8282;
+  }
+  .page-item.active .page-link {
+      z-index: 3;
+      color: #fff;
+      background-color: #4b8282;
+      border-color: #4b8282;
+  }
+  .account-actions .btn:focus {
+    border-color: transparent !important;
+    box-shadow: none !important;
+  }
+</style>
 {% endblock %}
 
 {% block content %}
 {% from "includes/_render_breadcrumb.html" import render_breadcrumb %}
 {% from "includes/_admin_sidebar.html" import admin_sidebar %}
 {% set display_word = "User" if is_master else "Customer" %}
+{% macro generate_link(page_num) %}
+  {{ url_for("manage_accounts") }}?page={{ page_num }}
+{% endmacro %}
 
 {# Render breadcrumbs #}
 {{ render_breadcrumb({
@@ -23,10 +51,12 @@
     {# Render sidebar using dictionary #}
     {{ admin_sidebar("Manage Accounts") }}
     <div class="col-lg-10 py-3 px-5">
-      <h2>User account overview</h2>
-      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUser">
-        Add New {{ display_word }}
-      </button>
+      <div class="d-flex">
+        <h2 class="me-auto">User account overview</h2>
+        <button type="button" class="btn btn-primary" id="addUserButton" data-bs-toggle="modal" data-bs-target="#addUser">
+          Add New {{ display_word }}
+        </button>
+      </div>
       <hr>
       <div class="table-responsive">
         <table class="table table-striped table-hover">
@@ -42,7 +72,7 @@
             </tr>
           </thead>
           <tbody>
-            {% for user in users %}
+            {% for user in display_users %}
             {% if user.__class__.__name__ != "Admin" or not user.is_master() %} {# Don't display master #}
             {% if user.__class__.__name__ == "Admin" %}
               {% set name = none %}
@@ -57,18 +87,40 @@
               <td>{{ user.__class__.__name__ }}</td>
               {% endif %}
               <td class="account-actions d-flex">
-                <a href="#" class="me-auto">
-                  <i class="fa-solid fa-pen" data-bs-toggle="tooltip" title="Edit"></i>
-                </a>
-                <a href="#" class="me-auto">
-                  <i class="fa-solid fa-trash" data-bs-toggle="tooltip" title="Delete"></i>
-                </a>
+                <button class="btn me-auto p-0" data-bs-toggle="tooltip" title="Edit" onclick="selectAccount('{{ user.get_user_id() }}', '{{ user.get_username() }}', 'editUserButton');">
+                  <i class="fa-solid fa-pen"></i>
+                </button>
+                <button class="btn me-auto p-0" data-bs-toggle="tooltip" title="Delete" onclick="selectAccount('{{ user.get_user_id() }}', '{{ user.get_username() }}', 'deleteUserButton');">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
               </td>
             </tr>
             {% endif %}
             {% endfor %}
           </tbody>
         </table>
+      </div>
+      <div class="clearfix">
+        <div class="hint-text">Showing <b>{{ entries_range[0] }}-{{ entries_range[1] }}</b> out of <b>{{ total_entries }}</b> users</div>
+        <ul class="pagination">
+          <li class="page-item {{ 'disabled' if first_page == active_page }}">
+            <a class="page-link" href="{{ generate_link(first_page) }}" data-bs-toggle="tooltip" title="Start"><span>&laquo;</span></a>
+          </li>
+          <li class="page-item {{ 'disabled' if prev_page == active_page }}">
+            <a class="page-link" href="{{ generate_link(prev_page) }}" data-bs-toggle="tooltip" title="Previous"><span>&lsaquo;</span></a>
+          </li>
+          {% for page_num in page_list %}
+          <li class="page-item {{ 'active disabled' if page_num == active_page }}">
+            <a class="page-link" href="{{ generate_link(page_num) }}">{{ page_num }}</a>
+          </li>
+          {% endfor %}
+          <li class="page-item {{ 'disabled' if next_page == active_page }}">
+            <a class="page-link" href="{{ generate_link(next_page) }}" data-bs-toggle="tooltip" title="Next"><span>&rsaquo;</span></a>
+          </li>
+          <li class="page-item {{ 'disabled' if last_page == active_page }}">
+            <a class="page-link" href="{{ generate_link(last_page) }}" data-bs-toggle="tooltip" title="End"><span>&raquo;</span></a>
+          </li>
+        </ul>
       </div>
     </div>
   </div>
@@ -125,12 +177,38 @@
           <div class="mb-4">
             {{ render_field(create_user_form.confirm, "Please confirm your password", class="form-control", placeholder="Confirm Password") }}
           </div>
+          <input type="reset" class="d-none" id="addUserReset"/>
           <input type="submit" value="SIGN UP" class="d-none" id="addUserSubmit"/>
         </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" onclick="submit_form('addUserSubmit');">Create {{ display_word }}</button>
+        <button type="button" class="btn btn-primary" onclick="addUser();">Create {{ display_word }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# Delete User Modal #}
+<button type="button" class="d-none" id="deleteUserButton" data-bs-toggle="modal" data-bs-target="#deleteUser"></button>
+<form method="POST" action="" class="d-none">
+  {{ delete_user_form.user_id(id="deleteUserField")|safe }}
+  <input type="reset" class="d-none" id="deleteUserReset"/>
+  <input type="submit" value="SIGN UP" class="d-none" id="deleteUserSubmit"/>
+</form>
+<div class="modal fade" id="deleteUser" tabindex="-1" aria-labelledby="deleteUserLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteUserLabel">Delete {{ display_word }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete <b class="display-username"></b>?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" onclick="deleteUser();">Delete {{ display_word }}</button>
       </div>
     </div>
   </div>
@@ -138,8 +216,8 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-[].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]')).map(trigger => new bootstrap.Tooltip(trigger));
-const submit_form = id => document.getElementById(id).click();
-</script>
+<script src="/static/js/manage_accounts.js"></script>
+{% if form_trigger %}
+<script>document.body.onload = () => document.getElementById("{{ form_trigger }}").click();</script>
+{% endif %}
 {% endblock %}

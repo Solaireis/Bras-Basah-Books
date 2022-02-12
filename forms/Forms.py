@@ -3,7 +3,6 @@ Form classes used by BrasBasahBooks web app
 """
 
 # Import WTForms
-from email.policy import default
 from wtforms import Form, validators, StringField, RadioField,\
                     TextAreaField, EmailField, PasswordField, FileField,\
                     SelectField, IntegerField, SubmitField, DecimalField
@@ -12,7 +11,7 @@ from wtforms import Form, validators, StringField, RadioField,\
 from .Validations import ContainsLower, ContainsUpper, ContainsNumSymbol, ValidUsername
 
 # Import validation for file upload
-from flask_wtf.file import FileAllowed, FileRequired
+from flask_wtf.file import FileAllowed
 
 
 class SignUpForm(Form):
@@ -92,6 +91,12 @@ class CreateUserForm(SignUpForm):
     user_type = SelectField("User Type", [validators.InputRequired(message="")],
                             choices=[("", "Select User Type"), ("C", "Customer"), ("A", "Admin")],
                             default="")
+
+class DeleteUserForm(Form):
+    """ Delete user form used when deleting new users """
+
+    # User ID
+    user_id = StringField(validators=[validators.InputRequired(message="")])
 
 
 class AddBookForm(Form):
