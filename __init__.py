@@ -7,6 +7,7 @@ from typing import Union, Dict
 import shelve
 import os
 import stripe
+from PIL import Image
 
 # Import classes
 import Book, Cart as c
@@ -32,9 +33,9 @@ app.config['UPLOAD_FOLDER'] = BOOK_IMG_UPLOAD_FOLDER  # Set upload folder
 app.config['MAX_CONTENT_LENGTH'] = 4 * 1024 * 1024  # Set maximum file upload limit (4MB)
 app.jinja_env.add_extension("jinja2.ext.do")  # Add do extension to jinja environment
 # testing mode
-#stripe.api_key = 'sk_test_51KPNSMLcZKZGRW8Qkzf58oSvjzX5LxhHQLBPZkmlCijcfXdhdXtXTTDXf3FqMHd1fd3kWcvxktgp7cj0ka4uSmzS00ilLjWTBX' # Stripe API Key
+stripe.api_key = 'sk_test_51KPNSMLcZKZGRW8Qkzf58oSvjzX5LxhHQLBPZkmlCijcfXdhdXtXTTDXf3FqMHd1fd3kWcvxktgp7cj0ka4uSmzS00ilLjWTBX' # Stripe API Key
 # live mode
-stripe.api_key = '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'
+# stripe.api_key = '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'
 
 
 # Serialiser for generating tokens
@@ -1699,6 +1700,12 @@ def add_book():
 
             path = os.path.join(app.config['UPLOAD_FOLDER'], bookimg.filename)
             bookimg.save(path)
+
+            #resize codes
+            image = Image.open(path)
+            resized_image = image.resize((259,371))
+            resized_image.save(path)
+
             print("upload_image filename: " + filename)
 
         else:
@@ -1789,6 +1796,12 @@ def update_book(id):
 
             path = os.path.join(app.config['UPLOAD_FOLDER'], bookimg.filename)
             bookimg.save(path)
+
+            #resize codes
+            image = Image.open(path)
+            resized_image = image.resize((259,371))
+            resized_image.save(path)
+
             book.set_img(str("/" + path))
             print("upload_image filename: " + filename)
 
@@ -1877,23 +1890,43 @@ def book_info2(id):
 
 
 # My Orders for customer
-@app.route('/my-orders')
+@app.route("/my-orders")
 def my_orders():
-
+    db_order = []
+    new_order = []
+    prepare_order = []
+    fulfilled_order = []
+    books_dict = {}
     try:
-        orders_list = []
-        db = shelve.open('database', 'r')
-        orders_list = db['Order']
+        db = shelve.open('database')
+        books_dict = db['Books']
+        db_order = db['Order']
+        print(db_order, "orders in database")
         db.close()
-
     except:
-        print("There are no orders")
+        print("There might not have any orders as of now.")
+    for order in db_order:
+        if order.get_order_status() == 'Ordered':
+            new_order.append(order)
+        elif order.get_order_status() == 'Preparing':
+            prepare_order.append(order)
+        elif order.get_order_status() == 'Fulfilled':
+            fulfilled_order.append(order)
+        else:
+            print(order, "Wrong order status")
 
-    print("orders_list:", orders_list)
-    for i in orders_list:
-        print(i.get_name())
+    # display from most recent to the least
+    db_order = list(reversed(db_order))
+    new_order = list(reversed(new_order))
+    prepare_order = list(reversed(prepare_order))
+    fulfilled_order = list(reversed(fulfilled_order))
 
-    return render_template('my_orders.html', count=len(orders_list), books_list=orders_list)
+    print('new order', new_order)
+    print('prepare order', prepare_order)
+    print('fulfilled order',fulfilled_order)
+
+    return render_template('my_orders.html', all_order=db_order, new_order=new_order, \
+                           prepare_order=prepare_order, fulfilled_order=fulfilled_order, books_dict=books_dict)
 
 #
 # end of luqman's codes
