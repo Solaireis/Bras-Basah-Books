@@ -106,8 +106,15 @@ th, td{
 }
 
 .label td{
-    text-align: center;
+    text-align: left;
     padding-top: 6px;
+    padding-left: 10px;
+}
+
+.float-right{
+    float: right;
+    font-size: 1em;
+    text-decoration: underline;
 }
 
 th{
