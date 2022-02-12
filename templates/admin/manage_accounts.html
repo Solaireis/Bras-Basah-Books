@@ -23,6 +23,9 @@
     {{ admin_sidebar("Manage Accounts") }}
     <div class="col-lg-10 py-3 px-5">
       <h2>User account overview</h2>
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
+        Add Customer
+      </button>
       <hr>
       <div class="table-responsive">
         <table class="table table-striped table-hover">
@@ -61,6 +64,28 @@
             {% endfor %}
           </tbody>
         </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{# Modals #}
+{% block modals %}
+{# Add Customer Modal #}
+<div class="modal fade" id="addCustomerModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="addCustomerModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addCustomerModalLabel">Modal title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
       </div>
     </div>
   </div>
