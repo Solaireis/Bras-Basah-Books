@@ -18,18 +18,20 @@
       <a href="/book/{{ english[0].get_book_id() }}">
         <div class="carousel-item active">
           <div class="slide row justify-content-center">
-              <div class="card mb-3 col-9" style="">
+              <div class="card mb-3 col-9">
                   <div class="row g-0">
                     <div class="col-8">
                       <div class="card-body">
-                          <h3 class="card-title">{{ english[0].get_title() }}</h3>
-                          <p class="card-text">{{ english[0].get_desc() }}</p>
-                          <h5 class="card-text">${{ english[0].get_price() }}</h5>
-                          <p class="card-text"><a href="/book/{{ english[0].get_book_id() }}">Find out more ></a></p>
+                          {{ english[0].get_category() }}
+                          <h2 class="card-title">{{ english[0].get_title() }}</h2>
+                          By {{ english[0].get_author() }}
+                          <h5 class="card-text">{{ english[0].get_desc() }}</h5>
+                          <h4 class="card-text">${{ "%.2f"|format(english[0].get_price()|float) }}</h4>
+                          <p class="card-text"><a title="Find out more" class="btn find-out-more" href="/book/{{ english[0].get_book_id() }}">FIND OUT MORE</a></p>
                       </div>
                     </div>
                     <div class="col-4"><a href="/book/{{english[0].get_book_id()}}">
-                      <img src="{{ english[0].get_img() }}" class="img-fluid rounded-start" alt="...">
+                      <img src="{{ english[0].get_img() }}" class="img-fluid rounded-start" alt="{{ english[0].get_title() }}">
                     </a></div>
                   </div>
               </div>
@@ -40,19 +42,21 @@
       <div class="carousel-item">
           <a href="/book/{{ english[book].get_book_id() }}">
               <div class="slide row justify-content-center">
-                  <div class="card mb-3 col-9" style="">
+                  <div class="card mb-3 col-9">
                       <div class="row g-0">
                         <div class="col-8">
                           <div class="card-body">
-                              <h3 class="card-title">{{ english[book].get_title() }}</h3>
-                              <p class="card-text">{{ english[book].get_desc() }}</p>
-                              <p class="card-text">${{ english[book].get_price() }}</p>
-                              <p class="card-text"><a href="/book/{{ english[book].get_book_id() }}">Find out more ></a></p>
+                              {{ english[book].get_category() }}
+                              <h2 class="card-title">{{ english[book].get_title() }}</h2>
+                              By {{ english[book].get_author() }}
+                              <h5 class="card-text">{{ english[book].get_desc() }}</h5>
+                              <h4 class="card-text">${{ "%.2f"|format(english[book].get_price()|float) }}</h4>
+                              <p class="card-text"><a title="Find out more" class="btn find-out-more" href="/book/{{ english[book].get_book_id() }}">FIND OUT MORE</a></p>
                           </div>
                         </div>
                         <div class="col-4">
                             <a href="/book/{{ english[book].get_book_id() }}">
-                                <img src="{{ english[book].get_img() }}" class="img-fluid rounded-start" alt="...">
+                                <img src="{{ english[book].get_img() }}" class="img-fluid rounded-start" alt="{{ english[book].get_title() }}">
                             </a>
                         </div>
                       </div>
