@@ -87,10 +87,10 @@
               <td>{{ user.__class__.__name__ }}</td>
               {% endif %}
               <td class="account-actions d-flex">
-                <button class="btn me-auto p-0" data-bs-toggle="tooltip" title="Edit" onclick="select_account('{{ user.get_user_id() }}');">
+                <button class="btn me-auto p-0" data-bs-toggle="tooltip" title="Edit" onclick="selectAccount('{{ user.get_user_id() }}', '{{ user.get_username() }}', 'editUserButton');">
                   <i class="fa-solid fa-pen"></i>
                 </button>
-                <button class="btn me-auto p-0" data-bs-toggle="tooltip" title="Delete" onclick="select_account('{{ user.get_user_id() }}');">
+                <button class="btn me-auto p-0" data-bs-toggle="tooltip" title="Delete" onclick="selectAccount('{{ user.get_user_id() }}', '{{ user.get_username() }}', 'deleteUserButton');">
                   <i class="fa-solid fa-trash"></i>
                 </button>
               </td>
@@ -177,12 +177,38 @@
           <div class="mb-4">
             {{ render_field(create_user_form.confirm, "Please confirm your password", class="form-control", placeholder="Confirm Password") }}
           </div>
+          <input type="reset" class="reset-form d-none"/>
           <input type="submit" value="SIGN UP" class="d-none" id="addUserSubmit"/>
         </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" onclick="submit_form('addUserSubmit');">Create {{ display_word }}</button>
+        <button type="button" class="btn btn-primary" onclick="clickButton('addUserSubmit');">Create {{ display_word }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# Delete User Modal #}
+<button type="button" class="d-none" id="deleteUserButton" data-bs-toggle="modal" data-bs-target="#deleteUser"></button>
+<form method="POST" action="" class="d-none">
+  {{ delete_user_form.user_id(id="deleteUserField")|safe }}
+  <input type="reset" class="reset-form d-none"/>
+  <input type="submit" value="SIGN UP" class="d-none" id="deleteUserSubmit"/>
+</form>
+<div class="modal fade" id="deleteUser" tabindex="-1" aria-labelledby="deleteUserLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteUserLabel">Delete {{ display_word }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete <b class="display-username"></b>?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" onclick="deleteUser();">Delete {{ display_word }}</button>
       </div>
     </div>
   </div>
@@ -190,13 +216,8 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-[].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]')).map(trigger => new bootstrap.Tooltip(trigger));
-const submit_form = id => document.getElementById(id).click();
-let selectedUserID = null;
-const select_account = userID => selectedUserID = userID;
+<script src="/static/js/manage_accounts.js"></script>
 {% if form_trigger %}
-document.body.onload = () => document.getElementById("{{ form_trigger }}").click();
+<script>document.body.onload = () => document.getElementById("{{ form_trigger }}").click();</script>
 {% endif %}
-</script>
 {% endblock %}

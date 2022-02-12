@@ -12,7 +12,8 @@ import stripe
 # Import classes
 import Book, Cart as c
 from users import GuestDB, Guest, Customer, Admin
-from forms import SignUpForm, LoginForm, AccountPageForm, ChangePasswordForm, CreateUserForm, \
+from forms import SignUpForm, LoginForm, AccountPageForm, ChangePasswordForm, \
+                  CreateUserForm, DeleteUserForm, \
                   Enquiry, UserEnquiry, Faq, FaqEntry, AddBookForm, \
                   Coupon, CreateCoupon, OrderForm, RequestCoupon, ReplyEnquiry \
 
@@ -535,6 +536,7 @@ def manage_accounts():
 
     # Get sign up form
     create_user_form = CreateUserForm(request.form)
+    delete_user_form = DeleteUserForm(request.form)
 
     form_trigger = "addUserButton"  # id of form to trigger on page load
 
@@ -635,7 +637,8 @@ def manage_accounts():
                            first_page=1, last_page=last_page,
                            entries_range=entries_range, total_entries=len(all_users),
                            form_trigger=form_trigger,
-                           create_user_form=create_user_form)
+                           create_user_form=create_user_form,
+                           delete_user_form=delete_user_form)
 
 
 """|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|"""
