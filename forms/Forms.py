@@ -5,7 +5,7 @@ Form classes used by BrasBasahBooks web app
 # Import WTForms
 from wtforms import Form, validators, StringField, RadioField,\
                     TextAreaField, EmailField, PasswordField, FileField,\
-                    SelectField, IntegerField, SubmitField, DecimalField
+                    SelectField, IntegerField, DecimalField
 
 # Import custom validations (for password field)
 from .Validations import ContainsLower, ContainsUpper, ContainsNumSymbol, ValidUsername
@@ -67,6 +67,13 @@ class ChangePasswordForm(Form):
     confirm_password = PasswordField("Confirm Password", [validators.InputRequired(message=""),
                                                           validators.Length(min=8, max=80, message=""),
                                                           validators.EqualTo("new_password", message="Password entered is different")])
+
+
+class SendPasswordLink(Form):
+    """ Send password link form used for sending password reset link """
+
+    # Email
+    email = EmailField("Email", [validators.InputRequired(message="")])
 
 
 class ForgetPasswordForm(Form):
