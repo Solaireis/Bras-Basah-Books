@@ -19,7 +19,7 @@ Under this circumstance, We as creative, enthusiastic and innovative programmers
 
 <b>PYTHON Version:</b> 3.8 and above required. <br/>
 <br/>
-<i> Library needed to be installed for Virtual Environment: </i> <br />
+<b><i> LIBRARY needed to be installed for Virtual Environment: </i></b> <br /> <br/>
 <b> 1.flask </b> | pip install flask<br /> 
 <b> 2.flask_mail </b> | pip install flask_mail <br />
 <b> 3.wtforms </b> | pip install wtforms <br />
