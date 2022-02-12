@@ -24,8 +24,8 @@
     {{ admin_sidebar("Manage Accounts") }}
     <div class="col-lg-10 py-3 px-5">
       <h2>User account overview</h2>
-      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
-        Add New Customer
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUser">
+        Add New User
       </button>
       <hr>
       <div class="table-responsive">
@@ -89,12 +89,12 @@
   {% endif %}
 {% endmacro %}
 
-{# Add Customer Modal #}
-<div class="modal fade" id="addCustomerModal" tabindex="-1" aria-labelledby="addCustomerModalLabel" aria-hidden="true">
+{# AddUser Modal #}
+<div class="modal fade" id="addUser" tabindex="-1" aria-labelledby="addUserLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="addCustomerModalLabel">Add New Customer</h5>
+        <h5 class="modal-title" id="addUserLabel">Add New User</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -115,12 +115,12 @@
           <div class="mb-4">
             {{ render_field(sign_up_form.confirm, "Please confirm your password", class="form-control", placeholder="Confirm Password") }}
           </div>
-          <input type="submit" value="SIGN UP" class="input-group btn" id="submitAddCustomer"/>
+          <input type="submit" value="SIGN UP" class="input-group btn" id="addUserSubmit"/>
         </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary">Create Customer</button>
+        <button type="button" class="btn btn-primary">Create User</button>
       </div>
     </div>
   </div>

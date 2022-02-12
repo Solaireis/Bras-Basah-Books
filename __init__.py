@@ -11,7 +11,7 @@ import stripe
 # Import classes
 import Book, Cart as c
 from users import GuestDB, Guest, Customer, Admin
-from forms import SignUpForm, LoginForm, AccountPageForm, ChangePasswordForm, \
+from forms import SignUpForm, LoginForm, AccountPageForm, ChangePasswordForm, CreateUserForm, \
                   Enquiry, UserEnquiry, Faq, FaqEntry, AddBookForm, \
                   Coupon, CreateCoupon, OrderForm, RequestCoupon, ReplyEnquiry \
 
@@ -540,7 +540,7 @@ def manage_accounts():
             users += tuple(retrieve_db("Admins", db).values())
     
     # Get sign up form
-    sign_up_form = SignUpForm(request.form)
+    sign_up_form = CreateUserForm(request.form)
 
     # Validate sign up form if request is post
     if request.method == "POST":

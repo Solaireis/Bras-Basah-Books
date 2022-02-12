@@ -3,6 +3,7 @@ Form classes used by BrasBasahBooks web app
 """
 
 # Import WTForms
+from email.policy import default
 from wtforms import Form, validators, StringField, RadioField,\
                     TextAreaField, EmailField, PasswordField, FileField,\
                     SelectField, IntegerField, SubmitField, DecimalField
@@ -84,6 +85,13 @@ class ChangePasswordForm(Form):
                                                           validators.Length(min=8, max=80, message=""),
                                                           validators.EqualTo("new_password", message="Password entered is different")])
 
+class CreateUserForm(SignUpForm):
+    """ Create user form used when creating new users """
+
+    # User Type
+    user_type = SelectField("User Type", [validators.InputRequired(message="")],
+                            choices=[("", "Select User Type"), ("C", "Customer"), ("A", "Admin")],
+                            default="")
 
 
 class AddBookForm(Form):
