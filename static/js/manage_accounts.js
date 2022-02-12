@@ -2,23 +2,24 @@
 
 const clickButton = id => document.getElementById(id).click();
 
+function addUser() {
+    clickButton("deleteUserReset");
+    clickButton("addUserSubmit");
+}
+
 const displayUsername = [].slice.call(document.querySelectorAll('.display-username'));
-const formResetInputs = [].slice.call(document.querySelectorAll('.reset-form'));
-
 let selectedUserID = null;
-
-function selectAccount(userID, username, buttonId) {
+function selectAccount(userID, username, buttonID) {
     selectedUserID = userID;
     for (let i in displayUsername) {
         displayUsername[i].innerText = username;
     }
-    clickButton(buttonId);
+    clickButton(buttonID);
 }
 
 function deleteUser() {
-    for (let i in formResetInputs) {
-        formResetInputs[i].click();
-    }
+    clickButton("addUserReset");
+    clickButton("deleteUserReset");
     document.getElementById("deleteUserField").value = selectedUserID;
     clickButton("deleteUserSubmit");
 }

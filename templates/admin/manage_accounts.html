@@ -177,13 +177,13 @@
           <div class="mb-4">
             {{ render_field(create_user_form.confirm, "Please confirm your password", class="form-control", placeholder="Confirm Password") }}
           </div>
-          <input type="reset" class="reset-form d-none"/>
+          <input type="reset" class="d-none" id="addUserReset"/>
           <input type="submit" value="SIGN UP" class="d-none" id="addUserSubmit"/>
         </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" onclick="clickButton('addUserSubmit');">Create {{ display_word }}</button>
+        <button type="button" class="btn btn-primary" onclick="addUser();">Create {{ display_word }}</button>
       </div>
     </div>
   </div>
@@ -193,7 +193,7 @@
 <button type="button" class="d-none" id="deleteUserButton" data-bs-toggle="modal" data-bs-target="#deleteUser"></button>
 <form method="POST" action="" class="d-none">
   {{ delete_user_form.user_id(id="deleteUserField")|safe }}
-  <input type="reset" class="reset-form d-none"/>
+  <input type="reset" class="d-none" id="deleteUserReset"/>
   <input type="submit" value="SIGN UP" class="d-none" id="deleteUserSubmit"/>
 </form>
 <div class="modal fade" id="deleteUser" tabindex="-1" aria-labelledby="deleteUserLabel" aria-hidden="true">

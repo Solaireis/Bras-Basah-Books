@@ -528,11 +528,14 @@ def account():
 # Manage accounts page
 @app.route("/admin/manage-accounts", methods=["GET", "POST"])
 def manage_accounts():
-    user = get_user()
+    admin = get_user()
 
     # If user is not admin
-    if not isinstance(user, Admin):
+    if not isinstance(admin, Admin):
         return redirect(url_for("home"))
+
+    # Get page number
+    active_page = request.args.get("page", default=1, type=int)
 
     # Get sign up form
     create_user_form = CreateUserForm(request.form)
@@ -544,12 +547,58 @@ def manage_accounts():
     if request.method == "GET":
         form_trigger = ""
     else:
-        if not create_user_form.validate():
+        if delete_user_form.validate():
+            # Delete selected user
+            user_id = delete_user_form.user_id.data
+
+            with shelve.open("database") as db:
+
+                # Get Customers, Admins, UsernameToUserID, EmailToUserID
+                customers_db = retrieve_db("Customers", db)
+                admins_db = retrieve_db("Admins", db)
+                username_to_user_id = retrieve_db("UsernameToUserID", db)
+                email_to_user_id = retrieve_db("EmailToUserID", db)
+            
+                try:
+                    del_user = customers_db[user_id]
+                except KeyError:
+                    if not admin.is_master():
+                        del_user = None
+                    else:
+                        try:
+                            del_user = admins_db[user_id]
+                        except KeyError:
+                            del_user = None
+                        else:
+                            user_type = "A"
+                else:
+                    user_type = "C"
+
+                if del_user is None:
+                    flash("No changes were made", "warning")
+                else:
+                    # Delete user
+                    {"C":customers_db, "A":admins_db}[user_type].pop(user_id, None)
+                    username_to_user_id.pop(del_user.get_username(), None)
+                    email_to_user_id.pop(del_user.get_email(), None)
+                    if DEBUG: print(f"Delete User: deleted {del_user}")
+
+                    # Save changes
+                    db["Customers"] = customers_db
+                    db["Admins"] = admins_db
+                    db["UsernameToUserID"] = username_to_user_id
+                    db["EmailToUserID"] = email_to_user_id
+
+                    # Redirect to prevent form resubmission
+                    flash(f"Deleted {del_user.__class__.__name__.lower()}: {del_user.get_username()}")
+                    return redirect(f"{url_for('manage_accounts')}?page={active_page}")
+
+        elif not create_user_form.validate():
             if DEBUG: print("Create User: form field invalid")
             session["DisplayFieldError"] = True
         else:
             # Extract data from sign up form
-            if user.is_master():
+            if admin.is_master():
                 user_type = create_user_form.user_type.data
             else:
                 user_type = "C"  # non-master admins can only create customers
@@ -560,7 +609,7 @@ def manage_accounts():
             # Create new user
             with shelve.open("database") as db:
 
-                # Get UsersDB, UsernameToUserID, EmailToUserID, Guests
+                # Get UsersDB, UsernameToUserID, EmailToUserID
                 db_key = {"C":"Customers", "A":"Admins"}[user_type]
                 users_db = retrieve_db(db_key, db)
                 username_to_user_id = retrieve_db("UsernameToUserID", db)
@@ -591,20 +640,20 @@ def manage_accounts():
                     db["EmailToUserID"] = email_to_user_id
                     db[db_key] = users_db
 
+                    # Redirect to prevent form resubmission
                     form_trigger = ""
-                    flash(f"New user created: {username}")
-                    return redirect(url_for("manage_accounts"))
+                    flash(f"Created new {created_user.__class__.__name__.lower()}: {username}")
+                    return redirect(f"{url_for('manage_accounts')}?page={active_page}")
 
     # Get users database
     with shelve.open("database") as db:
         all_users = list(retrieve_db("Customers", db).values())
 
         # If is master admin
-        if user.is_master():
+        if admin.is_master():
             all_users = list(retrieve_db("Admins", db).values()) + all_users
 
-    # Get page number
-    active_page = request.args.get("page", default=1, type=int)
+    # Set page number
     last_page = math.ceil(len(all_users)/ACCOUNTS_PER_PAGE)
     if active_page < 1:
         active_page = 1
@@ -631,7 +680,7 @@ def manage_accounts():
     entries_range = (first_index+1, first_index+len(display_users))
 
     return render_template("admin/manage_accounts.html",
-                           display_users=display_users, is_master=user.is_master(),
+                           display_users=display_users, is_master=admin.is_master(),
                            active_page=active_page, page_list=page_list,
                            prev_page=prev_page, next_page=next_page,
                            first_page=1, last_page=last_page,
