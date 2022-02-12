@@ -1582,13 +1582,14 @@ def coupon_adm():
                 if coupon.get_coupon_code_id() == create_coupon.coupon_code.data:
                     flash("Coupon code already exists" , "error")
                     #session["CodeExist"] = "exist"
-                print("First coupon no need run the key check!") # debugging purposes
-                coupon = Coupon(create_coupon.name.data,create_coupon.discount.data,create_coupon.coupon_code.data,\
-                    create_coupon.startdate.data,create_coupon.enddate.data)
-                coupon_dict[coupon.get_coupon_code_id()] = coupon
-                db['Coupon'] = coupon_dict
-                db.close() 
-                flash ("Coupon created successfully", "success")
+                else:
+                    print("First coupon no need run the key check!") # debugging purposes
+                    coupon = Coupon(create_coupon.name.data,create_coupon.discount.data,create_coupon.coupon_code.data,\
+                        create_coupon.startdate.data,create_coupon.enddate.data)
+                    coupon_dict[coupon.get_coupon_code_id()] = coupon
+                    db['Coupon'] = coupon_dict
+                    db.close() 
+                    flash ("Coupon created successfully", "success")
             
         else: # assuming if the dictionary does not exist with items in it (working!)
             print('Coupons dict empty, making new dictionary')
