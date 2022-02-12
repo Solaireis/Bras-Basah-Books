@@ -24,6 +24,10 @@
       background-color: #4b8282;
       border-color: #4b8282;
   }
+  .account-actions .btn:focus {
+    border-color: transparent !important;
+    box-shadow: none !important;
+  }
 </style>
 {% endblock %}
 
@@ -83,12 +87,12 @@
               <td>{{ user.__class__.__name__ }}</td>
               {% endif %}
               <td class="account-actions d-flex">
-                <a href="#" class="me-auto">
-                  <i class="fa-solid fa-pen" data-bs-toggle="tooltip" title="Edit"></i>
-                </a>
-                <a href="#" class="me-auto">
-                  <i class="fa-solid fa-trash" data-bs-toggle="tooltip" title="Delete"></i>
-                </a>
+                <button href="#" class="btn me-auto p-0" data-bs-toggle="tooltip" title="Edit">
+                  <i class="fa-solid fa-pen"></i>
+                </button>
+                <button href="#" class="btn me-auto p-0" data-bs-toggle="tooltip" title="Delete">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
               </td>
             </tr>
             {% endif %}
