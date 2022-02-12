@@ -4,31 +4,6 @@
 
 {% block stylesheets %}
 <link rel="stylesheet" href="/static/css/user.css">
-<style>
-  .hint-text {
-      float: left;
-      margin-top: 0.5rem;
-      font-size: 0.8rem;
-  }
-  .pagination {
-      float: right;
-  }
-  .page-item .page-link {
-      border-width: 0;
-      border-radius: 0.25rem;
-      color: #4b8282;
-  }
-  .page-item.active .page-link {
-      z-index: 3;
-      color: #fff;
-      background-color: #4b8282;
-      border-color: #4b8282;
-  }
-  .account-actions .btn:focus {
-    border-color: transparent !important;
-    box-shadow: none !important;
-  }
-</style>
 {% endblock %}
 
 {% block content %}
@@ -87,8 +62,8 @@
               <td>{{ user.__class__.__name__ }}</td>
               {% endif %}
               <td class="account-actions d-flex">
-                <button class="btn me-auto p-0" data-bs-toggle="tooltip" title="Edit" onclick="selectAccount('{{ user.get_user_id() }}', '{{ user.get_username() }}', 'editUserButton');">
-                  <i class="fa-solid fa-pen"></i>
+                <button class="btn me-auto p-0" data-bs-toggle="tooltip" title="View" onclick="selectAccount('{{ user.get_user_id() }}', '{{ user.get_username() }}', 'editUserButton');">
+                  <i class="fa-solid fa-eye"></i>
                 </button>
                 <button class="btn me-auto p-0" data-bs-toggle="tooltip" title="Delete" onclick="selectAccount('{{ user.get_user_id() }}', '{{ user.get_username() }}', 'deleteUserButton');">
                   <i class="fa-solid fa-trash"></i>
@@ -100,7 +75,7 @@
           </tbody>
         </table>
       </div>
-      <div class="clearfix">
+      <div class="account-footer clearfix">
         <div class="hint-text">Showing <b>{{ entries_range[0] }}-{{ entries_range[1] }}</b> out of <b>{{ total_entries }}</b> users</div>
         <ul class="pagination">
           <li class="page-item {{ 'disabled' if first_page == active_page }}">
