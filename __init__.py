@@ -327,7 +327,7 @@ def logout():
 """    Account Pages    """
 
 # Forgot password page
-@app.route("/user/forget-password", methods=["GET", "POST"])
+@app.route("/user/password/forget", methods=["GET", "POST"])
 def password_forget():
 
     # Get user
@@ -363,11 +363,11 @@ def password_forget():
             mail.send(msg)
 
             flash(f"Verification email sent to {email}")
-    return redirect(url_for("home"))#render_template("user/password_forget.html")
+    return redirect(url_for("home"))#render_template("user/password/password_forget.html")
 
 
 # Reset password page
-@app.route("/user/reset-password/<token>")
+@app.route("/user/password/reset/<token>")
 def password_reset(token):
 
     # Get user
@@ -379,7 +379,7 @@ def password_reset(token):
 
     # Get email from token
     try:
-        email = url_serialiser.loads(token, salt=app.config["VERIFY_EMAIL_SALT"], max_age=TOKEN_MAX_AGE)
+        email = url_serialiser.loads(token, salt=app.config["PASSWORD_FORGET_SALT"], max_age=TOKEN_MAX_AGE)
     except BadData as err:  # Token expired or Bad Signature
         if DEBUG: print("Invalid Token:", repr(err))  # print captured error (for debugging)
         return redirect(url_for("verify_fail"))
@@ -408,7 +408,7 @@ def password_reset(token):
     return render_template("user/verify/verify.html", email=email)
 
 # Change password page
-@app.route("/user/change-password", methods=["GET", "POST"])
+@app.route("/user/password/change", methods=["GET", "POST"])
 def password_change():
     # Get current user
     user = get_user()
@@ -448,7 +448,7 @@ def password_change():
                     if DEBUG: print("Password changed for", user)
                     return redirect(url_for("account"))
 
-    return render_template("user/password_change.html", form=change_password_form)
+    return render_template("user/password/password_change.html", form=change_password_form)
 
 
 # Send verification link page
