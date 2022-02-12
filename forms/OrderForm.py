@@ -16,10 +16,7 @@ class OrderForm(Form):
     name = StringField('Name', [validators.Length(min=1, max=100), validators.DataRequired()])
     contact_num = IntegerField("Contact Number", [contact_num_check, validators.DataRequired()])
     email = EmailField("Email", [validators.Email(), validators.DataRequired()])
-    address = TextAreaField("Address", [validators.DataRequired()])
-    # ship_method = RadioField('Shipping Method', choices=[('Standard Delivery', 'Standard Delivery (3 - 5 business days)'), \
-    #                                                      ('Self-collection', 'Self-collect (Reserve online, pick up at our store)')], \
-    #                          default='Standard Delivery')
+    address = TextAreaField("Address")
 
 class User_Order():
     user_order = {}
@@ -169,7 +166,7 @@ class Order_Detail(User_Order):
 # name = 'chiobu'
 # email = "testing@gmail.com"
 # contact_num = '12341234'
-# ship_address = "my house"
+# ship_address = ""
 # ship_method = 'Standard Delivery'
 #
 # order_item = ['', [1,2]]
@@ -178,5 +175,5 @@ class Order_Detail(User_Order):
 # order = Order_Detail(user_id, name, email, contact_num, ship_address, ship_method, order_item, total_price)
 # print(order.get_user_order())
 # print(order.get_order_item())
-# print(order.get_buy_item())
+# print(order.get_ship_address())
 
