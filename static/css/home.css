@@ -1,20 +1,23 @@
 
 /* Product Carousel */
 .carousel-control-prev .fa-chevron-left, .carousel-control-next .fa-chevron-right{
-    color: black;
     font-size: 30px;
     color: #4b8282;
 }
 
 .slide .card{
     max-height: 500px;
-    color: black;
     overflow-y: auto;
+    border: #4b8282 solid 1px;
 }
 
 .slide .card img{
     width: 100%;
     margin-left: 12px;
+}
+
+.slide .card h3{
+    font-weight: bold;
 }
 
 .slide p{
