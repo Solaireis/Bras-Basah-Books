@@ -1017,6 +1017,7 @@ def manage_orders():
     except:
         print("There might not have any orders as of now.")
     for order in db_order:
+        print(order.get_name(), order.get_rent_item())
         if order.get_order_status() == 'Ordered':
             new_order.append(order)
         elif order.get_order_status() == 'Confirmed':
@@ -1034,11 +1035,10 @@ def manage_orders():
     confirm_order = list(reversed(confirm_order))
     ship_order = list(reversed(ship_order))
     deliver_order = list(reversed(deliver_order))
-
-    print('new order', new_order)
-    print('confirm order', confirm_order)
-    print('ship order',ship_order)
-    print('deliver order',deliver_order)
+    # print('new order', new_order)
+    # print('confirm order', confirm_order)
+    # print('ship order',ship_order)
+    # print('deliver order',deliver_order)
 
     return render_template('admin/manage_orders.html', all_order=db_order, new_order=new_order, \
                            confirm_order=confirm_order, ship_order=ship_order, deliver_order=deliver_order, \
@@ -1058,16 +1058,62 @@ def edit_status(order_id):
         print(db_order, "orders in database")
     except:
         print("Error while loading data from database")
-    print(order_id)
     for order in db_order:
         if order.get_order_id() == order_id:
             order.set_order_status(order_status)
             flash('Order status for ' + order_id + ' has been updated.')
     db['Order'] = db_order
-    print(db_order, 'updated database')
     db.close()
-    print(order.get_order_status())
     return redirect(request.referrer)
+
+#
+# Edit return status for rented books
+#
+@app.route("/admin/manage_orders/edit_return/<order_id>", methods=['GET', 'POST'])
+def edit_return(order_id):
+    db_order = []
+    try:
+        db = shelve.open('database')
+        db_order = db['Order']
+        print(db_order, "orders in database")
+        books_dict = db['Books']
+    except:
+        print("Error while loading data from database")
+    for order in db_order:
+        if order.get_order_id() == order_id:
+            rent_item = order.get_rent_item()
+            print(rent_item, 'rent item___________')
+            # for returned orders [1, 2, 'Returned']
+            # set to not returned, rented book increase by 1
+            if order.get_returned_status() == 'Returned':
+                order.set_returned_status('No')
+                for book in rent_item:
+                    print("came in")
+                    rented_number = books_dict[book].get_rented()
+                    print(rented_number, book, 'has been rented')
+                    print('rented number [before]', rented_number)
+                    new_rented_number = rented_number+1
+                    books_dict[book].set_rented(new_rented_number)
+                flash('Return status for rented books in ' + order_id + ' has changed to "Not Returned".')
+            # for not returned orders [1, 2]
+            # set to returned, rented book decrease by 1
+            else:
+                for book in rent_item:
+                    print(books_dict[book], 'books_dict[book]')
+                    rented_number = books_dict[book].get_rented()
+                    print(rented_number, book, 'has been rented')
+                    print('rented number [before]', rented_number)
+                    new_rented_number = rented_number-1
+                    books_dict[book].set_rented(new_rented_number)
+                order.set_returned_status('yes')
+                flash('Rented books in ' + order_id + ' has been returned.')
+    db['Order'] = db_order
+    db['Books'] = books_dict
+    print('rented number [after]', rented_number)
+    db.close()
+    print(order.get_returned_status())
+    return redirect(request.referrer)
+
 
 #
 # End of Chee Qing's Codes
