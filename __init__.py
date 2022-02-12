@@ -1511,6 +1511,7 @@ def about():
 def page_not_found(e):
     return render_template("error/404.html")
 
+# test sitemap for my links
 @app.route('/sitemap',methods=["GET", "POST"])
 def sitemap():
     return render_template("sitemap.html")
