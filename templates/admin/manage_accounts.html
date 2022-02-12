@@ -4,6 +4,7 @@
 
 {% block stylesheets %}
 <link rel="stylesheet" href="/static/css/user.css">
+<link rel="stylesheet" href="/static/css/login.css">
 {% endblock %}
 
 {% block content %}
@@ -24,7 +25,7 @@
     <div class="col-lg-10 py-3 px-5">
       <h2>User account overview</h2>
       <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
-        Add Customer
+        Add New Customer
       </button>
       <hr>
       <div class="table-responsive">
@@ -70,22 +71,56 @@
 </div>
 {% endblock %}
 
-{# Modals #}
 {% block modals %}
+{% from "includes/_login_render_field.html" import render_field %}
+{# Displays flash sign up error #}
+{% macro display_flash_error(category) %}
+  {% with messages = get_flashed_messages(category_filter=(category)) %}
+    {% if messages %}
+      {% for message in messages %}
+        <div class="invalid-feedback display-feedback">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+{% endmacro %}
+{% macro display_error_span(session_name) %}
+  {% if session.pop(session_name, False) %}
+    <span class="d-none display-invalid"></span>
+  {% endif %}
+{% endmacro %}
+
 {# Add Customer Modal #}
-<div class="modal fade" id="addCustomerModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="addCustomerModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+<div class="modal fade" id="addCustomerModal" tabindex="-1" aria-labelledby="addCustomerModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="addCustomerModalLabel">Modal title</h5>
+        <h5 class="modal-title" id="addCustomerModalLabel">Add New Customer</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        ...
+        <form class="needs-validation" method="POST" action="" novalidate>
+          <div class="mb-4">
+            {{ display_error_span("SignUpUsernameError") }}
+            {{ render_field(sign_up_form.username, "Username should be 3-20 characters long", class="form-control", placeholder="Username") }}
+            {{ display_flash_error("sign-up-username-error") }}
+          </div>
+          <div class="mb-4">
+            {{ display_error_span("SignUpEmailError") }}
+            {{ render_field(sign_up_form.email, "Please enter a valid email like example@email.com", class="form-control", placeholder="Email") }}
+            {{ display_flash_error("sign-up-email-error") }}
+          </div>
+          <div class="mb-4">
+            {{ render_field(sign_up_form.password, "Password should be at least 8 characters long", class="form-control", placeholder="Password") }}
+          </div>
+          <div class="mb-4">
+            {{ render_field(sign_up_form.confirm, "Please confirm your password", class="form-control", placeholder="Confirm Password") }}
+          </div>
+          <input type="submit" value="SIGN UP" class="input-group btn" id="submitAddCustomer"/>
+        </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary">Create Customer</button>
       </div>
     </div>
   </div>
@@ -93,5 +128,11 @@
 {% endblock %}
 
 {% block scripts %}
-<script>[].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]')).map(trigger => new bootstrap.Tooltip(trigger));</script>
+<script>
+[].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]')).map(trigger => new bootstrap.Tooltip(trigger));
+function submit_form(id) {
+  const element = document.getElementById(id);
+
+}
+</script>
 {% endblock %}

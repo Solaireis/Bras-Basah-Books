@@ -538,8 +538,68 @@ def manage_accounts():
         # If is master admin
         if user.is_master():
             users += tuple(retrieve_db("Admins", db).values())
+    
+    # Get sign up form
+    sign_up_form = SignUpForm(request.form)
 
-    return render_template("admin/manage_accounts.html", users=users, is_master=user.is_master())
+    # Validate sign up form if request is post
+    if request.method == "POST":
+        if not sign_up_form.validate():
+            if DEBUG: print("Create Customer: form field invalid")
+            session["DisplayFieldError"] = True
+            return render_template("user/sign_up.html", sign_up_form=sign_up_form)
+
+        # Extract data from sign up form
+        username = sign_up_form.username.data
+        email = sign_up_form.email.data.lower()
+        password = sign_up_form.password.data
+
+        # Create new user
+        with shelve.open("database") as db:
+
+            # Get Customers, UsernameToUserID, EmailToUserID, Guests
+            customers_db = retrieve_db("Customers", db)
+            username_to_user_id = retrieve_db("UsernameToUserID", db)
+            email_to_user_id = retrieve_db("EmailToUserID", db)
+
+
+            # Ensure that email and username are not registered yet
+            if username.lower() in username_to_user_id:
+                if DEBUG: print("Create Customer: username already exists")
+                session["DisplayFieldError"] = session["SignUpUsernameError"] = True
+                flash("Username taken", "sign-up-username-error")
+                return render_template("user/sign_up.html", sign_up_form=sign_up_form)
+            elif email in email_to_user_id:
+                if DEBUG: print("Create Customer: email already exists")
+                session["DisplayFieldError"] = session["SignUpEmailError"] = True
+                flash("Email already registered", "sign-up-email-error")
+                return render_template("user/sign_up.html", sign_up_form=sign_up_form)
+
+            # Create customer
+            customer = Customer(username, email, password)
+            if DEBUG: print(f"Created: {customer}")
+
+
+
+            # Store customer into database
+            user_id = customer.get_user_id()
+            customers_db[user_id] = customer
+            username_to_user_id[username.lower()] = user_id
+            email_to_user_id[email] = user_id
+
+            # Create session to login
+            session["UserID"] = user_id
+            session["UserType"] = "Customer"
+            if DEBUG: print(f"Logged in: {customer}")
+
+            # Save changes to database
+            db["UsernameToUserID"] = username_to_user_id
+            db["EmailToUserID"] = email_to_user_id
+            db["Customers"] = customers_db
+
+    return render_template("admin/manage_accounts.html",
+                           users=users, is_master=user.is_master(),
+                           sign_up_form=sign_up_form)
 
 
 """|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|"""
