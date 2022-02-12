@@ -1436,14 +1436,22 @@ def coupon_adm():
         db = shelve.open('database', 'c')
         coupon_dict = retrieve_db('Coupon',db)
 
+        for key in coupon_dict:
+            coupon = coupon_dict.get(key)
+            if coupon.get_coupon_code_id() == create_coupon.coupon_code.data:
+                flash("Coupon code already exists" , "error")
+                
 
-        coupon = Coupon(create_coupon.name.data,create_coupon.discount.data,create_coupon.coupon_code.data,create_coupon.startdate.data,create_coupon.enddate.data)
-        coupon_dict[coupon.get_coupon_code_id] = coupon
-        db['Coupon'] = coupon_dict
-        db.close()
-
-
+            else:
+                coupon = Coupon(create_coupon.name.data,create_coupon.discount.data,create_coupon.coupon_code.data,create_coupon.startdate.data,create_coupon.enddate.data)
+                coupon_dict[coupon.get_coupon_code_id] = coupon
+                db['Coupon'] = coupon_dict
+                db.close()
+                
+       
     return render_template("coupon/create_coupons.html", form=create_coupon)
+
+    
 
 # retrieve coupons as an admin
 @app.route('/retrieve-coupons')

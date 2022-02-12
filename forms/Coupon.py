@@ -18,11 +18,14 @@ class CreateCoupon(Form):
         if field.data > 100:
             raise ValidationError("Discount input have to be less than 100!")
 
-    #valid_date = DateTimeField('Valid Till', [validators.data_required()], format='%Y-%m-%d %H:%M:%S')
-    #valid_date = IntegerField("Days before expiry",[validators.data_required()])
+
     coupon_code = StringField('Coupon Code', [validators.data_required()])  # please validate if there is a overwrite code
-    # startdate = DateField('Start Date' , [validators.data_required()], format='%Y-%m-%d')
-    # enddate = DateField('End Date' , [validators.data_required()], format='%Y-%m-%d')
+   
+    def validate_coupon_code(self, field):
+        if len(field.data) > 20:
+            raise ValidationError("Coupon code must be less than 20 Characters!")
+        
+            
     startdate = StringField('Start Date' , [validators.data_required()])
     enddate = StringField('End Date' , [validators.data_required()])
 
