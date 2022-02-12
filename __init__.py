@@ -625,12 +625,15 @@ def manage_accounts():
     prev_page = active_page-1 if active_page-1 > 0 else active_page
     next_page = active_page+1 if active_page+1 <= last_page else last_page
 
+    # Get entries range
+    entries_range = (first_index+1, first_index+len(display_users))
+
     return render_template("admin/manage_accounts.html",
                            display_users=display_users, is_master=user.is_master(),
                            active_page=active_page, page_list=page_list,
                            prev_page=prev_page, next_page=next_page,
                            first_page=1, last_page=last_page,
-                           entries_range=None, total_entries=None,
+                           entries_range=entries_range, total_entries=len(all_users),
                            form_trigger=form_trigger,
                            create_user_form=create_user_form)
 

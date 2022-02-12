@@ -5,14 +5,25 @@
 {% block stylesheets %}
 <link rel="stylesheet" href="/static/css/user.css">
 <style>
-.hint-text {
-    float: left;
-    margin-top: 0.5rem;
-    font-size: 0.8rem;
-}
-.pagination {
-    float: right;
-}
+  .hint-text {
+      float: left;
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+  }
+  .pagination {
+      float: right;
+  }
+  .page-item .page-link {
+      border-width: 0;
+      border-radius: 0.25rem;
+      color: #4b8282;
+  }
+  .page-item.active .page-link {
+      z-index: 3;
+      color: #fff;
+      background-color: #4b8282;
+      border-color: #4b8282;
+  }
 </style>
 {% endblock %}
 
@@ -84,24 +95,24 @@
         </table>
       </div>
       <div class="clearfix">
-        <div class="hint-text">Showing <b>1-n</b> out of <b>n</b> entries</div>
+        <div class="hint-text">Showing <b>{{ entries_range[0] }}-{{ entries_range[1] }}</b> out of <b>{{ total_entries }}</b> users</div>
         <ul class="pagination">
           <li class="page-item {{ 'disabled' if first_page == active_page }}">
-            <a class="page-link" href="{{ generate_link(first_page) }}"><span>&laquo;</span></i></a>
+            <a class="page-link" href="{{ generate_link(first_page) }}" data-bs-toggle="tooltip" title="Start"><span>&laquo;</span></a>
           </li>
           <li class="page-item {{ 'disabled' if prev_page == active_page }}">
-            <a class="page-link" href="{{ generate_link(prev_page) }}"><span>&lsaquo;</span></a>
+            <a class="page-link" href="{{ generate_link(prev_page) }}" data-bs-toggle="tooltip" title="Previous"><span>&lsaquo;</span></a>
           </li>
           {% for page_num in page_list %}
-          <li class="page-item {{ 'active' if page_num == active_page }}">
+          <li class="page-item {{ 'active disabled' if page_num == active_page }}">
             <a class="page-link" href="{{ generate_link(page_num) }}">{{ page_num }}</a>
           </li>
           {% endfor %}
           <li class="page-item {{ 'disabled' if next_page == active_page }}">
-            <a class="page-link" href="{{ generate_link(next_page) }}"><span>&rsaquo;</span></a>
+            <a class="page-link" href="{{ generate_link(next_page) }}" data-bs-toggle="tooltip" title="Next"><span>&rsaquo;</span></a>
           </li>
           <li class="page-item {{ 'disabled' if last_page == active_page }}">
-            <a class="page-link" href="{{ generate_link(last_page) }}"><span>&raquo;</span></i></a>
+            <a class="page-link" href="{{ generate_link(last_page) }}" data-bs-toggle="tooltip" title="End"><span>&raquo;</span></a>
           </li>
         </ul>
       </div>
