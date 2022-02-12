@@ -17,18 +17,53 @@
     </div>
     <!-- Page Name -->
     <h2 class="page-name"><span>Shopping Cart</span></h2>
-    <p class="cart-label">For buying</p>
+
+    <h6 class="cart-label d-none d-md-block">For buying</h6>
     <div class="row">
+        <div class="col-12 order-summary d-block d-lg-none">
+        <div class="card">
+          <div class="card-header">
+            <p>Order Summary
+            <span>{{ (buy_count)+(rent_count) }} item(s)</span></p>
+          </div>
+          <div class="card-body">
+            <p class="card-text">Subtotal<span>${{ total_price }}</span></p>
+            {% if (buy_count + rent_count) == 0 %}
+             <p class="card-text">Shipping <span>-</span></p>
+              <p class="card-text bolder">Estimated Total <span>-</span></p>
+            {% else %}
+            <p class="card-text">Shipping <span>$5.00</span></p>
+            <p class="card-text bolder">Estimated Total <span>${{ "%.2f"|format((total_price|float)+5) }}</span></p>
+            {% endif %}
+          </div>
+        </div>
+        {% if (buy_count + rent_count) == 0 %}
+                <button type="submit" disabled class="check-out-button btn" name="button">Check Out</button>
+        {% else %}
+          <form action="/checkout" method="POST">
+                <button type="submit" class="check-out-button btn" name="button">Check Out</button>
+          </form>
+        {% endif %}
+        <div class="show-payment">
+          <p>Accepted Payment Method</p>
+          <i class="fa-brands fa-cc-visa"></i>
+          <i class="fa-brands fa-cc-mastercard"></i>
+          <i class="fa-brands fa-cc-amex"></i>
+          <i class="fa-brands fa-google-pay"></i>
+        </div>
+      </div>
+
+        <h6 class="d-block d-md-none">For buying</h6>
       {% if buy_count == 0 %}
-      <div class="col-9 empty-cart">
+      <div class="col-md-9 col-12 empty-cart">
         <h5>Your cart is empty. <a href="/allbooks">Browse more</a>.</h5>
       </div>
       {% else %}
-      <div class="col-9 buying-cart">
+      <div class="col-lg-9 col-12 buying-cart">
           <table class="table table-striped">
             <tbody>
             {% for key in buy_cart %}
-                <tr>
+                <tr class="d-none d-md-block">
                     <form method="POST" action="/update_cart/{{ key }}">
 
                         <td class="col-2"><a href="/book/{{ key }}"><img src="{{ books_dict[key].get_img() }}" alt="book cover"></a></td>
@@ -42,12 +77,25 @@
                         <td class="col-1"><button type="submit" onclick="delete_buying_cart()" name="button" style="float:right;" class="btn"><i class="fa fa-close"></i></button></td>
                     </form>
                 </tr>
+                <tr class="d-block d-md-none">
+                    <form method="POST" action="/update_cart/{{ key }}">
+                        <td rowspan="col-2"><a href="/book/{{ book }}"><img src={{ books_dict[key].get_img() }} alt="book cover"></a></td>
+                        <td class="col-5"><a href="/book/{{ book }}"><p>{{ books_dict[key].get_title() }}</p></a>#{{ key }}</td>
+                        <td class="col-1"><p>${{ books_dict[key].get_price() }}</p></td>
+                        <td class="col-2"><input type="number" class="quantity-selector" name="quantity" min="0" value={{ buy_cart[key] }}>
+                        <button style="font-size:0.8em; padding:0px;" type="submit" class="btn update-btn" onclick="update_cart()">Update</button></td>
+                    </form>
+                    <form method="POST" action="/delete_buying_cart/{{ key }}">
+                        <input type="number" name="book_id" class="book_id" style="display:none;" value={{ books_dict[key] }} readonly></td>
+                        <td class="col-1"><button type="submit" onclick="delete_buying_cart()" name="button" style="float:right;" class="btn"><i class="fa fa-close"></i></button></td>
+                    </form>
+                </tr>
             {% endfor %}
               </tbody>
           </table>
       </div>
       {% endif %}
-      <div class="col-3 order-summary">
+      <div class="col-md-3 col-12 order-summary d-none d-lg-block">
         <div class="card">
           <div class="card-header">
             <p>Order Summary
@@ -82,22 +130,30 @@
 
     </div>
 
-    <p class="cart-label">For renting</p>
     <div class="row">
+        <h6>For renting</h6>
       {% if rent_count == 0 %}
-      <div class="col-9 empty-cart">
+      <div class="col-md-9 col-12 empty-cart">
         <h5>Nothing to rent. <a href="/allbooks">Browse more</a>.</h5>
       </div>
       {% else %}
-      <div class="col-9 renting-cart">
+      <div class="col-lg-9 col-12 renting-cart">
 
           <table class="table table-striped">
             <tbody>
             {% for book in rent_cart %}
-                <tr>
+                <tr class="d-none d-md-block">
                     <td rowspan="col-2"><a href="/book/{{ book }}"><img src={{ books_dict[book].get_img() }} alt="book cover"></a></td>
                     <td class="col-5"><a href="/book/{{ book }}"><h4>{{ books_dict[book].get_title() }}</h4></a>#{{ book }}</td>
                     <td class="col-4"><h5>{{ "$%.2f"|format((books_dict[book].get_price()|float)*0.1) }}</h5></td>
+                    <form method="POST" action="/delete_renting_cart/{{ book }}">
+                        <td class="col-1"><button type="submit" onclick="delete_renting_cart()" name="button" style="float:right;" class="btn"><i class="fa fa-close"></i></button></td>
+                    </form>
+                </tr>
+                <tr class="d-block d-md-none">
+                    <td rowspan="col-3"><a href="/book/{{ book }}"><img src={{ books_dict[book].get_img() }} alt="book cover"></a></td>
+                    <td class="col-6"><a href="/book/{{ book }}"><p>{{ books_dict[book].get_title() }}</p></a>#{{ book }}</td>
+                    <td class="col-2"><p>{{ "$%.2f"|format((books_dict[book].get_price()|float)*0.1) }}</p></td>
                     <form method="POST" action="/delete_renting_cart/{{ book }}">
                         <td class="col-1"><button type="submit" onclick="delete_renting_cart()" name="button" style="float:right;" class="btn"><i class="fa fa-close"></i></button></td>
                     </form>
