@@ -125,7 +125,7 @@
 
 {# Add User Modal #}
 <div class="modal fade" id="addUser" tabindex="-1" aria-labelledby="addUserLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
+  <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="addUserLabel">Add New {{ display_word }}</h5>
@@ -177,6 +177,14 @@
       </div>
       <div class="modal-body">
         <dl class="row">
+          <dt class="col-sm-3 mb-2 mt-auto">Picture</dt>
+          <dd class="col-sm-9">
+            <div class="view-user-profile-pic">
+              <div class="img-wrapper img-1-1">
+                <img src="" alt="" id="viewUserProfilePic">
+              </div>
+            </div>
+          </dd>
           {% if is_master %}
           <dt class="col-sm-3">User Type</dt>
           <dd class="col-sm-9" id="viewUserUserType"></dd>
@@ -192,7 +200,7 @@
         </dl>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Ok</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>

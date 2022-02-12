@@ -103,3 +103,11 @@
     background-color: #4b8282;
     border-color: #4b8282;
 }
+
+.view-user-profile-pic {
+    width: 7rem;
+    height: 7rem;
+}
+.view-user-profile-pic #viewUserProfilePic {
+    border-radius: 50%;
+}

@@ -23,11 +23,11 @@ function viewUser(accountType, username, name, email, gender, profilePic) {
     if (accountType != "") {
         getElement("viewUserUserType").innerText = accountType;
     }
-    getElement("viewUserUsername").innerText = username
-    getElement("viewUserName").innerText = name
-    getElement("viewUserEmail").innerText = email
-    getElement("viewUserGender").innerText = {"M":"Male", "F":"Female", "O":"Others", "-":"-"}[gender]
-    getElement()
+    getElement("viewUserUsername").innerText = username;
+    getElement("viewUserName").innerText = name;
+    getElement("viewUserEmail").innerText = email;
+    getElement("viewUserGender").innerText = {"M":"Male", "F":"Female", "O":"Others", "-":"-"}[gender];
+    getElement("viewUserProfilePic").src = profilePic;
     clickButton("viewUserButton");
 }
 
