@@ -1,4 +1,4 @@
-# IT-1566 Team 2 App Development project
+# AY21/22 IT-1566 Team 2 App Development project
 Project Name: Bras Basah Books <br />
 Proposed Industry: Bras Basah Complex Bookstore Website <br />
 Project Description: <br />
@@ -13,7 +13,7 @@ PEM Group: SF2102 <br/>
 Team members: <br /> 
 
 - [201520M]  Eden Will Sng Jin Xuan <b> -(Leader)-</b>
-- [211973E]  Jabriel Seah
+- [211973E]  Jabriel Seah 
 - [214442B]  Tan Chee Qing
 - [210290N]  Luqman
  
