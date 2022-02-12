@@ -43,8 +43,11 @@
           </thead>
           <tbody>
             {% for user in users %}
-            {% if is_master %} {% set name = none %}
-            {% else %} {% set name = user.get_name() %}
+            {% if user.__class__.__name__ != "Admin" or not user.is_master() %} {# Don't display master #}
+            {% if user.__class__.__name__ == "Admin" %}
+              {% set name = none %}
+            {% else %}
+              {% set name = user.get_name() %}
             {% endif %}
             <tr class="account-row">
               <td>{{ user.get_username() }}</td>
@@ -62,6 +65,7 @@
                 </a>
               </td>
             </tr>
+            {% endif %}
             {% endfor %}
           </tbody>
         </table>
@@ -106,14 +110,14 @@
           </div>
           {% endif %}
           <div class="mb-4">
-            {{ display_error_span("SignUpUsernameError") }}
+            {{ display_error_span("CreateUserUsernameError") }}
             {{ render_field(create_user_form.username, "Username should be 3-20 characters long", class="form-control", placeholder="Username") }}
-            {{ display_flash_error("sign-up-username-error") }}
+            {{ display_flash_error("create-user-username-error") }}
           </div>
           <div class="mb-4">
-            {{ display_error_span("SignUpEmailError") }}
+            {{ display_error_span("CreateUserEmailError") }}
             {{ render_field(create_user_form.email, "Please enter a valid email like example@email.com", class="form-control", placeholder="Email") }}
-            {{ display_flash_error("sign-up-email-error") }}
+            {{ display_flash_error("create-user-email-error") }}
           </div>
           <div class="mb-4">
             {{ render_field(create_user_form.password, "Password should be at least 8 characters long", class="form-control", placeholder="Password") }}

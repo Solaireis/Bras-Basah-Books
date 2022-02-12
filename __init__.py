@@ -530,14 +530,6 @@ def manage_accounts():
     # If user is not admin
     if not isinstance(user, Admin):
         return redirect(url_for("home"))
-
-    # Get users database
-    with shelve.open("database") as db:
-        users = tuple(retrieve_db("Customers", db).values())
-
-        # If is master admin
-        if user.is_master():
-            users += tuple(retrieve_db("Admins", db).values())
     
     # Get sign up form
     create_user_form = CreateUserForm(request.form)
@@ -550,6 +542,10 @@ def manage_accounts():
             return render_template("admin/manage_accounts.html", create_user_form=create_user_form)
 
         # Extract data from sign up form
+        if user.is_master():
+            user_type = create_user_form.user_type.data
+        else:
+            user_type = "C"  # non-master admins can only create customers
         username = create_user_form.username.data
         email = create_user_form.email.data.lower()
         password = create_user_form.password.data
@@ -557,45 +553,50 @@ def manage_accounts():
         # Create new user
         with shelve.open("database") as db:
 
-            # Get Customers, UsernameToUserID, EmailToUserID, Guests
-            customers_db = retrieve_db("Customers", db)
+            # Get UsersDB, UsernameToUserID, EmailToUserID, Guests
+            db_key = {"C":"Customers", "A":"Admins"}[user_type]
+            users_db = retrieve_db(db_key, db)
             username_to_user_id = retrieve_db("UsernameToUserID", db)
             email_to_user_id = retrieve_db("EmailToUserID", db)
 
 
             # Ensure that email and username are not registered yet
             if username.lower() in username_to_user_id:
-                if DEBUG: print("Create Customer: username already exists")
-                session["DisplayFieldError"] = session["SignUpUsernameError"] = True
-                flash("Username taken", "sign-up-username-error")
+                if DEBUG: print("Create User: username already exists")
+                session["DisplayFieldError"] = session["CreateUserUsernameError"] = True
+                flash("Username taken", "create-user-username-error")
                 return render_template("admin/manage_accounts.html", create_user_form=create_user_form)
             elif email in email_to_user_id:
-                if DEBUG: print("Create Customer: email already exists")
-                session["DisplayFieldError"] = session["SignUpEmailError"] = True
-                flash("Email already registered", "sign-up-email-error")
+                if DEBUG: print("Create User: email already exists")
+                session["DisplayFieldError"] = session["CreateUserEmailError"] = True
+                flash("Email already registered", "create-user-email-error")
                 return render_template("admin/manage_accounts.html", create_user_form=create_user_form)
 
             # Create customer
-            customer = Customer(username, email, password)
-            if DEBUG: print(f"Created: {customer}")
-
-
+            created_user = {"C":Customer, "A":Admin}[user_type](username, email, password)
+            if DEBUG: print(f"Created: {created_user}")
 
             # Store customer into database
-            user_id = customer.get_user_id()
-            customers_db[user_id] = customer
+            user_id = created_user.get_user_id()
+            users_db[user_id] = created_user
             username_to_user_id[username.lower()] = user_id
             email_to_user_id[email] = user_id
-
-            # Create session to login
-            session["UserID"] = user_id
-            session["UserType"] = "Customer"
-            if DEBUG: print(f"Logged in: {customer}")
 
             # Save changes to database
             db["UsernameToUserID"] = username_to_user_id
             db["EmailToUserID"] = email_to_user_id
-            db["Customers"] = customers_db
+            db[db_key] = users_db
+
+        flash(f"New user created: {username}")
+        return redirect(url_for("manage_accounts"))
+
+    # Get users database
+    with shelve.open("database") as db:
+        users = tuple(retrieve_db("Customers", db).values())
+
+        # If is master admin
+        if user.is_master():
+            users = tuple(retrieve_db("Admins", db).values()) + users
 
     return render_template("admin/manage_accounts.html",
                            users=users, is_master=user.is_master(),
