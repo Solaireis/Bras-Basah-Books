@@ -14,11 +14,12 @@ from PIL import Image
 # Import classes
 import Book, Cart as c
 from users import GuestDB, Guest, Customer, Admin
-from forms import SignUpForm, LoginForm, ChangePasswordForm, ForgetPasswordForm,\
+from forms import SignUpForm, LoginForm, ChangePasswordForm, \
+                  ResetPasswordForm, ForgetPasswordForm, \
                   AccountPageForm, CreateUserForm, DeleteUserForm, \
                   Enquiry, UserEnquiry, Faq, FaqEntry, AddBookForm, \
                   Coupon, CreateCoupon, OrderForm, RequestCoupon, ReplyEnquiry, \
-                    UpdateCoupon
+                  UpdateCoupon
 
 
 # CONSTANTS
@@ -328,11 +329,79 @@ def logout():
 # Forgot password page
 @app.route("/user/forget-password", methods=["GET", "POST"])
 def password_forget():
-    pass
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    # Get user
+    user = get_user()
+
+    # Only Guest will forget password
+    if session["UserType"] != "Guest":
+        return redirect(url_for("home"))
+    
+    if request.method == "POST":
+        forget_password_form = ForgetPasswordForm(request.form)
+
+        if not forget_password_form.validate():
+            if DEBUG: print("Send Link Forget Password: form field invalid")
+            session["DisplayFieldError"] = True
+        else:
+            # Configure noreplybbb02@gmail.com
+            # app.config.from_pyfile("config/noreply_email.cfg")
+            # mail.init_app(app)
+
+            # Get email
+            email = forget_password_form.email.data.lower()
+
+            # Generate token
+            token = url_serialiser.dumps(email, salt=app.config["PASSWORD_FORGET_SALT"])
+
+            # Send message to email entered
+            msg = Message(subject="Reset Your Password",
+                        sender=("BrasBasahBooks", "noreplybbb02@gmail.com"),
+                        recipients=[email])
+            link = url_for("verify", token=token, _external=True)
+            msg.html = render_template("emails/_password_reset.html", link=link)
+            mail.send(msg)
+
+            flash(f"Verification email sent to {email}")
+    return redirect(url_for("home"))#render_template("user/password_forget.html")
+
+
+# Reset password page
+@app.route("/user/reset-password/<token>")
+def password_reset(token):
+
+    # Get user
+    user = get_user()
+
+    # Get email from token
+    try:
+        email = url_serialiser.loads(token, salt=app.config["VERIFY_EMAIL_SALT"], max_age=TOKEN_MAX_AGE)
+    except BadData as err:  # Token expired or Bad Signature
+        if DEBUG: print("Invalid Token:", repr(err))  # print captured error (for debugging)
+        return redirect(url_for("verify_fail"))
+
+    with shelve.open("database") as db:
+        email_to_user_id = retrieve_db("EmailToUserID", db)
+        customers_db = retrieve_db("Customers", db)
+
+        # Get user
+        try:
+            user = customers_db[email_to_user_id[email]]
+        except KeyError:
+            if DEBUG: print("No user with email:", email)  # Account was deleted
+            return redirect(url_for("verify_fail"))
+
+        # Verify email
+        if not user.is_verified():
+            user.verify()
+        else:  # Email was alreadyt verified
+            if DEBUG: print(email, "is already verified")
+            return redirect(url_for("verify_fail"))
+
+        # Safe changes to database
+        db["Customers"] = customers_db
+
+    return render_template("user/verify/verify.html", email=email)
 
 # Change password page
 @app.route("/user/change-password", methods=["GET", "POST"])

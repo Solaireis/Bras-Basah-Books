@@ -69,15 +69,15 @@ class ChangePasswordForm(Form):
                                                           validators.EqualTo("new_password", message="Password entered is different")])
 
 
-class SendPasswordLink(Form):
-    """ Send password link form used for sending password reset link """
+class ForgetPasswordForm(Form):
+    """ Forget password link form used for sending password reset link """
 
     # Email
     email = EmailField("Email", [validators.InputRequired(message="")])
 
 
-class ForgetPasswordForm(Form):
-    """ Forget password form used when setting new password """
+class ResetPasswordForm(Form):
+    """ Reset password form used when setting new password """
 
     # New password
     new_password = PasswordField("New Password", [validators.InputRequired(message=""),
