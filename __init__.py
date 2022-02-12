@@ -530,14 +530,6 @@ def manage_accounts():
     # If user is not admin
     if not isinstance(user, Admin):
         return redirect(url_for("home"))
-
-    # Get users database
-    with shelve.open("database") as db:
-        users = tuple(retrieve_db("Customers", db).values())
-
-        # If is master admin
-        if user.is_master():
-            users += tuple(retrieve_db("Admins", db).values())
     
     # Get sign up form
     create_user_form = CreateUserForm(request.form)
@@ -550,6 +542,10 @@ def manage_accounts():
             return render_template("admin/manage_accounts.html", create_user_form=create_user_form)
 
         # Extract data from sign up form
+        if user.is_master():
+            user_type = create_user_form.user_type.data
+        else:
+            user_type = "C"  # non-master admins can only create customers
         username = create_user_form.username.data
         email = create_user_form.email.data.lower()
         password = create_user_form.password.data
@@ -566,20 +562,18 @@ def manage_accounts():
             # Ensure that email and username are not registered yet
             if username.lower() in username_to_user_id:
                 if DEBUG: print("Create Customer: username already exists")
-                session["DisplayFieldError"] = session["SignUpUsernameError"] = True
-                flash("Username taken", "sign-up-username-error")
+                session["DisplayFieldError"] = session["CreateUserUsernameError"] = True
+                flash("Username taken", "create-user-username-error")
                 return render_template("admin/manage_accounts.html", create_user_form=create_user_form)
             elif email in email_to_user_id:
                 if DEBUG: print("Create Customer: email already exists")
-                session["DisplayFieldError"] = session["SignUpEmailError"] = True
-                flash("Email already registered", "sign-up-email-error")
+                session["DisplayFieldError"] = session["CreateUserEmailError"] = True
+                flash("Email already registered", "create-user-email-error")
                 return render_template("admin/manage_accounts.html", create_user_form=create_user_form)
 
             # Create customer
             customer = Customer(username, email, password)
             if DEBUG: print(f"Created: {customer}")
-
-
 
             # Store customer into database
             user_id = customer.get_user_id()
@@ -587,15 +581,18 @@ def manage_accounts():
             username_to_user_id[username.lower()] = user_id
             email_to_user_id[email] = user_id
 
-            # Create session to login
-            session["UserID"] = user_id
-            session["UserType"] = "Customer"
-            if DEBUG: print(f"Logged in: {customer}")
-
             # Save changes to database
             db["UsernameToUserID"] = username_to_user_id
             db["EmailToUserID"] = email_to_user_id
             db["Customers"] = customers_db
+
+    # Get users database
+    with shelve.open("database") as db:
+        users = tuple(retrieve_db("Customers", db).values())
+
+        # If is master admin
+        if user.is_master():
+            users += tuple(retrieve_db("Admins", db).values())
 
     return render_template("admin/manage_accounts.html",
                            users=users, is_master=user.is_master(),
