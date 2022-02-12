@@ -1,4 +1,12 @@
 # AY21/22 IT-1566 Team 2 App Development project
+PEM Group: SF2102 <br/>
+Team members: <br /> 
+
+- [201520M]  Eden Will Sng Jin Xuan <b> -(Leader)- </b>
+- [211973E]  Jabriel Seah 
+- [214442B]  Tan Chee Qing
+- [210290N]  Luqman
+
 Project Name: Bras Basah Books <br />
 Proposed Industry: Bras Basah Complex Bookstore Website <br />
 Project Description: <br />
@@ -9,14 +17,6 @@ Bras Basah Complex has a lot of bookstores. However, not all bookstores have an 
 
 Under this circumstance, We as creative, enthusiastic and innovative programmers do not want to see the city of books die down and become a figment left behind in Singapore history books. Therefore we have decided to help store owners transition digitally in this Covid-19 affected world as well as create solutions that meet the needs of the business as well as the customers patronising these shop owners' stores.
 
-PEM Group: SF2102 <br/>
-Team members: <br /> 
-
-- [201520M]  Eden Will Sng Jin Xuan <b> -(Leader)- </b>
-- [211973E]  Jabriel Seah 
-- [214442B]  Tan Chee Qing
-- [210290N]  Luqman
- 
 <b>PYTHON Version: 3.8 and above required.</b> <br/>
 Library needed to be installed for Virtual Environment <br />
 <b> 1.flask </b> | pip install flask<br /> 
