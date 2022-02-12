@@ -70,7 +70,7 @@
                             <td>{{coupon.get_start_date()}}</td>
                             <td>{{coupon.get_end_date()}}</td>
                             <td>
-                                <a href ="/update-coupon/{{coupon.get_count()}}" class="btn btn-warning">Update</a>
+                                <a href ="/update-coupon/{{coupon.get_coupon_code_id()}}" class="btn btn-warning">Update</a>
                             </td>
                             <td>
                                 <form action="{{url_for('delete_coupons',id=coupon.get_coupon_code_id())}}" method="POST">

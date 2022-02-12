@@ -7,6 +7,7 @@ from typing import Union, Dict
 import shelve
 import os
 import stripe
+import datetime
 from PIL import Image
 
 # Import classes
@@ -1409,7 +1410,7 @@ def update_faq(id):
     update_faq = Faq(request.form)
     if request.method == 'POST' and update_faq.validate():
         faq_dict = {}
-        db = shelve.open('database','w')
+        db = shelve.open('database','c')
         faq_dict = db['Faq']
 
         faq = faq_dict.get(id)
@@ -1437,7 +1438,7 @@ def update_faq(id):
 @app.route('/delete-faq/<int:id>', methods=['POST'])
 def delete_faq(id):
     faq_dict={}
-    db = shelve.open('database','w')
+    db = shelve.open('database','c')
     faq_dict = db['Faq']
     faq_dict.pop(id)
     db['Faq'] = faq_dict
@@ -1482,19 +1483,27 @@ def coupon_adm():
         db = shelve.open('database', 'c')
         coupon_dict = retrieve_db('Coupon',db)
 
-        for key in coupon_dict:
-            coupon = coupon_dict.get(key)
-            if coupon.get_coupon_code_id() == create_coupon.coupon_code.data:
-                flash("Coupon code already exists" , "error")
-                
-
-            else:
-                coupon = Coupon(create_coupon.name.data,create_coupon.discount.data,create_coupon.coupon_code.data,create_coupon.startdate.data,create_coupon.enddate.data)
-                coupon_dict[coupon.get_coupon_code_id] = coupon
+        if len(coupon_dict) == 0: # if dictionary is empty 
+            print('Coupons dict empty, making new dictionary')
+            coupon = Coupon(create_coupon.name.data,create_coupon.discount.data,create_coupon.coupon_code.data,\
+                create_coupon.startdate.data,create_coupon.enddate.data)
+            coupon_dict[coupon.get_coupon_code_id()] = coupon
+            db['Coupon'] = coupon_dict
+            db.close()
+        else: # assuming if the dictionary does exist with items in it
+            for key in coupon_dict:
+                coupon = coupon_dict.get(key)
+                # checks if there is already a coupon with the same coupon code
+                if coupon.get_coupon_code_id() == create_coupon.coupon_code.data:
+                    flash("Coupon code already exists" , "error")
+                    #session["CodeExist"] = "exist"
+                print("First coupon no need run the key check!") # debugging purposes
+                coupon = Coupon(create_coupon.name.data,create_coupon.discount.data,create_coupon.coupon_code.data,\
+                    create_coupon.startdate.data,create_coupon.enddate.data)
+                coupon_dict[coupon.get_coupon_code_id()] = coupon
                 db['Coupon'] = coupon_dict
-                db.close()
-                
-       
+                db.close() 
+
     return render_template("coupon/create_coupons.html", form=create_coupon)
 
     
@@ -1503,32 +1512,47 @@ def coupon_adm():
 @app.route('/retrieve-coupons')
 def retrieve_coupons():
     coupon_dict = {}
-    db = shelve.open('database','w')
+    db = shelve.open('database','c')
     coupon_dict = retrieve_db('Coupon',db)
     db.close()
 
     coupon_list=[]
+    date = datetime.datetime.now() #get current date
+    today = date.strftime('%Y/%m/%d') #format date
+
+    # updates which coupons have become expired
+    # for key in coupon_dict:
+    #     coupon = coupon_dict.get(key)
+    #     enddate = coupon.get_end_date()
+    #     enddate = datetime.datetime.strptime(enddate,'%Y/%m/%d')
+    #     print(enddate)
+    #     if enddate < today:
+    #         coupon.set_expired(0)
+    #         print(coupon.get_expired())
+    #     coupon_dict = coupon   #updates the dictionary with the new values
+    #     db['Coupon'] = coupon_dict #updates the database
+
     for key in coupon_dict:
         coupon = coupon_dict.get(key)
-        coupon_list.append(coupon)
+        coupon_list.append(coupon) #append the coupon to the list
 
     return render_template('coupon/retrieve_coupons.html', count=len(coupon_list), coupon_list=coupon_list)
 
-# update coupons
-@app.route('/update-coupon/<int:id>/',methods=['GET','POST'])
+# update coupons (redo needed)
+@app.route('/update-coupon/<id>/',methods=['GET','POST'])
 def update_coupons(id):
     coupon_form = CreateCoupon(request.form)
     if request.method == 'POST' and coupon_form.validate():
         coupon_dict = {}
-        db = shelve.open('database','w')
+        db = shelve.open('database','c')
         coupon_dict = db['Coupon']
 
-        coupon = coupon_dict.get(id)
+        coupon = coupon_dict.get(id)# error is the id, you need to redo this
         coupon.set_name(coupon_form.name.data)
         coupon.set_discount(coupon_form.discount.data)
-        coupon.set_valid_date(coupon_form.valid_date.data)
-        coupon.set_coupon_code_id(coupon_form.coupon_code.data)
-
+        coupon.set_coupon_code_id(coupon_form.coupon_code.data) #make this part not able to be changed
+        coupon.set_start_date(coupon_form.startdate.data)
+        coupon.set_end_date(coupon_form.enddate.data)
         db['Coupon'] = coupon_dict
         db.close()
 
@@ -1536,15 +1560,16 @@ def update_coupons(id):
 
     else:
         coupon_dict={}
-        db =shelve.open('database','w')
+        db =shelve.open('database','c')
         coupon_dict = db['Coupon']
         db.close()
 
         coupon = coupon_dict.get(id)
         coupon_form.name.data = coupon.get_name()
         coupon_form.discount.data = coupon.get_discount()
-        coupon_form.valid_date.data = coupon.get_valid_date()
         coupon_form.coupon_code.data = coupon.get_coupon_code_id()
+        coupon_form.startdate.data = coupon.get_start_date()
+        coupon_form.enddate.data = coupon.get_end_date()
 
         return render_template('coupon/update_coupons.html', form=coupon_form)
 
@@ -1552,7 +1577,7 @@ def update_coupons(id):
 @app.route('/delete-coupon/<id>',methods=['GET', 'POST'])
 def delete_coupons(id):
     coupon_dict = {}
-    db = shelve.open('database','w')
+    db = shelve.open('database','c')
     coupon_dict = db['Coupon']
     for key in coupon_dict:
         coupon = coupon_dict.get(key)
@@ -1597,7 +1622,7 @@ def request_coupons():
 @app.route('/retrieve-customer-coupons', methods=['GET', 'POST'])
 def retrieve_cu_coupons():
     customer_dict = {}
-    db = shelve.open('database','w')
+    db = shelve.open('database','c')
     customer_dict = retrieve_db('Customers',db)
     db.close()
 
@@ -1606,7 +1631,7 @@ def retrieve_cu_coupons():
     coupon_list = customer.get_coupons()
 
     coupon_dict = {}
-    db = shelve.open('database','w')
+    db = shelve.open('database','c')
     coupon_dict = retrieve_db('Coupon',db)
     db.close()
 
