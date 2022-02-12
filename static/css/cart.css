@@ -22,12 +22,8 @@ table td, table i{
     text-decoration: underline;
 }
 
-td button .fa-close{
-  font-size: 1.3em;
-}
-
-td button .fa-close:hover{
-  color: #4b8282;
+.fa-times:hover{
+  opacity: 0.8;
 }
 
 td .quantity-selector, .update-btn{
@@ -94,7 +90,7 @@ td .quantity-selector, .update-btn{
 
 .check-out-button:hover{
   color: white;
-  opacity: 0.8;
+  opacity: 0.9;
 }
 
 .show-payment p{
