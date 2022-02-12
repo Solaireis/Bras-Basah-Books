@@ -596,7 +596,7 @@ def manage_accounts():
 
         # If is master admin
         if user.is_master():
-            users += tuple(retrieve_db("Admins", db).values())
+            users = tuple(retrieve_db("Admins", db).values()) + users
 
     return render_template("admin/manage_accounts.html",
                            users=users, is_master=user.is_master(),
