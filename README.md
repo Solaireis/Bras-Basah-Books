@@ -17,14 +17,14 @@ Team members: <br />
 - [214442B]  Tan Chee Qing
 - [210290N]  Luqman
  
-
+<b>PYTHON Version: 3.8 and above required.</b> <br/>
 Library needed to be installed for Virtual Environment <br />
-1.flask <br />
-2.flask_mail  <br />
-3.wtforms  <br />
-4.email_validator <br />
-5.argon2-cffi  <br />
-6.stripe <br />
+<b> 1.flask </b> | pip install flask<br /> 
+<b> 2.flask_mail </b> | pip install flask_mail <br />
+<b> 3.wtforms </b> | pip install wtforms <br />
+<b> 4.email_validator </b> | pip install email_validator <br />
+<b> 5.argon2-cffi  </b> | pip install argon2-cffi <br />
+<b> 6.stripe </b> | pip install stripe <br />
 
 Task By each Member: <br/>
 Eden: <br/>
