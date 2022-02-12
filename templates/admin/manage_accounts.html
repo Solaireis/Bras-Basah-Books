@@ -87,10 +87,10 @@
               <td>{{ user.__class__.__name__ }}</td>
               {% endif %}
               <td class="account-actions d-flex">
-                <button href="#" class="btn me-auto p-0" data-bs-toggle="tooltip" title="Edit">
+                <button class="btn me-auto p-0" data-bs-toggle="tooltip" title="Edit" onclick="select_account('{{ user.get_user_id() }}');">
                   <i class="fa-solid fa-pen"></i>
                 </button>
-                <button href="#" class="btn me-auto p-0" data-bs-toggle="tooltip" title="Delete">
+                <button class="btn me-auto p-0" data-bs-toggle="tooltip" title="Delete" onclick="select_account('{{ user.get_user_id() }}');">
                   <i class="fa-solid fa-trash"></i>
                 </button>
               </td>
@@ -193,6 +193,8 @@
 <script>
 [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]')).map(trigger => new bootstrap.Tooltip(trigger));
 const submit_form = id => document.getElementById(id).click();
+let selectedUserID = null;
+const select_account = userID => selectedUserID = userID;
 {% if form_trigger %}
 document.body.onload = () => document.getElementById("{{ form_trigger }}").click();
 {% endif %}
