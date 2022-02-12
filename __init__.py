@@ -530,7 +530,7 @@ def manage_accounts():
     # If user is not admin
     if not isinstance(user, Admin):
         return redirect(url_for("home"))
-    
+
     # Get sign up form
     create_user_form = CreateUserForm(request.form)
 
@@ -598,8 +598,12 @@ def manage_accounts():
         if user.is_master():
             users = tuple(retrieve_db("Admins", db).values()) + users
 
+    # Get page number
+    page = request.args.get("page", default=1, type=int)
+
     return render_template("admin/manage_accounts.html",
                            users=users, is_master=user.is_master(),
+                           active_page=page, page_list=[1,2,3],
                            create_user_form=create_user_form)
 
 

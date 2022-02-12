@@ -4,6 +4,16 @@
 
 {% block stylesheets %}
 <link rel="stylesheet" href="/static/css/user.css">
+<style>
+.hint-text {
+    float: left;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+}
+.pagination {
+    float: right;
+}
+</style>
 {% endblock %}
 
 {% block content %}
@@ -69,6 +79,20 @@
             {% endfor %}
           </tbody>
         </table>
+      </div>
+      <div class="clearfix">
+        <div class="hint-text">Showing <b>10</b> out of <b>n</b> entries</div>
+        <ul class="pagination">
+          <li class="page-item"><a class="page-link" href="#"><span>&laquo;</span></i></a></li>
+          <li class="page-item"><a class="page-link" href="#"><span>&lsaquo;</span></a></li>
+          {% for page_num in page_list %}
+          <li class="page-item {{ 'active' if page_num == active_page else '' }}">
+            <a class="page-link" href="{{ url_for('manage_accounts') }}?page={{ page_num }}">{{ page_num }}</a>
+          </li>
+          {% endfor %}
+          <li class="page-item"><a class="page-link" href="#"><span>&rsaquo;</span></a></li>
+          <li class="page-item"><a class="page-link" href="#"><span>&raquo;</span></i></a></li>
+        </ul>
       </div>
     </div>
   </div>
