@@ -4,6 +4,7 @@ const clickButton = id => document.getElementById(id).click();
 
 function addUser() {
     clickButton("deleteUserReset");
+    document.getElementById("deleteUserField").value = "";
     clickButton("addUserSubmit");
 }
 

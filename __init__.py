@@ -547,7 +547,9 @@ def manage_accounts():
     if request.method == "GET":
         form_trigger = ""
     else:
-        if delete_user_form.validate():
+        if delete_user_form.validate() and delete_user_form.user_id.data:
+            form_trigger = ""
+
             # Delete selected user
             user_id = delete_user_form.user_id.data
 
