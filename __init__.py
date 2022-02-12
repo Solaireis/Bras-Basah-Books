@@ -1980,8 +1980,9 @@ def book_info2(id):
 def my_orders():
     db_order = []
     new_order = []
-    prepare_order = []
-    fulfilled_order = []
+    confirm_order = []
+    ship_order = []
+    deliver_order = []
     books_dict = {}
     try:
         db = shelve.open('database')
@@ -1992,27 +1993,32 @@ def my_orders():
     except:
         print("There might not have any orders as of now.")
     for order in db_order:
+        print(order.get_name(), order.get_rent_item())
         if order.get_order_status() == 'Ordered':
             new_order.append(order)
-        elif order.get_order_status() == 'Preparing':
-            prepare_order.append(order)
-        elif order.get_order_status() == 'Fulfilled':
-            fulfilled_order.append(order)
+        elif order.get_order_status() == 'Confirmed':
+            confirm_order.append(order)
+        elif order.get_order_status() == 'Shipped':
+            ship_order.append(order)
+        elif order.get_order_status() == 'Delivered':
+            deliver_order.append(order)
         else:
             print(order, "Wrong order status")
 
     # display from most recent to the least
     db_order = list(reversed(db_order))
     new_order = list(reversed(new_order))
-    prepare_order = list(reversed(prepare_order))
-    fulfilled_order = list(reversed(fulfilled_order))
+    confirm_order = list(reversed(confirm_order))
+    ship_order = list(reversed(ship_order))
+    deliver_order = list(reversed(deliver_order))
+    # print('new order', new_order)
+    # print('confirm order', confirm_order)
+    # print('ship order',ship_order)
+    # print('deliver order',deliver_order)
 
-    print('new order', new_order)
-    print('prepare order', prepare_order)
-    print('fulfilled order',fulfilled_order)
-
-    return render_template('my_orders.html', all_order=db_order, new_order=new_order, \
-                           prepare_order=prepare_order, fulfilled_order=fulfilled_order, books_dict=books_dict)
+    return render_template('my_orders2.html', all_order=db_order, new_order=new_order, \
+                           confirm_order=confirm_order, ship_order=ship_order, deliver_order=deliver_order, \
+                           books_dict=books_dict)
 
 #
 # end of luqman's codes
