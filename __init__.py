@@ -14,8 +14,8 @@ from PIL import Image
 # Import classes
 import Book, Cart as c
 from users import GuestDB, Guest, Customer, Admin
-from forms import SignUpForm, LoginForm, AccountPageForm, ChangePasswordForm, \
-                  CreateUserForm, DeleteUserForm, \
+from forms import SignUpForm, LoginForm, ChangePasswordForm, ForgetPasswordForm,\
+                  AccountPageForm, CreateUserForm, DeleteUserForm, \
                   Enquiry, UserEnquiry, Faq, FaqEntry, AddBookForm, \
                   Coupon, CreateCoupon, OrderForm, RequestCoupon, ReplyEnquiry, \
                     UpdateCoupon

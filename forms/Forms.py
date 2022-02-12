@@ -84,6 +84,23 @@ class ChangePasswordForm(Form):
                                                           validators.Length(min=8, max=80, message=""),
                                                           validators.EqualTo("new_password", message="Password entered is different")])
 
+
+class ForgetPasswordForm(Form):
+    """ Forget password form used when setting new password """
+
+    # New password
+    new_password = PasswordField("New Password", [validators.InputRequired(message=""),
+                                                  validators.Length(min=8, max=80, message=""),
+                                                  ContainsLower(message="Password must contain at least one lowercase letter"),
+                                                  ContainsUpper(message="Password must contain at least one uppercase letter"),
+                                                  ContainsNumSymbol(message="Password must contain at least one symbol or number")])
+
+    # Confirm password
+    confirm_password = PasswordField("Confirm Password", [validators.InputRequired(message=""),
+                                                          validators.Length(min=8, max=80, message=""),
+                                                          validators.EqualTo("new_password", message="Password entered is different")])
+
+
 class CreateUserForm(SignUpForm):
     """ Create user form used when creating new users """
 
@@ -97,6 +114,7 @@ class DeleteUserForm(Form):
 
     # User ID
     user_id = StringField(validators=[validators.InputRequired(message="")])
+
 
 
 class AddBookForm(Form):

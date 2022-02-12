@@ -1,4 +1,4 @@
 from .Enquiry import Enquiry, UserEnquiry, ReplyEnquiry
-from .Forms import SignUpForm, LoginForm, AccountPageForm, ChangePasswordForm, CreateUserForm, DeleteUserForm, AddBookForm
+from .Forms import *
 from .Faq import Faq, FaqEntry
 from .Coupon import Coupon, CreateCoupon, RequestCoupon, UpdateCoupon
