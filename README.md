@@ -26,6 +26,7 @@ Under this circumstance, We as creative, enthusiastic and innovative programmers
 <b> 4.email_validator </b> | pip install email_validator <br />
 <b> 5.argon2-cffi  </b> | pip install argon2-cffi <br />
 <b> 6.stripe </b> | pip install stripe <br />
+<b>7.pillow </b> | pip install pillow <br/>
 
 <b> IMPORTANT: </b>
 Flask_mail functions requires tester to be log into the email address when using the function
