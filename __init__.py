@@ -586,7 +586,7 @@ def manage_accounts():
             db["UsernameToUserID"] = username_to_user_id
             db["EmailToUserID"] = email_to_user_id
             db[db_key] = users_db
-        
+
         flash(f"New user created: {username}")
         return redirect(url_for("manage_accounts"))
 

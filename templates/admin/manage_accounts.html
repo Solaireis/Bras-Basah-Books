@@ -43,8 +43,11 @@
           </thead>
           <tbody>
             {% for user in users %}
-            {% if is_master %} {% set name = none %}
-            {% else %} {% set name = user.get_name() %}
+            {% if user.__class__.__name__ != "Admin" or not user.is_master() %} {# Don't display master #}
+            {% if user.__class__.__name__ == "Admin" %}
+              {% set name = none %}
+            {% else %}
+              {% set name = user.get_name() %}
             {% endif %}
             <tr class="account-row">
               <td>{{ user.get_username() }}</td>
@@ -62,6 +65,7 @@
                 </a>
               </td>
             </tr>
+            {% endif %}
             {% endfor %}
           </tbody>
         </table>
