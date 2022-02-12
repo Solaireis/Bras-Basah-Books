@@ -51,6 +51,10 @@ td .quantity-selector, .update-btn{
   opacity: 0.8;
 }
 
+.order-summary{
+    margin-bottom: 30px;
+}
+
 .order-summary .card, .order-summary .card-header{
   border: none;
   width: 100%;
