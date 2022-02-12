@@ -23,7 +23,9 @@ from forms import SignUpForm, LoginForm, AccountPageForm, ChangePasswordForm, Cr
 DEBUG = True         # Debug flag (True when debugging)
 TOKEN_MAX_AGE = 900  # Max age of token (15 mins)
 
-# For image file upload
+# For image file upload (Eden having issues with this)
+#BOOK_IMG_UPLOAD_FOLDER = '1566-App-dev-Team-2/static/img/books'
+# For image file upload Everyone
 BOOK_IMG_UPLOAD_FOLDER = 'static/img/books'
 PROFILE_PIC_UPLOAD_FOLDER = "static/img/profile-pic"
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
