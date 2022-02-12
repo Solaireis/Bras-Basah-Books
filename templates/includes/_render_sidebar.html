@@ -1,6 +1,7 @@
 {% macro render_sidebar(name_to_target_dict) %}
-  <div class="d-flex flex-column sidebar col-lg-2 p-3">
-    <ul class="nav nav-pills nav-justified flex-lg-column mb-lg-auto">
+<div class="sidebar container col-lg-2 p-3">
+  <div class="d-flex flex-column">
+    <ul class="nav nav-pills nav-justified flex-lg-column">
       {% for name, target in name_to_target_dict.items() %}
         <li class="nav-item">
           <a href="{{ target }}" class="nav-link {% if target == '#' %}active disabled{% endif %} text-lg-start">
@@ -10,4 +11,5 @@
       {% endfor %}
     </ul>
   </div>
+</div>
 {% endmacro %}

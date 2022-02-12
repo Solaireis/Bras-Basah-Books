@@ -1,4 +1,4 @@
-.container {
+main > div.container {
     height: calc(100% - 3rem);
 }
 

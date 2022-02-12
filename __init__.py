@@ -540,19 +540,19 @@ def manage_accounts():
             users += tuple(retrieve_db("Admins", db).values())
     
     # Get sign up form
-    sign_up_form = CreateUserForm(request.form)
+    create_user_form = CreateUserForm(request.form)
 
     # Validate sign up form if request is post
     if request.method == "POST":
-        if not sign_up_form.validate():
+        if not create_user_form.validate():
             if DEBUG: print("Create Customer: form field invalid")
             session["DisplayFieldError"] = True
-            return render_template("user/sign_up.html", sign_up_form=sign_up_form)
+            return render_template("admin/manage_accounts.html", create_user_form=create_user_form)
 
         # Extract data from sign up form
-        username = sign_up_form.username.data
-        email = sign_up_form.email.data.lower()
-        password = sign_up_form.password.data
+        username = create_user_form.username.data
+        email = create_user_form.email.data.lower()
+        password = create_user_form.password.data
 
         # Create new user
         with shelve.open("database") as db:
@@ -568,12 +568,12 @@ def manage_accounts():
                 if DEBUG: print("Create Customer: username already exists")
                 session["DisplayFieldError"] = session["SignUpUsernameError"] = True
                 flash("Username taken", "sign-up-username-error")
-                return render_template("user/sign_up.html", sign_up_form=sign_up_form)
+                return render_template("admin/manage_accounts.html", create_user_form=create_user_form)
             elif email in email_to_user_id:
                 if DEBUG: print("Create Customer: email already exists")
                 session["DisplayFieldError"] = session["SignUpEmailError"] = True
                 flash("Email already registered", "sign-up-email-error")
-                return render_template("user/sign_up.html", sign_up_form=sign_up_form)
+                return render_template("admin/manage_accounts.html", create_user_form=create_user_form)
 
             # Create customer
             customer = Customer(username, email, password)
@@ -599,7 +599,7 @@ def manage_accounts():
 
     return render_template("admin/manage_accounts.html",
                            users=users, is_master=user.is_master(),
-                           sign_up_form=sign_up_form)
+                           create_user_form=create_user_form)
 
 
 """|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|"""
