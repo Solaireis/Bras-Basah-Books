@@ -193,20 +193,22 @@ footer a:focus, footer a:hover {
   background-color: #4b8282;
 }
 
+/* Mobile Nav Bar */
 .mobile-nav .btn{
     background: #4b8282;
-    overflow-x: hidden;
+    width: 99%;
+    max-height: 70px;
 }
 
 .mobile-nav i{
     float: right;
     color: white;
-    font-size: 1.6em;
-    margin-top: 8px;
+    font-size: 2em;
+    line-height: 55px;
 }
 
 #mobile-logo{
-    width: 10%;
+    max-width: 12%;
     float: left;
 }
 
@@ -311,7 +313,7 @@ footer .fa-brands:hover, .footer-link:hover, .footer-link2:hover{
   text-align: center;
   border-bottom: 2px solid #4b8282;;
   line-height: 0.1em;
-  margin: 10px 0 20px;
+  margin: 30px 0 20px;
   color:#4b8282;
 }
 
