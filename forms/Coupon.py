@@ -5,7 +5,9 @@ from wtforms import Form, StringField, RadioField, SelectField, TextAreaField, v
 import datetime
 
 
+
 class CreateCoupon(Form):
+    
     name = StringField('Name', [validators.DataRequired()])
 
     def validate_name(self, field):
@@ -24,7 +26,7 @@ class CreateCoupon(Form):
     def validate_coupon_code(self, field):
         if len(field.data) > 20:
             raise ValidationError("Coupon code must be less than 20 Characters!")
-        
+
             
     startdate = StringField('Start Date' , [validators.data_required()])
     enddate = StringField('End Date' , [validators.data_required()])
@@ -93,7 +95,7 @@ class Coupon:
         return self.__expired
     
     def set_expired(self, expired):
-        self.__expired = expired
+        self.__expired = Coupon.expired[expired]
 
 class RequestCoupon(Form):
     coupon_code = StringField('Coupon Code', [validators.data_required()])
