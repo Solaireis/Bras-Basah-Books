@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}BrasBasahBooks Check Out{% endblock %}
+
+{% block stylesheets %}
+
+
+<link rel="stylesheet" href="/static/css/checkout.css">
+
+{% endblock %}
+
+{% block content %}
+{% from "includes/_form.html" import render_field %}
+
+<h2 class="page-name"><span>Check Out</span></h2>
+<div class="row">
+    <div class="col-md-9 col-12">
+      <h3>Apply Coupons</h3>
+      <form method="POST" action="">
+        <div class="form-group container-padding-20">
+          {{ render_field(form.coupon_code, class="form-control") }}
+        </div>
+        <input type="submit" value="Create Coupon" class="btn btn-warning"/>
+      </form>
+
+    </div>
+    <div class="col-md-3 col-12 order_summary">
+      <table>
+        <thead>
+          <tr>
+              <th colspan="4"><h5>In Your Cart <span>({{ (buy_count)+(rent_count) }})</span>  <a href="" data-bs-toggle="modal" data-bs-target="#exampleModal">Edit Cart</a></h5></th>
+          </tr>
+        </thead>
+        <tbody>
+        {% if buy_count != 0 %}
+            <tr class="label">
+                <td colspan="4"><h6>Buy</h6></td>
+            </tr>
+            {% for key in buy_cart %}
+            <tr class="products">
+                <td><img src={{ books_dict[key].get_img() }}></td>
+                <td style="text-align:left;">{{ books_dict[key].get_title() }}</td>
+                <td>X{{ buy_cart[key] }}</td>
+                <td>${{ books_dict[key].get_price() }}</td>
+            {% endfor %}
+        {% endif %}
+        {% if rent_count != 0 %}
+            <tr class="label">
+                <td colspan="4"><h6>Rent</h6></td>
+            </tr>
+            {% for book in rent_cart %}
+            <tr class="products">
+                <td><img src={{ books_dict[book].get_img() }}></td>
+                <td colspan="2" style="text-align:left;">{{ books_dict[book].get_title() }}</td>
+                <td>{{ "$%.2f"|format((books_dict[book].get_price()|float)*0.1) }}</td>
+            </tr>
+            {% endfor %}
+        {% endif %}
+          <tr class="bottom-sticky">
+              <td colspan="4">
+                  <h6>Subtotal <span class="float_right">${{ total_price }}</span></h6>
+                  <h6>Shipping <span class="float_right" id="shipping_fee">$5.00</span></h6>
+                  <h6>Coupon Applied <span class="float_right">-${{discount_applied}}</span></h6>
+                  <h5>Total To Pay <span class="float_right" id="total_pay">${{ "%.2f"|format((total_price|float)+5) }}</span></h5>
+              </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit Cart</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          {% if buy_count != 0 %}
+            <p class="cart-label">For buying</p>
+          <div class="buying-cart">
+              <table class="table table-striped">
+                <tbody>
+                {% for key in buy_cart %}
+                    <tr>
+                        <form method="POST" action="/update_cart/{{ key }}">
+                            <td class="col-3"><img src="{{ books_dict[key].get_img() }}" alt="book cover"></td>
+                            <td class="col-7"><h4>{{ books_dict[key].get_title() }}</h4>#{{ key }}</td>
+                            <td class="col-1"><h5>${{ books_dict[key].get_price() }}</h5></td>
+                            <td class="col-1"><input type="number" class="quantity-selector" name="quantity" min="0" value={{ buy_cart[key] }}>
+                            <button type="submit" class="btn update-btn" onclick="update_cart()">Update</button></td>
+                        </form>
+                        <form method="POST" action="/delete_buying_cart/{{ key }}">
+                            <td class="col-1"><button type="submit" onclick="delete_buying_cart()" name="button" style="float:right;" class="btn"><i class="fa fa-close"></i></button></td>
+                        </form>
+                    </tr>
+                {% endfor %}
+                  </tbody>
+              </table>
+          {% endif %}
+          {% if rent_count != 0 %}
+          <p class="cart-label">For renting</p>
+          <div class="renting-cart">
+              <table class="table table-striped">
+                <tbody>
+                {% for book in rent_cart %}
+                    <tr>
+                        <td rowspan="col-3"><img src={{ books_dict[book].get_img() }} alt="book cover"></td>
+                        <td class="col-5"><h4>{{ books_dict[book].get_title() }}</h4>#{{ book }}</td>
+                        <td class="col-4"><h5>{{ "$%.2f"|format((books_dict[book].get_price()|float)*0.1) }}</h5></td>
+                        <form method="POST" action="/delete_renting_cart/{{ book }}">
+                            <td class="col-1"><button type="submit" onclick="delete_renting_cart()" name="button" style="float:right;" class="btn"><i class="fa fa-close"></i></button></td>
+                        </form>
+                    </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+
+          </div>
+          {% endif %}
+          </div>
+<!--      <div class="modal-footer">-->
+<!--        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
+<!--        <button type="button" class="btn btn-primary">Save changes</button>-->
+<!--      </div>-->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+
+    function get_radio_value(method) {
+        if (method.value == 'Standard Delivery'){
+            shipping_fee = 5;
+            display = '$5.00';
+        }else{
+            shipping_fee = 0;
+            display = 'FREE';
+        };
+        document.getElementById('shipping_fee').innerHTML = display;
+        total = {{ total_price }};
+        var total_price = shipping_fee + total
+        total_price = total_price.toFixed(2)
+        total_price = total_price.toString()
+        displayT = '$' + total_price
+        document.getElementById('total_pay').innerHTML = displayT;
+      }
+
+
+</script>
+{% endblock %}
+
