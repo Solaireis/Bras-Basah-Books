@@ -373,6 +373,10 @@ def password_reset(token):
     # Get user
     user = get_user()
 
+    # Only Guest will forget password
+    if session["UserType"] != "Guest":
+        return redirect(url_for("home"))
+
     # Get email from token
     try:
         email = url_serialiser.loads(token, salt=app.config["VERIFY_EMAIL_SALT"], max_age=TOKEN_MAX_AGE)
@@ -483,8 +487,6 @@ def verify_send():
 # Verify email page
 @app.route("/user/verify/<token>")
 def verify(token):
-    # Get user
-    user = get_user()
 
     # Get email from token
     try:
