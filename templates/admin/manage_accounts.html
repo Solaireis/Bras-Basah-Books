@@ -37,7 +37,7 @@
     {{ admin_sidebar("Manage Accounts") }}
     <div class="col-lg-10 py-3 px-5">
       <h2>User account overview</h2>
-      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUser">
+      <button type="button" class="btn btn-primary" id="addUserButton" data-bs-toggle="modal" data-bs-target="#addUser">
         Add New {{ display_word }}
       </button>
       <hr>
@@ -176,5 +176,8 @@
 <script>
 [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]')).map(trigger => new bootstrap.Tooltip(trigger));
 const submit_form = id => document.getElementById(id).click();
+{% if form_trigger %}
+document.body.onload = () => document.getElementById("{{ form_trigger }}").click();
+{% endif %}
 </script>
 {% endblock %}

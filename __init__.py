@@ -536,61 +536,62 @@ def manage_accounts():
     # Get sign up form
     create_user_form = CreateUserForm(request.form)
 
+    form_trigger = "addUserButton"  # id of form to trigger on page load
+
     # Validate sign up form if request is post
-    if request.method == "POST":
+    if request.method == "GET":
+        form_trigger = ""
+    else:
         if not create_user_form.validate():
             if DEBUG: print("Create User: form field invalid")
             session["DisplayFieldError"] = True
-            return render_template("admin/manage_accounts.html", create_user_form=create_user_form)
-
-        # Extract data from sign up form
-        if user.is_master():
-            user_type = create_user_form.user_type.data
         else:
-            user_type = "C"  # non-master admins can only create customers
-        username = create_user_form.username.data
-        email = create_user_form.email.data.lower()
-        password = create_user_form.password.data
+            # Extract data from sign up form
+            if user.is_master():
+                user_type = create_user_form.user_type.data
+            else:
+                user_type = "C"  # non-master admins can only create customers
+            username = create_user_form.username.data
+            email = create_user_form.email.data.lower()
+            password = create_user_form.password.data
 
-        # Create new user
-        with shelve.open("database") as db:
+            # Create new user
+            with shelve.open("database") as db:
 
-            # Get UsersDB, UsernameToUserID, EmailToUserID, Guests
-            db_key = {"C":"Customers", "A":"Admins"}[user_type]
-            users_db = retrieve_db(db_key, db)
-            username_to_user_id = retrieve_db("UsernameToUserID", db)
-            email_to_user_id = retrieve_db("EmailToUserID", db)
+                # Get UsersDB, UsernameToUserID, EmailToUserID, Guests
+                db_key = {"C":"Customers", "A":"Admins"}[user_type]
+                users_db = retrieve_db(db_key, db)
+                username_to_user_id = retrieve_db("UsernameToUserID", db)
+                email_to_user_id = retrieve_db("EmailToUserID", db)
 
+                # Ensure that email and username are not registered yet
+                if username.lower() in username_to_user_id:
+                    if DEBUG: print("Create User: username already exists")
+                    session["DisplayFieldError"] = session["CreateUserUsernameError"] = True
+                    flash("Username taken", "create-user-username-error")
+                elif email in email_to_user_id:
+                    if DEBUG: print("Create User: email already exists")
+                    session["DisplayFieldError"] = session["CreateUserEmailError"] = True
+                    flash("Email already registered", "create-user-email-error")
+                else:
+                    # Create customer
+                    created_user = {"C":Customer, "A":Admin}[user_type](username, email, password)
+                    if DEBUG: print(f"Created: {created_user}")
 
-            # Ensure that email and username are not registered yet
-            if username.lower() in username_to_user_id:
-                if DEBUG: print("Create User: username already exists")
-                session["DisplayFieldError"] = session["CreateUserUsernameError"] = True
-                flash("Username taken", "create-user-username-error")
-                return render_template("admin/manage_accounts.html", create_user_form=create_user_form)
-            elif email in email_to_user_id:
-                if DEBUG: print("Create User: email already exists")
-                session["DisplayFieldError"] = session["CreateUserEmailError"] = True
-                flash("Email already registered", "create-user-email-error")
-                return render_template("admin/manage_accounts.html", create_user_form=create_user_form)
+                    # Store customer into database
+                    user_id = created_user.get_user_id()
+                    users_db[user_id] = created_user
+                    username_to_user_id[username.lower()] = user_id
+                    email_to_user_id[email] = user_id
 
-            # Create customer
-            created_user = {"C":Customer, "A":Admin}[user_type](username, email, password)
-            if DEBUG: print(f"Created: {created_user}")
+                    # Save changes to database
+                    db["UsernameToUserID"] = username_to_user_id
+                    db["EmailToUserID"] = email_to_user_id
+                    db[db_key] = users_db
 
-            # Store customer into database
-            user_id = created_user.get_user_id()
-            users_db[user_id] = created_user
-            username_to_user_id[username.lower()] = user_id
-            email_to_user_id[email] = user_id
-
-            # Save changes to database
-            db["UsernameToUserID"] = username_to_user_id
-            db["EmailToUserID"] = email_to_user_id
-            db[db_key] = users_db
-
-        flash(f"New user created: {username}")
-        return redirect(url_for("manage_accounts"))
+                    form_trigger = ""
+                    flash(f"New user created: {username}")
+                    return redirect(url_for("manage_accounts"))
 
     # Get users database
     with shelve.open("database") as db:
@@ -611,12 +612,26 @@ def manage_accounts():
     first_index = (active_page-1)*ACCOUNTS_PER_PAGE
     display_users = all_users[first_index:first_index+10]
 
+    # Get page list
+    if last_page <= 5:
+        page_list = [i for i in range(1, last_page+1)]
+    else:
+        center_item = active_page
+        if center_item < 3:
+            center_item = 3
+        elif center_item > last_page - 2:
+            center_item = last_page - 2
+        page_list = [i for i in range(center_item-2, center_item+2+1)]
+    prev_page = active_page-1 if active_page-1 > 0 else active_page
+    next_page = active_page+1 if active_page+1 <= last_page else last_page
+
     return render_template("admin/manage_accounts.html",
                            display_users=display_users, is_master=user.is_master(),
-                           active_page=active_page, page_list=[1,2,3,4,5],
-                           prev_page=1, next_page=1,
+                           active_page=active_page, page_list=page_list,
+                           prev_page=prev_page, next_page=next_page,
                            first_page=1, last_page=last_page,
-                           entries_range=1, total_entries=0,
+                           entries_range=None, total_entries=None,
+                           form_trigger=form_trigger,
                            create_user_form=create_user_form)
 
 
@@ -1991,7 +2006,27 @@ def test2(user_type):
         session["UserType"] = user.__class__.__name__
 
     return redirect(url_for("test"))
+@app.route("/test/random/<int:num>")
+def test_rand(num):
+    with shelve.open("database") as db:
+        # Get DB
+        customers_db = retrieve_db("Customers", db)
+        username_to_user_id = retrieve_db("UsernameToUserID", db)
+        email_to_user_id = retrieve_db("EmailToUserID", db)
 
+        maxno = len(customers_db)+1
+
+        for i in range(maxno, maxno+num):
+            customer = Customer(f"rand{i}", f"{i}@rand.cust", f"Password{i}")
+            customers_db[customer.get_user_id()] = customer
+            username_to_user_id["quick_switch_customer"] = customer.get_user_id()
+            email_to_user_id["quick@switch.customer"] = customer.get_user_id()
+
+        # Save changes
+        db["Customers"] = customers_db
+        db["UsernameToUserID"] = username_to_user_id
+        db["EmailToUserID"] = email_to_user_id
+    return f"{num} customers created"
 
 if __name__ == "__main__":
     app.run(debug=DEBUG)  # Run app
