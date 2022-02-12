@@ -367,11 +367,11 @@ def password_forget():
 
 
 # Reset password page
-@app.route("/user/password/reset/<token>")
+@app.route("/user/password/reset/<token>", methods=["GET", "POST"])
 def password_reset(token):
 
     # Get user
-    user = get_user()
+    guest = get_user()
 
     # Only Guest will forget password
     if session["UserType"] != "Guest":
@@ -387,25 +387,46 @@ def password_reset(token):
     with shelve.open("database") as db:
         email_to_user_id = retrieve_db("EmailToUserID", db)
         customers_db = retrieve_db("Customers", db)
+        guests_db = retrieve_db("Guests", db)
 
         # Get user
         try:
-            user = customers_db[email_to_user_id[email]]
+            customer = customers_db[email_to_user_id[email]]
         except KeyError:
             if DEBUG: print("No user with email:", email)  # Account was deleted
             return redirect(url_for("invalid_link"))
 
-        # Verify email
-        if not user.is_verified():
-            user.verify()
-        else:  # Email was alreadyt verified
-            if DEBUG: print(email, "is already verified")
-            return redirect(url_for("invalid_link"))
+        # Render form
+        reset_password_form = ResetPasswordForm(request.form)
+        if request.method == "POST":
+            if not reset_password_form.validate():
+                session["DisplayFieldError"] = True
+            else:
+                # Extract password
+                new_password = reset_password_form.new_password.data
 
-        # Safe changes to database
-        db["Customers"] = customers_db
+                # Reset Password
+                customer.set_password(new_password)
+                if DEBUG: print(f"Reset password for: {customer}")
 
-    return render_template("user/verify/verify.html", email=email)
+                # Delete guest account
+                guests_db.remove(guest.get_user_id())
+                if DEBUG: print(f"Deleted: {guest}")
+
+                # Log in customer
+                session["UserID"] = customer.get_user_id()
+                session["UserType"] = "Customer"
+                if DEBUG: print(f"Logged in: {customer}")
+
+                # Safe changes to database
+                db["Customers"] = customers_db
+                db["Guests"] = guests_db
+
+                # Flash message and redirect to account page
+                flash("Password succesfully resetted")
+                return redirect(url_for("account"))
+
+    return render_template("user/password/password_reset.html", form=reset_password_form, email=email)
 
 # Change password page
 @app.route("/user/password/change", methods=["GET", "POST"])
@@ -522,7 +543,7 @@ def verify(token):
 # Invalid link page
 @app.route("/invalid-Link")
 def invalid_link():
-    render_template("user/verify/fail.html")
+    render_template("user/verify/invalid_link.html")
 
 
 """    User Pages    """
