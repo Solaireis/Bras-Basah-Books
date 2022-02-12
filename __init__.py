@@ -337,11 +337,12 @@ def password_forget():
     if session["UserType"] != "Guest":
         return redirect(url_for("home"))
 
-    if request.method == "POST":
-        forget_password_form = ForgetPasswordForm(request.form)
+    # Create form
+    forget_password_form = ForgetPasswordForm(request.form)
 
+    if request.method == "POST":
         if not forget_password_form.validate():
-            if DEBUG: print("Send Link Forget Password: form field invalid")
+            if DEBUG: print("Forget Password: form field invalid")
             session["DisplayFieldError"] = True
         else:
             # Configure noreplybbb02@gmail.com
@@ -351,19 +352,28 @@ def password_forget():
             # Get email
             email = forget_password_form.email.data.lower()
 
-            # Generate token
-            token = url_serialiser.dumps(email, salt=app.config["PASSWORD_FORGET_SALT"])
+            with shelve.open("database") as db:
+                email_to_user_id = retrieve_db("EmailToUserID", db)
+            
+            if email in email_to_user_id:
+                # Generate token
+                token = url_serialiser.dumps(email, salt=app.config["PASSWORD_FORGET_SALT"])
 
-            # Send message to email entered
-            msg = Message(subject="Reset Your Password",
-                        sender=("BrasBasahBooks", "noreplybbb02@gmail.com"),
-                        recipients=[email])
-            link = url_for("verify", token=token, _external=True)
-            msg.html = render_template("emails/_password_reset.html", link=link)
-            mail.send(msg)
+                # Send message to email entered
+                msg = Message(subject="Reset Your Password",
+                            sender=("BrasBasahBooks", "noreplybbb02@gmail.com"),
+                            recipients=[email])
+                link = url_for("password_reset", token=token, _external=True)
+                msg.html = render_template("emails/_password_reset.html", link=link)
+                mail.send(msg)
+                if DEBUG: print(f"Sent email to {email}")
+            else:
+                if DEBUG: print(f"No user with email: {email}")
 
             flash(f"Verification email sent to {email}")
-    return redirect(url_for("home"))#render_template("user/password/password_forget.html")
+            return redirect(url_for("login"))
+
+    return render_template("user/password/password_forget.html", form=forget_password_form)
 
 
 # Reset password page
@@ -423,7 +433,7 @@ def password_reset(token):
                 db["Guests"] = guests_db
 
                 # Flash message and redirect to account page
-                flash("Password succesfully resetted")
+                flash("Password has been successfully set")
                 return redirect(url_for("account"))
 
     return render_template("user/password/password_reset.html", form=reset_password_form, email=email)
@@ -541,9 +551,9 @@ def verify(token):
 
 
 # Invalid link page
-@app.route("/invalid-Link")
+@app.route("/invalid-link")
 def invalid_link():
-    render_template("user/verify/invalid_link.html")
+    return render_template("user/verify/invalid_link.html")
 
 
 """    User Pages    """

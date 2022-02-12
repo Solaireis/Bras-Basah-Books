@@ -73,7 +73,9 @@ class ForgetPasswordForm(Form):
     """ Forget password link form used for sending password reset link """
 
     # Email
-    email = EmailField("Email", [validators.InputRequired(message="")])
+    email = EmailField("Email", [validators.InputRequired(message=""),
+                                 validators.Email(message=""),
+                                 validators.Length(max=320, message="")])
 
 
 class ResetPasswordForm(Form):
