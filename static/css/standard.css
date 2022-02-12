@@ -110,12 +110,14 @@ ul{
   margin-left: 60px;
 }
 
-header .nav-link{
+header .nav-link, footer .nav-link {
   font-size: 1.1em;
   color: white;
+  transition: none;
 }
 
-.nav-item :hover{
+header .nav-link:focus, header .nav-link:hover,
+footer a:focus, footer a:hover {
   opacity: 0.9;
   color: white;
 }
