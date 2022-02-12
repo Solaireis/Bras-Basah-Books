@@ -16,27 +16,17 @@
 <div class="row">
     <div class="col-md-9 col-12">
         <h3>Shipping Information</h3>
-<!--        <h5>Shipping Option</h5>-->
-<!--        <button type="button" name="button" class="btn shipping-option">-->
-<!--          <h5>Standard Delivery<span>$5.00</span></h5>-->
-<!--          <p>SingPost (3 - 5 business days)</p>-->
-<!--        </button>-->
-<!--        <button type="button" name="button" class="btn shipping-option">-->
-<!--          <h5>Self-collection<span>Free</span></h5>-->
-<!--          <p>Reserve online, collect at <a href="#">our store</a>.</p>-->
-<!--        </button>-->
         <form method="POST" class="row checkout-form" id="checkout" action="/create-checkout-session/{{ total_price }}">
             <h5>Shipping Option</h5>
             <div class="form-group col-12">
-<!--                render_field(form.ship_method, class="form-control radio-select") -->
                 <div class="radio">
                     <input type="radio" id="delivery" onchange="get_radio_value(this)" name="ship-method" value="Standard Delivery" checked="checked">
-                    <label for="delivery"><h5> Standard Delivery (3 - 5 business days)</h5> </label>
+                    <label for="delivery"><h5>&nbsp;<i class="fa-solid fa-truck-fast"></i>&nbsp; Standard Delivery (3 - 5 business days) </h5> </label>
                     <span class="float-right">$5.00</span>
                 </div>
                 <div class="radio">
                     <input type="radio" id="collection" onchange="get_radio_value(this)" name="ship-method" value="Self-collection">
-                    <label for="collection"><h5> Self-collection </h5></label>
+                    <label for="collection"><h5>&nbsp;<i class="fa-solid fa-shop"></i>&nbsp; Self-collection </h5></label>
                     <span class="float-right">FREE</span>
                 </div>
             </div>
@@ -50,7 +40,7 @@
             <div class="form-group col-6">
                 {{ render_field(form.email, class="form-control") }}
             </div>
-            <div class="form-group col-12">
+            <div class="form-group col-12" id="address_text">
                 {{ render_field(form.address, class="form-control") }}
             </div>
             <div class="col-9">
@@ -97,7 +87,7 @@
                   <h6>Subtotal <span class="float_right">${{ total_price }}</span></h6>
                   <h6>Shipping <span class="float_right" id="shipping_fee">$5.00</span></h6>
                   <h6>Coupon Applied <span class="float_right">$-</span></h6>
-                  <h5>Total To Pay <span class="float_right" id="total_pay">${{ "%.2f"|format((total_price|float)+5) }}</span></h5>
+                  <h4>Total To Pay <span class="float_right" id="total_pay">${{ "%.2f"|format((total_price|float)+5) }}</span></h4>
               </td>
           </tr>
         </tbody>
@@ -178,9 +168,12 @@
         if (method.value == 'Standard Delivery'){
             shipping_fee = 5;
             display = '$5.00';
+
+            document.getElementById('address_text').style.display = 'block';
         }else{
             shipping_fee = 0;
             display = 'FREE';
+            document.getElementById('address_text').style.display = 'none';
         };
         document.getElementById('shipping_fee').innerHTML = display;
         total = {{ total_price }};
