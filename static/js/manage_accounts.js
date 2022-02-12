@@ -1,10 +1,11 @@
 [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]')).map(trigger => new bootstrap.Tooltip(trigger));
 
-const clickButton = id => document.getElementById(id).click();
+const getElement = id => document.getElementById(id);
+const clickButton = id => getElement(id).click();
 
 function addUser() {
     clickButton("deleteUserReset");
-    document.getElementById("deleteUserField").value = "";
+    getElement("deleteUserField").value = "";
     clickButton("addUserSubmit");
 }
 
@@ -20,15 +21,19 @@ function selectAccount(userID, username, buttonID) {
 
 function viewUser(accountType, username, name, email, gender, profilePic) {
     if (accountType != "") {
-
+        getElement("viewUserUserType").innerText = accountType;
     }
-    console.log("hi");
-    clickButton("viewUser");
+    getElement("viewUserUsername").innerText = username
+    getElement("viewUserName").innerText = name
+    getElement("viewUserEmail").innerText = email
+    getElement("viewUserGender").innerText = {"M":"Male", "F":"Female", "O":"Others", "-":"-"}[gender]
+    getElement()
+    clickButton("viewUserButton");
 }
 
 function deleteUser() {
     clickButton("addUserReset");
     clickButton("deleteUserReset");
-    document.getElementById("deleteUserField").value = selectedUserID;
+    getElement("deleteUserField").value = selectedUserID;
     clickButton("deleteUserSubmit");
 }
