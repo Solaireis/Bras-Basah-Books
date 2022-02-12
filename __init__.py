@@ -2043,7 +2043,7 @@ def home():
     #     book = books_dict.get(key)
     #     books_list.append(book)
 
-    return render_template("home2.html", english=english, chinese=chinese)  # optional: books_list=books_list
+    return render_template("home.html", english=english, chinese=chinese)  # optional: books_list=books_list
 
 
 # Add Book
