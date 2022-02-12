@@ -50,22 +50,6 @@ class LoginForm(Form):
     password = PasswordField("Password", [validators.InputRequired(message="")])
 
 
-class AccountPageForm(Form):
-    """ Account page form used for editing account """
-
-    # Picture
-    picture = FileField("Picture", [validators.Optional(),
-                                    FileAllowed(["jpg", "jpeg", "png"], message="File uploaded is not in an accepted format")])
-
-    # Name
-    name = StringField("Name", [validators.Optional(),
-                                validators.Regexp("^[a-zA-Z ]*$", message="Name should only contain letters and spaces"),
-                                validators.Length(min=2, max=26, message="Name should be 2-26 characters long")])
-
-    # Gender
-    gender = RadioField("Gender", [validators.Optional()], choices=[("M", "Male"), ("F", "Female"), ("O", "Others")])
-
-
 class ChangePasswordForm(Form):
     """ Changing password form used for changing password """
 
@@ -99,6 +83,22 @@ class ForgetPasswordForm(Form):
     confirm_password = PasswordField("Confirm Password", [validators.InputRequired(message=""),
                                                           validators.Length(min=8, max=80, message=""),
                                                           validators.EqualTo("new_password", message="Password entered is different")])
+
+
+class AccountPageForm(Form):
+    """ Account page form used for editing account """
+
+    # Picture
+    picture = FileField("Picture", [validators.Optional(),
+                                    FileAllowed(["jpg", "jpeg", "png"], message="File uploaded is not in an accepted format")])
+
+    # Name
+    name = StringField("Name", [validators.Optional(),
+                                validators.Regexp("^[a-zA-Z ]*$", message="Name should only contain letters and spaces"),
+                                validators.Length(min=2, max=26, message="Name should be 2-26 characters long")])
+
+    # Gender
+    gender = RadioField("Gender", [validators.Optional()], choices=[("M", "Male"), ("F", "Female"), ("O", "Others")])
 
 
 class CreateUserForm(SignUpForm):
