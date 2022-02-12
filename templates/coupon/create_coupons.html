@@ -59,11 +59,12 @@
   ///////
    $( "#enddate" ).datepicker({
   dateFormat: 'yy/mm/dd',
+  minDate: today,
   });
   ///////
   $('#startdate').change(function() {
   startDate = $(this).datepicker('getDate');
-  $("#enddate").datepicker("option", "minDate", startDate );
+  $("#enddate").datepicker("option", "minDate", today );
   })
   
   ///////
