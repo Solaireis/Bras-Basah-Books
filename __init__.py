@@ -336,7 +336,7 @@ def password_forget():
     # Only Guest will forget password
     if session["UserType"] != "Guest":
         return redirect(url_for("home"))
-    
+
     if request.method == "POST":
         forget_password_form = ForgetPasswordForm(request.form)
 
@@ -382,7 +382,7 @@ def password_reset(token):
         email = url_serialiser.loads(token, salt=app.config["PASSWORD_FORGET_SALT"], max_age=TOKEN_MAX_AGE)
     except BadData as err:  # Token expired or Bad Signature
         if DEBUG: print("Invalid Token:", repr(err))  # print captured error (for debugging)
-        return redirect(url_for("verify_fail"))
+        return redirect(url_for("invalid_link"))
 
     with shelve.open("database") as db:
         email_to_user_id = retrieve_db("EmailToUserID", db)
@@ -393,14 +393,14 @@ def password_reset(token):
             user = customers_db[email_to_user_id[email]]
         except KeyError:
             if DEBUG: print("No user with email:", email)  # Account was deleted
-            return redirect(url_for("verify_fail"))
+            return redirect(url_for("invalid_link"))
 
         # Verify email
         if not user.is_verified():
             user.verify()
         else:  # Email was alreadyt verified
             if DEBUG: print(email, "is already verified")
-            return redirect(url_for("verify_fail"))
+            return redirect(url_for("invalid_link"))
 
         # Safe changes to database
         db["Customers"] = customers_db
@@ -493,7 +493,7 @@ def verify(token):
         email = url_serialiser.loads(token, salt=app.config["VERIFY_EMAIL_SALT"], max_age=TOKEN_MAX_AGE)
     except BadData as err:  # Token expired or Bad Signature
         if DEBUG: print("Invalid Token:", repr(err))  # print captured error (for debugging)
-        return redirect(url_for("verify_fail"))
+        return redirect(url_for("invalid_link"))
 
     with shelve.open("database") as db:
         email_to_user_id = retrieve_db("EmailToUserID", db)
@@ -504,14 +504,14 @@ def verify(token):
             user = customers_db[email_to_user_id[email]]
         except KeyError:
             if DEBUG: print("No user with email:", email)  # Account was deleted
-            return redirect(url_for("verify_fail"))
+            return redirect(url_for("invalid_link"))
 
         # Verify email
         if not user.is_verified():
             user.verify()
         else:  # Email was alreadyt verified
             if DEBUG: print(email, "is already verified")
-            return redirect(url_for("verify_fail"))
+            return redirect(url_for("invalid_link"))
 
         # Safe changes to database
         db["Customers"] = customers_db
@@ -519,9 +519,9 @@ def verify(token):
     return render_template("user/verify/verify.html", email=email)
 
 
-# Verify fail page
-@app.route("/user/verify/fail")
-def verify_fail():
+# Invalid link page
+@app.route("/invalid-Link")
+def invalid_link():
     render_template("user/verify/fail.html")
 
 
