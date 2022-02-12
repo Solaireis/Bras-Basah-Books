@@ -12,7 +12,7 @@ Under this circumstance, We as creative, enthusiastic and innovative programmers
 PEM Group: SF2102 <br/>
 Team members: <br /> 
 
-- [201520M]  Eden Will Sng Jin Xuan <b> -(Leader)-</b>
+- [201520M]  Eden Will Sng Jin Xuan <b> -(Leader)- </b>
 - [211973E]  Jabriel Seah 
 - [214442B]  Tan Chee Qing
 - [210290N]  Luqman
@@ -36,13 +36,13 @@ Eden: <br/>
 <br/>
 
 Jabriel: <br/>
-- #
+- Account management
 <br/>
 
 Chee Qing: <br/>
-- #
+- Payment management
 <br/>
 
 Luqman: <br/>
-- #
+- Inventory Management
 <br/>
