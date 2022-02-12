@@ -1846,80 +1846,72 @@ def temp_home():
 @app.route("/test", methods=["GET", "POST"])  # To go to test page: http://127.0.0.1:5000/test
 def test():
     # Get current (guest) user
-    user = get_user()
+    current_user = get_user()
+    current_type = session["UserType"]
+    if current_type == "Admin" and current_user.is_master(): current_type = "Master"
+    flash(f"Currently logged in as: {current_user}")
+    type_list = ("Guest", "Customer", "Admin", "Master")
+    return render_template("TESTTEST.html", current_type=current_type, type_list=type_list)
+@app.route("/test/<user_type>")
+def test2(user_type):
+    # Get current (guest) user
+    current_user = get_user()
+    current_user_type = session["UserType"]
+    with shelve.open("database") as db:
+        # Get DB
+        guests_db = retrieve_db("Guests", db, GuestDB())
+        customers_db = retrieve_db("Customers", db)
+        admins_db = retrieve_db("Admins", db)
+        username_to_user_id = retrieve_db("UsernameToUserID", db)
+        email_to_user_id = retrieve_db("EmailToUserID", db)
 
-    sign_up_form = SignUpForm(request.form)
+        if user_type == "Guest":
+            if current_user_type == "Guest":
+                user = current_user
+            else:
+                user = Guest()
+                guests_db.add(user.get_user_id(), user)
+                guests_db.clean()
+        elif user_type == "Customer":
+            if current_user_type == "Customer":
+                user = current_user
+            elif "quick_switch_customer" in username_to_user_id:
+                user = customers_db[username_to_user_id["quick_switch_customer"]]
+            else:
+                user = Customer("quick_switch_customer", "quick@switch.customer", "Password1")
+                customers_db[user.get_user_id()] = user
+                username_to_user_id["quick_switch_customer"] = user.get_user_id()
+                email_to_user_id["quick@switch.customer"] = user.get_user_id()
+        elif user_type == "Admin":
+            if current_user_type == "Admin" and not current_user.is_master():
+                user = current_user
+            elif "quick_switch_admin" in username_to_user_id:
+                user = admins_db[username_to_user_id["quick_switch_admin"]]
+            else:
+                user = Admin("quick_switch_admin", "quick@switch.admin", "Password1")
+                admins_db[user.get_user_id()] = user
+                username_to_user_id["quick_switch_admin"] = user.get_user_id()
+                email_to_user_id["quick@switch.admin"] = user.get_user_id()
+        elif user_type == "Master":
+            user = admins_db[username_to_user_id["admin"]]
 
-    # Validate sign up form if request is post
-    if request.method == "POST":
-        if not sign_up_form.validate():
-            if DEBUG: print("Sign-up: form field invalid")
-            session["DisplayFieldError"] = True
-            flash("WARNING: TESTING PAGE FOR CREATING ADMINS", "warning")
-            flash(f"Currently logged in as: {user}")
-            return render_template("user/sign_up.html", form=sign_up_form)
+        # Remove guest if needed
+        if current_user is not user and current_user_type == "Guest":
+            guests_db.remove(current_user.get_user_id())
 
-        # Extract data from sign up form
-        username = sign_up_form.username.data
-        email = sign_up_form.email.data.lower()
-        password = sign_up_form.password.data
+        # Save changes
+        db["Guests"] = guests_db
+        db["Customers"] = customers_db
+        db["Admins"] = admins_db
+        db["UsernameToUserID"] = username_to_user_id
+        db["EmailToUserID"] = email_to_user_id
 
-        # Create new user
-        with shelve.open("database") as db:
+    # Log in if needed
+    if current_user is not user:
+        session["UserID"] = user.get_user_id()
+        session["UserType"] = user.__class__.__name__
 
-            # Get Admins, UsernameToUserID, EmailToUserID, Guests
-            admins_db = retrieve_db("Admins", db)
-            username_to_user_id = retrieve_db("UsernameToUserID", db)
-            email_to_user_id = retrieve_db("EmailToUserID", db)
-            guests_db = retrieve_db("Guests", db)
-
-
-            # Ensure that email and username are not registered yet
-            if username.lower() in username_to_user_id:
-                if DEBUG: print("Sign-up: username already exists")
-                session["DisplayFieldError"] = True
-                flash("WARNING: TESTING PAGE FOR CREATING ADMINS", "warning")
-                flash(f"Currently logged in as: {user}")
-                return render_template("user/sign_up.html", form=sign_up_form)
-            elif email in email_to_user_id:
-                if DEBUG: print("Sign-up: email already exists")
-                session["DisplayFieldError"] = True
-                flash("WARNING: TESTING PAGE FOR CREATING ADMINS", "warning")
-                flash(f"Currently logged in as: {user}")
-                return render_template("user/sign_up.html", form=sign_up_form)
-
-            # Create customer
-            admin = Admin(username, email, password)
-            if DEBUG: print(f"Created: {admin}")
-
-            # Delete guest account
-            guests_db.remove(user.get_user_id())
-            if DEBUG: print(f"Deleted: {user}")
-
-            # Store customer into database
-            user_id = admin.get_user_id()
-            admins_db[user_id] = admin
-            username_to_user_id[username.lower()] = user_id
-            email_to_user_id[email] = user_id
-
-            # Create session to login
-            session["UserID"] = user_id
-            session["UserType"] = "Admin"
-            if DEBUG: print(f"Logged in: {admin}")
-
-            # Save changes to database
-            db["UsernameToUserID"] = username_to_user_id
-            db["EmailToUserID"] = email_to_user_id
-            db["Admins"] = admins_db
-            db["Guests"] = guests_db
-
-        flash(f"Currently logged in as: {user}")
-        return redirect(url_for("home"))
-
-    # Render page
-    flash("WARNING: TESTING PAGE FOR CREATING ADMINS", "warning")
-    flash(f"Currently logged in as: {user}")
-    return render_template("user/sign_up.html", form=sign_up_form)
+    return redirect(url_for("test"))
 
 
 if __name__ == "__main__":

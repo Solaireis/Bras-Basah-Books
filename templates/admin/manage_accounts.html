@@ -25,7 +25,7 @@
       <h2>User account overview</h2>
       <hr>
       <div class="table-responsive">
-        <table class="table">
+        <table class="table table-striped table-hover">
           <thead>
             <tr>
               <th scope="col">Username</th>
@@ -38,22 +38,50 @@
             </tr>
           </thead>
           <tbody>
+          {# ADD NEW USER FUNCTION
+          ADD NEW USER FUNCTION
+          ADD NEW USER FUNCTION
+          ADD NEW USER FUNCTION
+          ADD NEW USER FUNCTION
+          ADD NEW USER FUNCTION
+          ADD NEW USER FUNCTION
+          ADD NEW USER FUNCTION
+          ADD NEW USER FUNCTION
+          ADD NEW USER FUNCTION
+          ADD NEW USER FUNCTION
+          ADD NEW USER FUNCTION
+          ADD NEW USER FUNCTION
+          ADD NEW USER FUNCTION
+          ADD NEW USER FUNCTION
+          ADD NEW USER FUNCTION
+          ADD NEW USER FUNCTION
+          ADD NEW USER FUNCTION
+          ADD NEW USER FUNCTION
+          ADD NEW USER FUNCTION
+          ADD NEW USER FUNCTION
+          ADD NEW USER FUNCTION
+          ADD NEW USER FUNCTION
+          ADD NEW USER FUNCTION
+          ADD NEW USER FUNCTION
+          ADD NEW USER FUNCTION
+          ADD NEW USER FUNCTION
+          ADD NEW USER FUNCTION #}
             {% for user in users %}
             {% if is_master %} {% set name = none %}
             {% else %} {% set name = user.get_name() %}
             {% endif %}
-            <tr>
+            <tr class="account-row">
               <td>{{ user.get_username() }}</td>
               <td>{{ name if name else "-" }}</td>
               <td>{{ user.get_email() }}</td>
               {% if is_master %}
               <td>{{ user.__class__.__name__ }}</td>
               {% endif %}
-              <td class="account-actions">
-                <a href="#">
+              <td class="account-actions d-flex">
+                <a href="#" class="me-auto">
                   <i class="fa-solid fa-pen" data-bs-toggle="tooltip" title="Edit"></i>
                 </a>
-                <a href="#">
+                <a href="#" class="me-auto">
                   <i class="fa-solid fa-trash" data-bs-toggle="tooltip" title="Delete"></i>
                 </a>
               </td>
