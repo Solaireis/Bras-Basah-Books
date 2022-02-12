@@ -116,7 +116,10 @@ class Order_Detail(User_Order):
         if rent_item == '':
             rent_count = 0
         else:
-            rent_count = len(rent_item)
+            if rent_item[-1] == 'Returned':
+                rent_count = (len(rent_item)-1)
+            else:
+                rent_count = len(rent_item)
         return rent_count
     def get_item_count(self):
         buy_count = self.get_buy_count()
@@ -153,9 +156,30 @@ class Order_Detail(User_Order):
         return return_status
     def get_returned_status(self):
         rent_item = self.get_rent_item()
-        if rent_item[-1] == 'Returned':
-            return_status = 'Returned'
+        if rent_item != '':
+            if rent_item[-1] == 'Returned':
+                return_status = 'Returned'
+            else:
+                return_status = 'Not Returned'
         else:
-            return_status = 'Not Returned'
+            return_status = "No rented books"
         return return_status
+
+# user_id = 1
+# name = 'chiobu'
+# email = "testing@gmail.com"
+# contact_num = '12341234'
+# ship_address = "my house"
+# ship_method = 'Standard Delivery'
+#
+# order_item = [{1:5, 4:3}, [1, 3, 5]]
+# total_price = 300
+#
+# order = Order_Detail(user_id, name, email, contact_num, ship_address, ship_method, order_item, total_price)
+# print(order.get_user_order())
+# print(order.get_order_item())
+#
+# print(order.set_returned_status('yes'))
+# print(order.get_rent_count())
+
 
