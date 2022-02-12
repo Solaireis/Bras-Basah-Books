@@ -9,6 +9,7 @@
     max-height: 500px;
     overflow-y: auto;
     border: #4b8282 solid 1px;
+    background: #FFF9F3;
 }
 
 .slide .card img{
@@ -16,16 +17,27 @@
     margin-left: 12px;
 }
 
-.slide .card h3{
+.slide .card h2{
     font-weight: bold;
 }
 
-.slide p{
-    padding: 10px 0px;
+.slide .card h5{
+ font-size: 1.2em;
 }
 
-.card-text a{
-    text-decoration: underline;
+.find-out-more{
+    color: white;
+    background: #4b8282;
+}
+
+.find-out-more:hover{
+    background: #FFF9F3;
+    color: #4b8282;
+    border: solid 1px #4b8282;
+}
+
+.slide .card-text{
+    padding: 10px 0px;
 }
 
 .card-text a:hover{
