@@ -23,7 +23,8 @@
         {{ render_field(form.discount, class="form-control") }}
       </div>
       <div class="form-group container-padding-20">
-        {{ render_field(form.coupon_code, class="form-control") }} 
+        <p>Coupon Code </p>
+        {{coupon.get_coupon_code_id()}}
       </div>
       <div class="form-group container-padding-20">
         {{ render_field(form.startdate, class="form-control datepicker") }}

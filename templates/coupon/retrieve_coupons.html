@@ -56,6 +56,7 @@
                             <th>Coupon Code</th>
                             <th>start date</th>
                             <th>end date</th>
+                            <th>status</th>
                             <th colspan = "2" style="text-align:center;"> Actions</th>
 
                         </tr>
@@ -69,6 +70,7 @@
                             <td>{{coupon.get_coupon_code_id()}}</td>
                             <td>{{coupon.get_start_date()}}</td>
                             <td>{{coupon.get_end_date()}}</td>
+                            <td>{{coupon.get_expired()}}</td>
                             <td>
                                 <a href ="/update-coupon/{{coupon.get_coupon_code_id()}}" class="btn btn-warning">Update</a>
                             </td>

@@ -31,6 +31,24 @@ class CreateCoupon(Form):
     startdate = StringField('Start Date' , [validators.data_required()])
     enddate = StringField('End Date' , [validators.data_required()])
 
+class UpdateCoupon(Form):
+    
+    name = StringField('Name', [validators.DataRequired()])
+
+    def validate_name(self, field):
+        if len(field.data) > 20:
+            raise ValidationError("Name of coupon must be less than 20 Characters!")
+
+    discount = IntegerField('Discount Applied', [validators.data_required()])
+
+    def validate_discount(self, field):
+        if field.data > 100:
+            raise ValidationError("Discount input have to be less than 100!")
+
+            
+    startdate = StringField('Start Date' , [validators.data_required()])
+    enddate = StringField('End Date' , [validators.data_required()])
+
 class Coupon:
     today = datetime.datetime.now()
     count = 0

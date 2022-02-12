@@ -15,7 +15,8 @@ import Book, Cart as c
 from users import GuestDB, Guest, Customer, Admin
 from forms import SignUpForm, LoginForm, AccountPageForm, ChangePasswordForm, CreateUserForm, \
                   Enquiry, UserEnquiry, Faq, FaqEntry, AddBookForm, \
-                  Coupon, CreateCoupon, OrderForm, RequestCoupon, ReplyEnquiry \
+                  Coupon, CreateCoupon, OrderForm, RequestCoupon, ReplyEnquiry, \
+                    UpdateCoupon
 
 
 # CONSTANTS
@@ -1518,30 +1519,33 @@ def retrieve_coupons():
 
     coupon_list=[]
     date = datetime.datetime.now() #get current date
-    today = date.strftime('%Y/%m/%d') #format date
+    #today = datetime.datetime.strptime(date,'%Y/%m/%d') #format date
 
-    # updates which coupons have become expired
+    #updates which coupons have become expired
+    for key in coupon_dict:
+        db = shelve.open('database','c')
+        coupon = coupon_dict.get(key)
+        coupon_dict = retrieve_db('Coupon',db)
+        enddate = coupon.get_end_date()
+        enddate = datetime.datetime.strptime(enddate,'%Y/%m/%d')
+        print(enddate)
+        if enddate < date:
+            coupon.set_expired(0)
+            print(coupon.get_expired())
+        coupon_dict = coupon   #updates the dictionary with the new values
+        db['Coupon'] = coupon_dict #updates the database
+        coupon_list.append(coupon) #append the coupon to the list
+
     # for key in coupon_dict:
     #     coupon = coupon_dict.get(key)
-    #     enddate = coupon.get_end_date()
-    #     enddate = datetime.datetime.strptime(enddate,'%Y/%m/%d')
-    #     print(enddate)
-    #     if enddate < today:
-    #         coupon.set_expired(0)
-    #         print(coupon.get_expired())
-    #     coupon_dict = coupon   #updates the dictionary with the new values
-    #     db['Coupon'] = coupon_dict #updates the database
-
-    for key in coupon_dict:
-        coupon = coupon_dict.get(key)
-        coupon_list.append(coupon) #append the coupon to the list
+    #     coupon_list.append(coupon) #append the coupon to the list
 
     return render_template('coupon/retrieve_coupons.html', count=len(coupon_list), coupon_list=coupon_list)
 
 # update coupons (redo needed)
 @app.route('/update-coupon/<id>/',methods=['GET','POST'])
 def update_coupons(id):
-    coupon_form = CreateCoupon(request.form)
+    coupon_form = UpdateCoupon(request.form)
     if request.method == 'POST' and coupon_form.validate():
         coupon_dict = {}
         db = shelve.open('database','c')
@@ -1550,7 +1554,6 @@ def update_coupons(id):
         coupon = coupon_dict.get(id)# error is the id, you need to redo this
         coupon.set_name(coupon_form.name.data)
         coupon.set_discount(coupon_form.discount.data)
-        coupon.set_coupon_code_id(coupon_form.coupon_code.data) #make this part not able to be changed
         coupon.set_start_date(coupon_form.startdate.data)
         coupon.set_end_date(coupon_form.enddate.data)
         db['Coupon'] = coupon_dict
@@ -1567,11 +1570,10 @@ def update_coupons(id):
         coupon = coupon_dict.get(id)
         coupon_form.name.data = coupon.get_name()
         coupon_form.discount.data = coupon.get_discount()
-        coupon_form.coupon_code.data = coupon.get_coupon_code_id()
         coupon_form.startdate.data = coupon.get_start_date()
         coupon_form.enddate.data = coupon.get_end_date()
 
-        return render_template('coupon/update_coupons.html', form=coupon_form)
+        return render_template('coupon/update_coupons.html', form=coupon_form, coupon=coupon)
 
 #delete the coupons
 @app.route('/delete-coupon/<id>',methods=['GET', 'POST'])
