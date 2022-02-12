@@ -73,11 +73,33 @@
 .account-actions a{
     text-decoration: none;
 }
-
-.account-actions .fa-pen {
+.account-actions .btn:focus {
+    border-color: transparent !important;
+    box-shadow: none !important;
+}
+.account-actions .fa-eye {
     color: #588B8B;
 }
-
 .account-actions .fa-trash {
     color: #dc3545;
+}
+
+.account-footer .hint-text {
+    float: left;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+}
+.account-footer .pagination {
+    float: right;
+}
+.account-footer .page-item .page-link {
+    border-width: 0;
+    border-radius: 0.25rem;
+    color: #4b8282;
+}
+.account-footer .page-item.active .page-link {
+    z-index: 3;
+    color: #fff;
+    background-color: #4b8282;
+    border-color: #4b8282;
 }

@@ -4,31 +4,6 @@
 
 {% block stylesheets %}
 <link rel="stylesheet" href="/static/css/user.css">
-<style>
-  .hint-text {
-      float: left;
-      margin-top: 0.5rem;
-      font-size: 0.8rem;
-  }
-  .pagination {
-      float: right;
-  }
-  .page-item .page-link {
-      border-width: 0;
-      border-radius: 0.25rem;
-      color: #4b8282;
-  }
-  .page-item.active .page-link {
-      z-index: 3;
-      color: #fff;
-      background-color: #4b8282;
-      border-color: #4b8282;
-  }
-  .account-actions .btn:focus {
-    border-color: transparent !important;
-    box-shadow: none !important;
-  }
-</style>
 {% endblock %}
 
 {% block content %}
@@ -75,20 +50,22 @@
             {% for user in display_users %}
             {% if user.__class__.__name__ != "Admin" or not user.is_master() %} {# Don't display master #}
             {% if user.__class__.__name__ == "Admin" %}
-              {% set name = none %}
+              {% set name = "-" %}
+              {% set gender = "-" %}
             {% else %}
-              {% set name = user.get_name() %}
+              {% set name = user.get_name() if user.get_name() else "-" %}
+              {% set gender = user.get_gender() if user.get_gender() else "-" %}
             {% endif %}
             <tr class="account-row">
               <td>{{ user.get_username() }}</td>
-              <td>{{ name if name else "-" }}</td>
+              <td>{{ name }}</td>
               <td>{{ user.get_email() }}</td>
               {% if is_master %}
               <td>{{ user.__class__.__name__ }}</td>
               {% endif %}
               <td class="account-actions d-flex">
-                <button class="btn me-auto p-0" data-bs-toggle="tooltip" title="Edit" onclick="selectAccount('{{ user.get_user_id() }}', '{{ user.get_username() }}', 'editUserButton');">
-                  <i class="fa fa-pen"></i>
+                <button class="btn me-auto p-0" data-bs-toggle="tooltip" title="View" onclick="viewUser('{{ user.__class__.__name__ if is_master }}', '{{ user.get_username() }}', '{{ name }}', '{{ user.get_email() }}', '{{ gender }}', '{{ user.get_profile_pic() }}');">
+                  <i class="fa fa-eye"></i>
                 </button>
                 <button class="btn me-auto p-0" data-bs-toggle="tooltip" title="Delete" onclick="selectAccount('{{ user.get_user_id() }}', '{{ user.get_username() }}', 'deleteUserButton');">
                   <i class="fa fa-trash"></i>
@@ -100,7 +77,7 @@
           </tbody>
         </table>
       </div>
-      <div class="clearfix">
+      <div class="account-footer clearfix">
         <div class="hint-text">Showing <b>{{ entries_range[0] }}-{{ entries_range[1] }}</b> out of <b>{{ total_entries }}</b> users</div>
         <ul class="pagination">
           <li class="page-item {{ 'disabled' if first_page == active_page }}">
@@ -184,6 +161,26 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
         <button type="button" class="btn btn-primary" onclick="addUser();">Create {{ display_word }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# View User Modal #}
+<button type="button" class="d-none" id="viewUserButton" data-bs-toggle="modal" data-bs-target="#viewUser"></button>
+<div class="modal fade" id="viewUser" tabindex="-1" aria-labelledby="viewUserLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="viewUserLabel">Delete {{ display_word }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete <b class="display-username"></b>?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" onclick="viewUser();">Delete {{ display_word }}</button>
       </div>
     </div>
   </div>

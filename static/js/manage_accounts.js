@@ -18,6 +18,14 @@ function selectAccount(userID, username, buttonID) {
     clickButton(buttonID);
 }
 
+function viewUser(accountType, username, name, email, gender, profilePic) {
+    if (accountType != "") {
+
+    }
+    console.log("hi");
+    clickButton("viewUser");
+}
+
 function deleteUser() {
     clickButton("addUserReset");
     clickButton("deleteUserReset");
