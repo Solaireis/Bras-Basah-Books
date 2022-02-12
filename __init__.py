@@ -14,11 +14,12 @@ from PIL import Image
 # Import classes
 import Book, Cart as c
 from users import GuestDB, Guest, Customer, Admin
-from forms import SignUpForm, LoginForm, AccountPageForm, ChangePasswordForm, \
-                  CreateUserForm, DeleteUserForm, \
+from forms import SignUpForm, LoginForm, ChangePasswordForm, \
+                  ResetPasswordForm, ForgetPasswordForm, \
+                  AccountPageForm, CreateUserForm, DeleteUserForm, \
                   Enquiry, UserEnquiry, Faq, FaqEntry, AddBookForm, \
                   Coupon, CreateCoupon, OrderForm, RequestCoupon, ReplyEnquiry, \
-                    UpdateCoupon
+                  UpdateCoupon
 
 
 # CONSTANTS
@@ -326,16 +327,119 @@ def logout():
 """    Account Pages    """
 
 # Forgot password page
-@app.route("/user/forget-password", methods=["GET", "POST"])
+@app.route("/user/password/forget", methods=["GET", "POST"])
 def password_forget():
-    pass
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    # Get user
+    user = get_user()
+
+    # Only Guest will forget password
+    if session["UserType"] != "Guest":
+        return redirect(url_for("home"))
+
+    # Create form
+    forget_password_form = ForgetPasswordForm(request.form)
+
+    if request.method == "POST":
+        if not forget_password_form.validate():
+            if DEBUG: print("Forget Password: form field invalid")
+            session["DisplayFieldError"] = True
+        else:
+            # Configure noreplybbb02@gmail.com
+            # app.config.from_pyfile("config/noreply_email.cfg")
+            # mail.init_app(app)
+
+            # Get email
+            email = forget_password_form.email.data.lower()
+
+            with shelve.open("database") as db:
+                email_to_user_id = retrieve_db("EmailToUserID", db)
+            
+            if email in email_to_user_id:
+                # Generate token
+                token = url_serialiser.dumps(email, salt=app.config["PASSWORD_FORGET_SALT"])
+
+                # Send message to email entered
+                msg = Message(subject="Reset Your Password",
+                            sender=("BrasBasahBooks", "noreplybbb02@gmail.com"),
+                            recipients=[email])
+                link = url_for("password_reset", token=token, _external=True)
+                msg.html = render_template("emails/_password_reset.html", link=link)
+                mail.send(msg)
+                if DEBUG: print(f"Sent email to {email}")
+            else:
+                if DEBUG: print(f"No user with email: {email}")
+
+            flash(f"Verification email sent to {email}")
+            return redirect(url_for("login"))
+
+    return render_template("user/password/password_forget.html", form=forget_password_form)
+
+
+# Reset password page
+@app.route("/user/password/reset/<token>", methods=["GET", "POST"])
+def password_reset(token):
+
+    # Get user
+    guest = get_user()
+
+    # Only Guest will forget password
+    if session["UserType"] != "Guest":
+        return redirect(url_for("home"))
+
+    # Get email from token
+    try:
+        email = url_serialiser.loads(token, salt=app.config["PASSWORD_FORGET_SALT"], max_age=TOKEN_MAX_AGE)
+    except BadData as err:  # Token expired or Bad Signature
+        if DEBUG: print("Invalid Token:", repr(err))  # print captured error (for debugging)
+        return redirect(url_for("invalid_link"))
+
+    with shelve.open("database") as db:
+        email_to_user_id = retrieve_db("EmailToUserID", db)
+        customers_db = retrieve_db("Customers", db)
+        guests_db = retrieve_db("Guests", db)
+
+        # Get user
+        try:
+            customer = customers_db[email_to_user_id[email]]
+        except KeyError:
+            if DEBUG: print("No user with email:", email)  # Account was deleted
+            return redirect(url_for("invalid_link"))
+
+        # Render form
+        reset_password_form = ResetPasswordForm(request.form)
+        if request.method == "POST":
+            if not reset_password_form.validate():
+                session["DisplayFieldError"] = True
+            else:
+                # Extract password
+                new_password = reset_password_form.new_password.data
+
+                # Reset Password
+                customer.set_password(new_password)
+                if DEBUG: print(f"Reset password for: {customer}")
+
+                # Delete guest account
+                guests_db.remove(guest.get_user_id())
+                if DEBUG: print(f"Deleted: {guest}")
+
+                # Log in customer
+                session["UserID"] = customer.get_user_id()
+                session["UserType"] = "Customer"
+                if DEBUG: print(f"Logged in: {customer}")
+
+                # Safe changes to database
+                db["Customers"] = customers_db
+                db["Guests"] = guests_db
+
+                # Flash message and redirect to account page
+                flash("Password has been successfully set")
+                return redirect(url_for("account"))
+
+    return render_template("user/password/password_reset.html", form=reset_password_form, email=email)
 
 # Change password page
-@app.route("/user/change-password", methods=["GET", "POST"])
+@app.route("/user/password/change", methods=["GET", "POST"])
 def password_change():
     # Get current user
     user = get_user()
@@ -375,7 +479,7 @@ def password_change():
                     if DEBUG: print("Password changed for", user)
                     return redirect(url_for("account"))
 
-    return render_template("user/password_change.html", form=change_password_form)
+    return render_template("user/password/password_change.html", form=change_password_form)
 
 
 # Send verification link page
@@ -414,15 +518,13 @@ def verify_send():
 # Verify email page
 @app.route("/user/verify/<token>")
 def verify(token):
-    # Get user
-    user = get_user()
 
     # Get email from token
     try:
         email = url_serialiser.loads(token, salt=app.config["VERIFY_EMAIL_SALT"], max_age=TOKEN_MAX_AGE)
     except BadData as err:  # Token expired or Bad Signature
         if DEBUG: print("Invalid Token:", repr(err))  # print captured error (for debugging)
-        return redirect(url_for("verify_fail"))
+        return redirect(url_for("invalid_link"))
 
     with shelve.open("database") as db:
         email_to_user_id = retrieve_db("EmailToUserID", db)
@@ -433,14 +535,14 @@ def verify(token):
             user = customers_db[email_to_user_id[email]]
         except KeyError:
             if DEBUG: print("No user with email:", email)  # Account was deleted
-            return redirect(url_for("verify_fail"))
+            return redirect(url_for("invalid_link"))
 
         # Verify email
         if not user.is_verified():
             user.verify()
         else:  # Email was alreadyt verified
             if DEBUG: print(email, "is already verified")
-            return redirect(url_for("verify_fail"))
+            return redirect(url_for("invalid_link"))
 
         # Safe changes to database
         db["Customers"] = customers_db
@@ -448,10 +550,10 @@ def verify(token):
     return render_template("user/verify/verify.html", email=email)
 
 
-# Verify fail page
-@app.route("/user/verify/fail")
-def verify_fail():
-    render_template("user/verify/fail.html")
+# Invalid link page
+@app.route("/invalid-link")
+def invalid_link():
+    return render_template("user/verify/invalid_link.html")
 
 
 """    User Pages    """
