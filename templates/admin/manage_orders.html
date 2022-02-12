@@ -81,10 +81,10 @@
                       <div class="col-md-3 col-12 form-check">
                           {% if order.get_order_status() == "Delivered" %}
                           <input type="radio" id="Delivered" name="order-status" value="Delivered" checked="checked">
-                          <label for="Shipped">&nbsp; Delivered</label>
+                          <label for="Delivered">&nbsp; Delivered</label>
                           {% else %}
                           <input type="radio" id="Delivered2" name="order-status" value="Delivered">
-                          <label for="Shipped2">&nbsp; Delivered</label>
+                          <label for="Delivered2">&nbsp; Delivered</label>
                           {% endif %}
                       </div>
                       <div class="col-md-2 col-12">
@@ -128,13 +128,25 @@
                     {% endif %}
                     {% if order.get_rent_item() != '' %}
                         <tr class="label">
-                            <td colspan="4"><h6>Rent</h6></td>
+                            <td colspan="4">
+                                <h6>Rent
+                                    {% if order.get_returned_status() == 'Returned' %}
+                                        <a href="/admin/manage_orders/edit_return/{{ order.get_order_id() }}"><span class="float-right">{{ order.get_return_date() }} ({{ order.get_returned_status() }})</span></a>
+                                    {% elif order.get_return_date() > order.get_today_date() and order.get_returned_status != 'Returned' %}
+                                        <a href="/admin/manage_orders/edit_return/{{ order.get_order_id() }}"><span class="float-right" style="color:#8B8000;">{{order.get_return_date() }} ({{ order.get_returned_status() }})</span></a>
+                                    {% else %}
+                                        <a href="/admin/manage_orders/edit_return/{{ order.get_order_id() }}"><span class="float-right" style="color:red;">{{order.get_return_date() }} ({{ order.get_returned_status() }})</span></a>
+                                    {% endif %}
+                                </h6>
+                            </td>
                         </tr>
                         {% for book in order.get_rent_item() %}
                         <tr class="products">
+                            {% if book != 'Returned' %}
                             <td><img src={{ books_dict[book].get_img() }}></td>
                             <td colspan="2" style="text-align:left;">{{ books_dict[book].get_title() }}</td>
                             <td>{{ "$%.2f"|format((books_dict[book].get_price()|float)*0.1) }}</td>
+                            {% endif %}
                         </tr>
                         {% endfor %}
                     {% endif %}
@@ -195,10 +207,10 @@
                       <div class="col-md-3 col-12 form-check">
                           {% if order.get_order_status() == "Delivered" %}
                           <input type="radio" id="Delivered3" name="order-status" value="Delivered" checked="checked">
-                          <label for="Shipped3">&nbsp; Delivered</label>
+                          <label for="Delivered3">&nbsp; Delivered</label>
                           {% else %}
                           <input type="radio" id="Delivered4" name="order-status" value="Delivered">
-                          <label for="Shipped4">&nbsp; Delivered</label>
+                          <label for="Delivered4">&nbsp; Delivered</label>
                           {% endif %}
                       </div>
                       <div class="col-md-2 col-12">
@@ -246,9 +258,11 @@
                         </tr>
                         {% for book in order.get_rent_item() %}
                         <tr class="products">
+                            {% if book != 'Returned' %}
                             <td><img src={{ books_dict[book].get_img() }}></td>
                             <td colspan="2" style="text-align:left;">{{ books_dict[book].get_title() }}</td>
                             <td>{{ "$%.2f"|format((books_dict[book].get_price()|float)*0.1) }}</td>
+                            {% endif %}
                         </tr>
                         {% endfor %}
                     {% endif %}
@@ -421,10 +435,10 @@
                       <div class="col-md-3 col-12 form-check">
                           {% if order.get_order_status() == "Delivered" %}
                           <input type="radio" id="Delivered7" name="order-status" value="Delivered" checked="checked">
-                          <label for="Shipped7">&nbsp; Delivered</label>
+                          <label for="Delivered7">&nbsp; Delivered</label>
                           {% else %}
                           <input type="radio" id="Delivered8" name="order-status" value="Delivered">
-                          <label for="Shipped8">&nbsp; Delivered</label>
+                          <label for="Delivered8">&nbsp; Delivered</label>
                           {% endif %}
                       </div>
                       <div class="col-md-2 col-12">
@@ -507,37 +521,37 @@
                       <div class="col-md-2 col-12 form-check">
                           {% if order.get_order_status() == "Ordered" %}
                           <input type="radio" id="Ordered9" name="order-status" value="Ordered" checked="checked">
-                          <label for="Ordered7">&nbsp; New</label>
+                          <label for="Ordered9">&nbsp; New</label>
                           {% else %}
                           <input type="radio" id="Ordered0" name="order-status" value="Ordered">
-                          <label for="Ordered8">&nbsp; New</label>
+                          <label for="Ordered0">&nbsp; New</label>
                           {% endif %}
                       </div>
                       <div class="col-md-3 col-12 form-check">
                           {% if order.get_order_status() == "Confirmed" %}
                           <input type="radio" id="Confirmed9" name="order-status" value="Confirmed" checked="checked">
-                          <label for="Confirmed7">&nbsp; Confirmed</label>
+                          <label for="Confirmed9">&nbsp; Confirmed</label>
                           {% else %}
                           <input type="radio" id="Confirmed0" name="order-status" value="Confirmed">
-                          <label for="Confirmed8">&nbsp; Confirmed</label>
+                          <label for="Confirmed0">&nbsp; Confirmed</label>
                           {% endif %}
                       </div>
                       <div class="col-md-2 col-12 form-check">
                           {% if order.get_order_status() == "Shipped" %}
                           <input type="radio" id="Shipped9" name="order-status" value="Shipped" checked="checked">
-                          <label for="Shipped7">&nbsp; Shipped</label>
+                          <label for="Shipped9">&nbsp; Shipped</label>
                           {% else %}
                           <input type="radio" id="Shipped0" name="order-status" value="Shipped">
-                          <label for="Shipped8">&nbsp; Shipped</label>
+                          <label for="Shipped0">&nbsp; Shipped</label>
                           {% endif %}
                       </div>
                       <div class="col-md-3 col-12 form-check">
                           {% if order.get_order_status() == "Delivered" %}
                           <input type="radio" id="Delivered9" name="order-status" value="Delivered" checked="checked">
-                          <label for="Shipped9">&nbsp; Delivered</label>
+                          <label for="Delivered9">&nbsp; Delivered</label>
                           {% else %}
                           <input type="radio" id="Delivered0" name="order-status" value="Delivered">
-                          <label for="Shipped0">&nbsp; Delivered</label>
+                          <label for="Delivered0">&nbsp; Delivered</label>
                           {% endif %}
                       </div>
                       <div class="col-md-2 col-12">
