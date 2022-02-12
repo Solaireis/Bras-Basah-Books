@@ -118,3 +118,4 @@ class Coupon:
 class RequestCoupon(Form):
     coupon_code = StringField('Coupon Code', [validators.data_required()])
 
+

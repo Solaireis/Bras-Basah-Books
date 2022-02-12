@@ -1575,14 +1575,7 @@ def coupon_adm():
         db = shelve.open('database', 'c')
         coupon_dict = retrieve_db('Coupon',db)
 
-        if len(coupon_dict) == 0: # if dictionary is empty 
-            print('Coupons dict empty, making new dictionary')
-            coupon = Coupon(create_coupon.name.data,create_coupon.discount.data,create_coupon.coupon_code.data,\
-                create_coupon.startdate.data,create_coupon.enddate.data)
-            coupon_dict[coupon.get_coupon_code_id()] = coupon
-            db['Coupon'] = coupon_dict
-            db.close()
-        else: # assuming if the dictionary does exist with items in it
+        if coupon_dict: # if dictionary has items
             for key in coupon_dict:
                 coupon = coupon_dict.get(key)
                 # checks if there is already a coupon with the same coupon code
@@ -1595,7 +1588,22 @@ def coupon_adm():
                 coupon_dict[coupon.get_coupon_code_id()] = coupon
                 db['Coupon'] = coupon_dict
                 db.close() 
-
+                flash ("Coupon created successfully", "success")
+            
+        else: # assuming if the dictionary does not exist with items in it (working!)
+            print('Coupons dict empty, making new dictionary')
+            coupon = Coupon(create_coupon.name.data,create_coupon.discount.data,create_coupon.coupon_code.data,\
+                create_coupon.startdate.data,create_coupon.enddate.data)
+            coupon_dict[coupon.get_coupon_code_id()] = coupon
+            db['Coupon'] = coupon_dict
+            db.close() 
+            flash ("coupon created successfully", "success")
+        # print('Coupons dict empty, making new dictionary')
+        # coupon = Coupon(create_coupon.name.data,create_coupon.discount.data,create_coupon.coupon_code.data,\
+        #     create_coupon.startdate.data,create_coupon.enddate.data)
+        # coupon_dict[coupon.get_coupon_code_id()] = coupon
+        # db['Coupon'] = coupon_dict
+        # db.close()
     return render_template("coupon/create_coupons.html", form=create_coupon)
 
     
@@ -1606,7 +1614,7 @@ def retrieve_coupons():
     coupon_dict = {}
     db = shelve.open('database','c')
     coupon_dict = retrieve_db('Coupon',db)
-    db.close()
+    
 
     coupon_list=[]
     date = datetime.datetime.now() #get current date
@@ -1614,23 +1622,21 @@ def retrieve_coupons():
 
     #updates which coupons have become expired
     for key in coupon_dict:
-        db = shelve.open('database','c')
         coupon = coupon_dict.get(key)
-        coupon_dict = retrieve_db('Coupon',db)
         enddate = coupon.get_end_date()
         enddate = datetime.datetime.strptime(enddate,'%Y/%m/%d')
         print(enddate)
         if enddate < date:
             coupon.set_expired(0)
             print(coupon.get_expired())
-        coupon_dict = coupon   #updates the dictionary with the new values
+        coupon_dict[coupon.get_coupon_code_id()] = coupon   #updates the dictionary with the new values
         db['Coupon'] = coupon_dict #updates the database
         coupon_list.append(coupon) #append the coupon to the list
 
     # for key in coupon_dict:
     #     coupon = coupon_dict.get(key)
     #     coupon_list.append(coupon) #append the coupon to the list
-
+    db.close()
     return render_template('coupon/retrieve_coupons.html', count=len(coupon_list), coupon_list=coupon_list)
 
 # update coupons (redo needed)
@@ -1736,6 +1742,84 @@ def retrieve_cu_coupons():
 
     return render_template('coupon/retrieve_cust_coupons.html', count=len(coupon_list_final), coupon_list=coupon_list_final)
 
+#apply coupon
+@app.route('/apply-coupon', methods=['GET', 'POST'])
+def apply_coupons():
+    
+    
+
+    #Kelly & Luqman cart function
+    user_id = get_user().get_user_id()
+    cart_dict = {}
+    db = shelve.open('database', 'c')
+    buy_count = 0
+    rent_count = 0
+    total_price = 0
+    discount_applied = 0
+    buy_cart = {}
+    rent_cart = []
+    try:
+        books_dict = db['Books']
+        db = shelve.open('database', 'c')
+        db_pending = db['Pending_Order']
+        del db_pending[user_id]
+        db['Pending_Order'] = db_pending
+        db.close()
+    except:
+        pass
+
+    try:
+        cart_dict = db['Cart']
+        print(cart_dict)
+    except:
+        print("Error while retrieving data from database")
+
+    if user_id in cart_dict:
+        user_cart = cart_dict[user_id]
+        if user_cart[0] == '':
+            print('This user has nothing in the buying cart')
+        else:
+            buy_cart = user_cart[0]
+            for key in buy_cart:
+                buy_count += buy_cart[key]
+                total_price = float(total_price)
+                total_price += float(buy_cart[key]*books_dict[key].get_price())
+                total_price = float(("%.2f" % round(total_price, 2)))
+        if len(user_cart) == 1:
+            print('This user has nothing in the renting cart')
+        else:
+            rent_cart = user_cart[1]
+            rent_count = len(user_cart[1])
+            for book in rent_cart:
+                total_price += float(books_dict[book].get_price()) * 0.1
+                total_price = float(("%.2f" % round(total_price, 2)))
+    
+    # apply the coupons
+    apply_coupon = RequestCoupon(request.form)
+    if request.method == 'POST' and apply_coupon.validate():
+        db = shelve.open('database','c')
+        coupon_dict = retrieve_db('Coupon',db)
+
+        coupon_applied = None
+        for key in coupon_dict:
+            coupon = coupon_dict.get(key)
+            print('coupon_code',coupon.get_coupon_code_id())
+            if coupon.get_coupon_code_id() == apply_coupon.coupon_code.data:
+                coupon_applied = coupon.get_coupon_code_id()
+                print('coupon applied',coupon_applied)
+                discount = coupon.get_discount()
+                discount_applied = total_price * ( discount/100)
+                total_price = total_price - total_price * (discount / 100)
+                print('total price',total_price)
+                flash('success')
+            else:
+                print('no match for coupon')
+            
+
+
+    return render_template("coupon/apply_coupon.html",form=apply_coupon, total_price=total_price, buy_count=buy_count,\
+                           rent_count=rent_count, buy_cart=buy_cart, rent_cart=rent_cart,\
+                                books_dict=books_dict, discount_applied = discount_applied)
 #
 # about page static
 #
