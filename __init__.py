@@ -537,7 +537,7 @@ def manage_accounts():
     # Validate sign up form if request is post
     if request.method == "POST":
         if not create_user_form.validate():
-            if DEBUG: print("Create Customer: form field invalid")
+            if DEBUG: print("Create User: form field invalid")
             session["DisplayFieldError"] = True
             return render_template("admin/manage_accounts.html", create_user_form=create_user_form)
 
