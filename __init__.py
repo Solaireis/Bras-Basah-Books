@@ -810,35 +810,111 @@ def manage_accounts():
 
 
 #
+#
 # Start of Chee Qing's Codes
+#
 #
 
 #
 # allbooks
 #
-@app.route("/allbooks")
-def allbooks():
+@app.route("/all_books/<sort_this>")
+def all_books(sort_this):
     books = []
+    sort_dict = {}
+    books_dict = {}
     try:
         books_dict = {}
         db = shelve.open('database', 'r')
         books_dict = db['Books']
         db.close()
-
     except:
         print("There are no books")
 
-    books_dict = dict(reversed(list(books_dict.items())))
+    if sort_this == 'latest':
+        books_dict = dict(reversed(list(books_dict.items())))
+        sort_dict = books_dict
+    elif sort_this == 'name_a_to_z':
+        sort_dict = name_a_to_z(books_dict)
+    elif sort_this == 'name_z_to_a':
+        sort_dict = name_z_to_a(books_dict)
+    elif sort_this == 'price_low_to_high':
+        sort_dict = price_low_to_high(books_dict)
+    elif sort_this == 'price_high_to_low':
+        sort_dict = price_high_to_low(books_dict)
+    else:
+        sort_dict = books_dict
 
-    for book in books_dict:
-        books.append(books_dict[book].get_title())
+    return render_template("all_books.html", books_dict=books_dict, sort_dict=sort_dict)
 
-    print(books)
-    books.sort(reverse=True)
-    print(books)
-    #sorted_dict = sorted(books.get_title(), key=lambda kv:(kv[1], kv[0]))
-    #print(sorted_dict)
-    return render_template("all_books.html", books_dict=books_dict)
+# Sort name from a to z
+def name_a_to_z(books_dict):
+    sort_dict = {}
+    unsorted_dict = {}
+    if books_dict != {}:
+        for book in books_dict:
+            unsorted_dict.update({book: books_dict[book].get_title()})
+        print(unsorted_dict)
+        unsorted_dict = sorted(unsorted_dict.items(), key = lambda kv:(kv[1], kv[0]))
+        unsorted_dict = {k: v for k, v in unsorted_dict}
+        print(unsorted_dict)
+
+        for id in unsorted_dict:
+            if id in books_dict:
+                sort_dict.update({id: books_dict[id]})
+    return sort_dict
+
+# Sort name from z to a
+def name_z_to_a(books_dict):
+    sort_dict = {}
+    unsorted_dict = {}
+    if books_dict != {}:
+        for book in books_dict:
+            unsorted_dict.update({book: books_dict[book].get_title()})
+        print(unsorted_dict)
+        unsorted_dict = sorted(unsorted_dict.items(), key = lambda kv:(kv[1], kv[0]), reverse=True)
+        unsorted_dict = {k: v for k, v in unsorted_dict}
+        print(unsorted_dict)
+
+        for id in unsorted_dict:
+            if id in books_dict:
+                sort_dict.update({id: books_dict[id]})
+    return sort_dict
+
+# Sort price from low to high
+def price_low_to_high(books_dict):
+    sort_dict = {}
+    unsorted_dict = {}
+    if books_dict != {}:
+        for book in books_dict:
+            unsorted_dict.update({book: float(books_dict[book].get_price())})
+        print(unsorted_dict)
+        unsorted_dict = sorted(unsorted_dict.items(), key = lambda kv:(kv[1], kv[0]))
+        unsorted_dict = {k: v for k, v in unsorted_dict}
+        print(unsorted_dict)
+
+        for id in unsorted_dict:
+            if id in books_dict:
+                sort_dict.update({id: books_dict[id]})
+    return sort_dict
+
+# Sort price from high to low
+def price_high_to_low(books_dict):
+    sort_dict = {}
+    unsorted_dict = {}
+    if books_dict != {}:
+        for book in books_dict:
+            unsorted_dict.update({book: float(books_dict[book].get_price())})
+        print(unsorted_dict)
+        unsorted_dict = sorted(unsorted_dict.items(), key = lambda kv:(kv[1], kv[0]), reverse=True)
+        unsorted_dict = {k: v for k, v in unsorted_dict}
+        print(unsorted_dict)
+
+        for id in unsorted_dict:
+            if id in books_dict:
+                sort_dict.update({id: books_dict[id]})
+    return sort_dict
+
 
 #
 # add to buying cart
