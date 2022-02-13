@@ -2,6 +2,9 @@
 .user-container {
     background-color: #fff;
 }
+.user-container > .row {
+    min-height: 500px;
+}
 .user-container h2 {
     color: #999;
 }
