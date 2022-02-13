@@ -12,449 +12,448 @@
 {% block content %}
 {% from "includes/_render_breadcrumb.html" import render_breadcrumb %}
 {% from "includes/_user_sidebar.html" import user_sidebar %}
-    <div aria-label="breadcrumb">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="/">Home</a></li>
-        <li class="breadcrumb-item active" aria-current="page">My Orders</li>
-      </ol>
-    </div>
-    <!-- Page Name -->
-    <h2 class="page-name"><span>My Orders</span></h2>
+<div aria-label="breadcrumb">
+    <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">My Orders</li>
+    </ol>
+</div>
+<!-- Page Name -->
+<h2 class="page-name"><span>My Orders</span></h2>
 
-    <ul class="nav nav-tabs" id="myTab" role="tablist">
-      <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="all-order-tab" data-bs-toggle="tab" data-bs-target="#all-order" type="button" role="tab" aria-controls="all-order" aria-selected="true">All</button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="new-order-tab" data-bs-toggle="tab" data-bs-target="#new-order" type="button" role="tab" aria-controls="new-order" aria-selected="false">Confirmed</button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="Confirmed-order-tab" data-bs-toggle="tab" data-bs-target="#Confirmed-order" type="button" role="tab" aria-controls="Confirmed-order" aria-selected="false">To Ship</button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="Shipped-order-tab" data-bs-toggle="tab" data-bs-target="#Shipped-order" type="button" role="tab" aria-controls="Shipped-order" aria-selected="false">To Receive</button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="delivered-order-tab" data-bs-toggle="tab" data-bs-target="#delivered-order" type="button" role="tab" aria-controls="delivered-order" aria-selected="false">Completed</button>
-      </li>
-    </ul>
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="all-order-tab" data-bs-toggle="tab" data-bs-target="#all-order" type="button" role="tab" aria-controls="all-order" aria-selected="true">All</button>
+    </li>
+    <li class="nav-item" role="presentation">
+    <button class="nav-link" id="new-order-tab" data-bs-toggle="tab" data-bs-target="#new-order" type="button" role="tab" aria-controls="new-order" aria-selected="false">Confirmed</button>
+    </li>
+    <li class="nav-item" role="presentation">
+    <button class="nav-link" id="Confirmed-order-tab" data-bs-toggle="tab" data-bs-target="#Confirmed-order" type="button" role="tab" aria-controls="Confirmed-order" aria-selected="false">To Ship</button>
+    </li>
+    <li class="nav-item" role="presentation">
+    <button class="nav-link" id="Shipped-order-tab" data-bs-toggle="tab" data-bs-target="#Shipped-order" type="button" role="tab" aria-controls="Shipped-order" aria-selected="false">To Receive</button>
+    </li>
+    <li class="nav-item" role="presentation">
+    <button class="nav-link" id="delivered-order-tab" data-bs-toggle="tab" data-bs-target="#delivered-order" type="button" role="tab" aria-controls="delivered-order" aria-selected="false">Completed</button>
+    </li>
+</ul>
 
-    <div class="tab-content" id="myTabContent">
+<div class="tab-content" id="myTabContent">
 
-      <div class="tab-pane fade show active" id="all-order" role="tabpanel" aria-labelledby="all-order-tab">
-          {% if all_order|length == 0 %}
-          <br>
-          <h4>You have no orders yet.</h4>
-          {% else %}
-          {% for order in all_order %}
-          <div class="row">
-              <div class="order-card col-md-9 col-12" style="position: relative;">
-                  <h2 style="text-transform: uppercase; font-weight: bold;">{{ order.get_order_status()}}</h2>
-                  <p>Order #{{ order.get_order_id() }}</p>
-                  <div class="row user-info" style="position: absolute; bottom: 0;">
-                      <p>Name: {{ order.get_name() }}</p>
-                      <div class="col-6">
-                          <h5 style="font-weight: 500;">Contact</h5>
-                          <p>Contact Number: {{ order.get_contact_num() }}</p>
-                          <p>Email: {{ order.get_email() }}</p>
-                      </div>
-                      <div class="col-6">
-                          <h5>Shipping</h5>
-                          <p>Shipping Method: {{ order.get_ship_method() }}</p>
-                          <p>Shipping Address: {{ order.get_ship_address() }}</p>
-                      </div>
-                  </div>
-              </div>
-              <br>
-              <div class="col-md-3 col-12 order_summary">
-                  <table>
-                    <thead>
-                      <tr>
-                          <th colspan="4"><h5>Order Summary ({{ order.get_item_count() }})</h5></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                    {% if order.get_buy_item() != '' %}
-                        <tr class="label">
-                            <td colspan="4"><h6>Buy</h6></td>
-                        </tr>
-                        {% for book in order.get_buy_item() %}
-                        <tr class="products">
-                            <td><img src={{ books_dict[book].get_img() }}></td>
-                            <td style="text-align:left;">{{ books_dict[book].get_title() }}</td>
-                            <td>X{{ order.get_buy_item()[book] }}</td>
-                            <td>${{ books_dict[book].get_price() }}</td>
-                        {% endfor %}
-                    {% endif %}
-                    {% if order.get_rent_item() != '' %}
-                        <tr class="label">
-                            <td colspan="4">
-                                <h6>Rent
-                                    {% if order.get_returned_status() == 'Returned' %}
-                                        <a href="/admin/manage_orders/edit_return/{{ order.get_order_id() }}"><span class="float-right">{{ order.get_return_date() }} ({{ order.get_returned_status() }})</span></a>
-                                    {% elif order.get_return_date() > order.get_today_date() and order.get_returned_status != 'Returned' %}
-                                        <a href="/admin/manage_orders/edit_return/{{ order.get_order_id() }}"><span class="float-right" style="color:#8B8000;">{{order.get_return_date() }} ({{ order.get_returned_status() }})</span></a>
-                                    {% else %}
-                                        <a href="/admin/manage_orders/edit_return/{{ order.get_order_id() }}"><span class="float-right" style="color:red;">{{order.get_return_date() }} ({{ order.get_returned_status() }})</span></a>
-                                    {% endif %}
-                                </h6>
-                            </td>
-                        </tr>
-                        {% for book in order.get_rent_item() %}
-                        <tr class="products">
-                            {% if book != 'Returned' %}
-                            <td><img src={{ books_dict[book].get_img() }}></td>
-                            <td colspan="2" style="text-align:left;">{{ books_dict[book].get_title() }}</td>
-                            <td>{{ "$%.2f"|format((books_dict[book].get_price()|float)*0.1) }}</td>
-                            {% endif %}
-                        </tr>
-                        {% endfor %}
-                    {% endif %}
-                      <tr class="bottom-sticky">
-                          <td colspan="4">
-                              <h5>Total Price <span class="float_right">{{ "$%.2f"|format(order.get_total_price()) }}</span></h5>
-                          </td>
-                      </tr>
-                    </tbody>
-                  </table>
-              </div>
-          </div>
-          <hr>
-          {% endfor %}
-          {% endif %}
-
-      </div>
-
-      <div class="tab-pane fade" id="new-order" role="tabpanel" aria-labelledby="new-order-tab">
-          {% if confirm_order|length == 0 %}
-          <br>
-          <h4>You have no confirmed orders.</h4>
-          {% else %}
-          {% for order in confirm_order %}
-          <div class="row">
-              <div class="order-card col-md-9 col-12" style="position: relative;">
-                  <h2 style="text-transform: uppercase; font-weight: bold;">{{ order.get_order_status()}}</h2>
-                  <p>Order #{{ order.get_order_id() }}</p>
-                  <div class="row user-info" style="position: absolute; bottom: 0;">
-                      <p>Name: {{ order.get_name() }}</p>
-                      <div class="col-6">
-                          <h5 style="font-weight: 500;">Contact</h5>
-                          <p>Contact Number: {{ order.get_contact_num() }}</p>
-                          <p>Email: {{ order.get_email() }}</p>
-                      </div>
-                      <div class="col-6">
-                          <h5>Shipping</h5>
-                          <p>Shipping Method: {{ order.get_ship_method() }}</p>
-                          <p>Shipping Address: {{ order.get_ship_address() }}</p>
-                      </div>
-                  </div>
-              </div>
-              <br>
-              <div class="col-md-3 col-12 order_summary">
-                  <table>
-                    <thead>
-                      <tr>
-                          <th colspan="4"><h5>Order Summary ({{ order.get_item_count() }})</h5></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                    {% if order.get_buy_item() != '' %}
-                        <tr class="label">
-                            <td colspan="4"><h6>Buy</h6></td>
-                        </tr>
-                        {% for book in order.get_buy_item() %}
-                        <tr class="products">
-                            <td><img src={{ books_dict[book].get_img() }}></td>
-                            <td style="text-align:left;">{{ books_dict[book].get_title() }}</td>
-                            <td>X{{ order.get_buy_item()[book] }}</td>
-                            <td>${{ books_dict[book].get_price() }}</td>
-                        {% endfor %}
-                    {% endif %}
-                    {% if order.get_rent_item() != '' %}
-                        <tr class="label">
-                            <td colspan="4">
-                                <h6>Rent
-                                    {% if order.get_returned_status() == 'Returned' %}
-                                        <a href="/admin/manage_orders/edit_return/{{ order.get_order_id() }}"><span class="float-right">{{ order.get_return_date() }} ({{ order.get_returned_status() }})</span></a>
-                                    {% elif order.get_return_date() > order.get_today_date() and order.get_returned_status != 'Returned' %}
-                                        <a href="/admin/manage_orders/edit_return/{{ order.get_order_id() }}"><span class="float-right" style="color:#8B8000;">{{order.get_return_date() }} ({{ order.get_returned_status() }})</span></a>
-                                    {% else %}
-                                        <a href="/admin/manage_orders/edit_return/{{ order.get_order_id() }}"><span class="float-right" style="color:red;">{{order.get_return_date() }} ({{ order.get_returned_status() }})</span></a>
-                                    {% endif %}
-                                </h6>
-                            </td>
-                        </tr>
-                        {% for book in order.get_rent_item() %}
-                        <tr class="products">
-                            {% if book != 'Returned' %}
-                            <td><img src={{ books_dict[book].get_img() }}></td>
-                            <td colspan="2" style="text-align:left;">{{ books_dict[book].get_title() }}</td>
-                            <td>{{ "$%.2f"|format((books_dict[book].get_price()|float)*0.1) }}</td>
-                            {% endif %}
-                        </tr>
-                        {% endfor %}
-                    {% endif %}
-                      <tr class="bottom-sticky">
-                          <td colspan="4">
-                              <h5>Total Price <span class="float_right">{{ "$%.2f"|format(order.get_total_price()) }}</span></h5>
-                          </td>
-                      </tr>
-                    </tbody>
-                  </table>
-              </div>
-          </div>
-          <hr>
-          {% endfor %}
-          {% endif %}
-      </div>
-
-      <div class="tab-pane fade" id="Confirmed-order" role="tabpanel" aria-labelledby="Confirmed-order-tab">
-          {% if confirm_order|length == 0 %}
-          <br>
-          <h4>You have no shipped orders.</h4>
-          {% else %}
-          {% for order in confirm_order %}
-          <div class="row">
-              <div class="order-card col-md-9 col-12" style="position: relative;">
-                  <h2 style="text-transform: uppercase; font-weight: bold;">{{ order.get_order_status()}}</h2>
-                  <p>Order #{{ order.get_order_id() }}</p>
-                  <div class="row user-info" style="position: absolute; bottom: 0;">
-                      <p>Name: {{ order.get_name() }}</p>
-                      <div class="col-6">
-                          <h5 style="font-weight: 500;">Contact</h5>
-                          <p>Contact Number: {{ order.get_contact_num() }}</p>
-                          <p>Email: {{ order.get_email() }}</p>
-                      </div>
-                      <div class="col-6">
-                          <h5>Shipping</h5>
-                          <p>Shipping Method: {{ order.get_ship_method() }}</p>
-                          <p>Shipping Address: {{ order.get_ship_address() }}</p>
-                      </div>
-                  </div>
-              </div>
-              <br>
-              <div class="col-md-3 col-12 order_summary">
-                  <table>
-                    <thead>
-                      <tr>
-                          <th colspan="4"><h5>Order Summary ({{ order.get_item_count() }})</h5></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                    {% if order.get_buy_item() != '' %}
-                        <tr class="label">
-                            <td colspan="4"><h6>Buy</h6></td>
-                        </tr>
-                        {% for book in order.get_buy_item() %}
-                        <tr class="products">
-                            <td><img src={{ books_dict[book].get_img() }}></td>
-                            <td style="text-align:left;">{{ books_dict[book].get_title() }}</td>
-                            <td>X{{ order.get_buy_item()[book] }}</td>
-                            <td>${{ books_dict[book].get_price() }}</td>
-                        {% endfor %}
-                    {% endif %}
-                    {% if order.get_rent_item() != '' %}
-                        <tr class="label">
-                            <td colspan="4">
-                                <h6>Rent
-                                    {% if order.get_returned_status() == 'Returned' %}
-                                        <a href="/admin/manage_orders/edit_return/{{ order.get_order_id() }}"><span class="float-right">{{ order.get_return_date() }} ({{ order.get_returned_status() }})</span></a>
-                                    {% elif order.get_return_date() > order.get_today_date() and order.get_returned_status != 'Returned' %}
-                                        <a href="/admin/manage_orders/edit_return/{{ order.get_order_id() }}"><span class="float-right" style="color:#8B8000;">{{order.get_return_date() }} ({{ order.get_returned_status() }})</span></a>
-                                    {% else %}
-                                        <a href="/admin/manage_orders/edit_return/{{ order.get_order_id() }}"><span class="float-right" style="color:red;">{{order.get_return_date() }} ({{ order.get_returned_status() }})</span></a>
-                                    {% endif %}
-                                </h6>
-                            </td>
-                        </tr>
-                        {% for book in order.get_rent_item() %}
-                        <tr class="products">
-                            {% if book != 'Returned' %}
-                            <td><img src={{ books_dict[book].get_img() }}></td>
-                            <td colspan="2" style="text-align:left;">{{ books_dict[book].get_title() }}</td>
-                            <td>{{ "$%.2f"|format((books_dict[book].get_price()|float)*0.1) }}</td>
-                            {% endif %}
-                        </tr>
-                        {% endfor %}
-                    {% endif %}
-                      <tr class="bottom-sticky">
-                          <td colspan="4">
-                              <h5>Total Price <span class="float_right">{{ "$%.2f"|format(order.get_total_price()) }}</span></h5>
-                          </td>
-                      </tr>
-                    </tbody>
-                  </table>
-              </div>
-          </div>
-          <hr>
-          {% endfor %}
-          {% endif %}
-      </div>
-
-      <div class="tab-pane fade" id="Shipped-order" role="tabpanel" aria-labelledby="Shipped-order-tab">
-          {% if ship_order|length == 0 %}
-          <br>
-          <h4>You have no received orders.</h4>
-          {% else %}
-          {% for order in ship_order %}
-          <div class="row">
-              <div class="order-card col-md-9 col-12" style="position: relative;">
-                  <h2 style="text-transform: uppercase; font-weight: bold;">{{ order.get_order_status()}}</h2>
-                  <p>Order #{{ order.get_order_id() }}</p>
-                  <div class="row user-info" style="position: absolute; bottom: 0;">
-                      <p>Name: {{ order.get_name() }}</p>
-                      <div class="col-6">
-                          <h5 style="font-weight: 500;">Contact</h5>
-                          <p>Contact Number: {{ order.get_contact_num() }}</p>
-                          <p>Email: {{ order.get_email() }}</p>
-                      </div>
-                      <div class="col-6">
-                          <h5>Shipping</h5>
-                          <p>Shipping Method: {{ order.get_ship_method() }}</p>
-                          <p>Shipping Address: {{ order.get_ship_address() }}</p>
-                      </div>
-                      <div class="bottom-right-padding" style="text-align: right;">
-                          <a href="/my-orders/confirm-delivery/{{order.get_order_id}}" class="btn defaultbtn">Confirm Delivery</a>
-                      </div>
-                  </div>
-              </div>
-              <br>
-              <div class="col-md-3 col-12 order_summary">
-                  <table>
-                    <thead>
-                      <tr>
-                          <th colspan="4"><h5>Order Summary ({{ order.get_item_count() }})</h5></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                    {% if order.get_buy_item() != '' %}
-                        <tr class="label">
-                            <td colspan="4"><h6>Buy</h6></td>
-                        </tr>
-                        {% for book in order.get_buy_item() %}
-                        <tr class="products">
-                            <td><img src={{ books_dict[book].get_img() }}></td>
-                            <td style="text-align:left;">{{ books_dict[book].get_title() }}</td>
-                            <td>X{{ order.get_buy_item()[book] }}</td>
-                            <td>${{ books_dict[book].get_price() }}</td>
-                        {% endfor %}
-                    {% endif %}
-                    {% if order.get_rent_item() != '' %}
-                        <tr class="label">
-                            <td colspan="4">
-                                <h6>Rent
-                                </h6>
-                            </td>
-                        </tr>
-                        {% for book in order.get_rent_item() %}
-                        <tr class="products">
-                            {% if book != 'Returned' %}
-                            <td><img src={{ books_dict[book].get_img() }}></td>
-                            <td colspan="2" style="text-align:left;">{{ books_dict[book].get_title() }}</td>
-                            <td>{{ "$%.2f"|format((books_dict[book].get_price()|float)*0.1) }}</td>
-                            {% endif %}
-                        </tr>
-                        {% endfor %}
-                    {% endif %}
-                      <tr class="bottom-sticky">
-                          <td colspan="4">
-                              <h5>Total Price <span class="float_right">{{ "$%.2f"|format(order.get_total_price()) }}</span></h5>
-                          </td>
-                      </tr>
-                    </tbody>
-                  </table>
-              </div>
-          </div>
-          <hr>
-          {% endfor %}
-          {% endif %}
-      </div>
-
-        <div class="tab-pane fade" id="delivered-order" role="tabpanel" aria-labelledby="delivered-order-tab">
-          {% if deliver_order|length == 0 %}
-          <br>
-          <h4>None of the orders have been delivered.</h4>
-          {% else %}
-          {% for order in deliver_order %}
-          <div class="row">
-              <div class="order-card col-md-9 col-12" style="position: relative;">
-                  <h2 style="text-transform: uppercase; font-weight: bold;">{{ order.get_order_status()}}</h2>
-                  <p>Order #{{ order.get_order_id() }}</p>
-                  <div class="row user-info" style="position: absolute; bottom: 0;">
-                      <p>Name: {{ order.get_name() }}</p>
-                      <div class="col-6">
-                          <h5 style="font-weight: 500;">Contact</h5>
-                          <p>Contact Number: {{ order.get_contact_num() }}</p>
-                          <p>Email: {{ order.get_email() }}</p>
-                      </div>
-                      <div class="col-6">
-                          <h5>Shipping</h5>
-                          <p>Shipping Method: {{ order.get_ship_method() }}</p>
-                          <p>Shipping Address: {{ order.get_ship_address() }}</p>
-                      </div>
-                  </div>
-              </div>
-              <br>
-              <div class="col-md-3 col-12 order_summary">
-                  <table>
-                    <thead>
-                      <tr>
-                          <th colspan="4"><h5>Order Summary ({{ order.get_item_count() }})</h5></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                    {% if order.get_buy_item() != '' %}
-                        <tr class="label">
-                            <td colspan="4"><h6>Buy</h6></td>
-                        </tr>
-                        {% for book in order.get_buy_item() %}
-                        <tr class="products">
-                            <td><img src={{ books_dict[book].get_img() }}></td>
-                            <td style="text-align:left;">{{ books_dict[book].get_title() }}</td>
-                            <td>X{{ order.get_buy_item()[book] }}</td>
-                            <td>${{ books_dict[book].get_price() }}</td>
-                        {% endfor %}
-                    {% endif %}
-                    {% if order.get_rent_item() != '' %}
-                        <tr class="label">
-                            <td colspan="4">
-                                <h6>Rent
-                                    {% if order.get_returned_status() == 'Returned' %}
-                                        <a href="/admin/manage_orders/edit_return/{{ order.get_order_id() }}"><span class="float-right">{{ order.get_return_date() }} ({{ order.get_returned_status() }})</span></a>
-                                    {% elif order.get_return_date() > order.get_today_date() and order.get_returned_status != 'Returned' %}
-                                        <a href="/admin/manage_orders/edit_return/{{ order.get_order_id() }}"><span class="float-right" style="color:#8B8000;">{{order.get_return_date() }} ({{ order.get_returned_status() }})</span></a>
-                                    {% else %}
-                                        <a href="/admin/manage_orders/edit_return/{{ order.get_order_id() }}"><span class="float-right" style="color:red;">{{order.get_return_date() }} ({{ order.get_returned_status() }})</span></a>
-                                    {% endif %}
-                                </h6>
-                            </td>
-                        </tr>
-                        {% for book in order.get_rent_item() %}
-                        <tr class="products">
-                            {% if book != 'Returned' %}
-                            <td><img src={{ books_dict[book].get_img() }}></td>
-                            <td colspan="2" style="text-align:left;">{{ books_dict[book].get_title() }}</td>
-                            <td>{{ "$%.2f"|format((books_dict[book].get_price()|float)*0.1) }}</td>
-                            {% endif %}
-                        </tr>
-                        {% endfor %}
-                    {% endif %}
-                      <tr class="bottom-sticky">
-                          <td colspan="4">
-                              <h5>Total Price <span class="float_right">{{ "$%.2f"|format(order.get_total_price()) }}</span></h5>
-                          </td>
-                      </tr>
-                    </tbody>
-                  </table>
-              </div>
-          </div>
-          <hr>
-          {% endfor %}
-          {% endif %}
-      </div>
+    <div class="tab-pane fade show active" id="all-order" role="tabpanel" aria-labelledby="all-order-tab">
+        {% if all_order|length == 0 %}
+        <br>
+        <h4>You have no orders yet.</h4>
+        {% else %}
+        {% for order in all_order %}
+        <div class="row">
+            <div class="order-card col-md-9 col-12" style="position: relative;">
+                <h2 style="text-transform: uppercase; font-weight: bold;">{{ order.get_order_status()}}</h2>
+                <p>Order #{{ order.get_order_id() }}</p>
+                <div class="row user-info" style="position: absolute; bottom: 0;">
+                    <p>Name: {{ order.get_name() }}</p>
+                    <div class="col-6">
+                        <h5 style="font-weight: 500;">Contact</h5>
+                        <p>Contact Number: {{ order.get_contact_num() }}</p>
+                        <p>Email: {{ order.get_email() }}</p>
+                    </div>
+                    <div class="col-6">
+                        <h5>Shipping</h5>
+                        <p>Shipping Method: {{ order.get_ship_method() }}</p>
+                        <p>Shipping Address: {{ order.get_ship_address() }}</p>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="col-md-3 col-12 order_summary">
+                <table>
+                <thead>
+                    <tr>
+                        <th colspan="4"><h5>Order Summary ({{ order.get_item_count() }})</h5></th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% if order.get_buy_item() != '' %}
+                    <tr class="label">
+                        <td colspan="4"><h6>Buy</h6></td>
+                    </tr>
+                    {% for book in order.get_buy_item() %}
+                    <tr class="products">
+                        <td><img src={{ books_dict[book].get_img() }}></td>
+                        <td style="text-align:left;">{{ books_dict[book].get_title() }}</td>
+                        <td>X{{ order.get_buy_item()[book] }}</td>
+                        <td>${{ books_dict[book].get_price() }}</td>
+                    {% endfor %}
+                {% endif %}
+                {% if order.get_rent_item() != '' %}
+                    <tr class="label">
+                        <td colspan="4">
+                            <h6>Rent
+                                {% if order.get_returned_status() == 'Returned' %}
+                                    <a href="/admin/manage_orders/edit_return/{{ order.get_order_id() }}"><span class="float-right">{{ order.get_return_date() }} ({{ order.get_returned_status() }})</span></a>
+                                {% elif order.get_return_date() > order.get_today_date() and order.get_returned_status != 'Returned' %}
+                                    <a href="/admin/manage_orders/edit_return/{{ order.get_order_id() }}"><span class="float-right" style="color:#8B8000;">{{order.get_return_date() }} ({{ order.get_returned_status() }})</span></a>
+                                {% else %}
+                                    <a href="/admin/manage_orders/edit_return/{{ order.get_order_id() }}"><span class="float-right" style="color:red;">{{order.get_return_date() }} ({{ order.get_returned_status() }})</span></a>
+                                {% endif %}
+                            </h6>
+                        </td>
+                    </tr>
+                    {% for book in order.get_rent_item() %}
+                    <tr class="products">
+                        {% if book != 'Returned' %}
+                        <td><img src={{ books_dict[book].get_img() }}></td>
+                        <td colspan="2" style="text-align:left;">{{ books_dict[book].get_title() }}</td>
+                        <td>{{ "$%.2f"|format((books_dict[book].get_price()|float)*0.1) }}</td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                {% endif %}
+                    <tr class="bottom-sticky">
+                        <td colspan="4">
+                            <h5>Total Price <span class="float_right">{{ "$%.2f"|format(order.get_total_price()) }}</span></h5>
+                        </td>
+                    </tr>
+                </tbody>
+                </table>
+            </div>
+        </div>
+        <hr>
+        {% endfor %}
+        {% endif %}
 
     </div>
 
+    <div class="tab-pane fade" id="new-order" role="tabpanel" aria-labelledby="new-order-tab">
+        {% if confirm_order|length == 0 %}
+        <br>
+        <h4>You have no confirmed orders.</h4>
+        {% else %}
+        {% for order in confirm_order %}
+        <div class="row">
+            <div class="order-card col-md-9 col-12" style="position: relative;">
+                <h2 style="text-transform: uppercase; font-weight: bold;">{{ order.get_order_status()}}</h2>
+                <p>Order #{{ order.get_order_id() }}</p>
+                <div class="row user-info" style="position: absolute; bottom: 0;">
+                    <p>Name: {{ order.get_name() }}</p>
+                    <div class="col-6">
+                        <h5 style="font-weight: 500;">Contact</h5>
+                        <p>Contact Number: {{ order.get_contact_num() }}</p>
+                        <p>Email: {{ order.get_email() }}</p>
+                    </div>
+                    <div class="col-6">
+                        <h5>Shipping</h5>
+                        <p>Shipping Method: {{ order.get_ship_method() }}</p>
+                        <p>Shipping Address: {{ order.get_ship_address() }}</p>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="col-md-3 col-12 order_summary">
+                <table>
+                <thead>
+                    <tr>
+                        <th colspan="4"><h5>Order Summary ({{ order.get_item_count() }})</h5></th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% if order.get_buy_item() != '' %}
+                    <tr class="label">
+                        <td colspan="4"><h6>Buy</h6></td>
+                    </tr>
+                    {% for book in order.get_buy_item() %}
+                    <tr class="products">
+                        <td><img src={{ books_dict[book].get_img() }}></td>
+                        <td style="text-align:left;">{{ books_dict[book].get_title() }}</td>
+                        <td>X{{ order.get_buy_item()[book] }}</td>
+                        <td>${{ books_dict[book].get_price() }}</td>
+                    {% endfor %}
+                {% endif %}
+                {% if order.get_rent_item() != '' %}
+                    <tr class="label">
+                        <td colspan="4">
+                            <h6>Rent
+                                {% if order.get_returned_status() == 'Returned' %}
+                                    <a href="/admin/manage_orders/edit_return/{{ order.get_order_id() }}"><span class="float-right">{{ order.get_return_date() }} ({{ order.get_returned_status() }})</span></a>
+                                {% elif order.get_return_date() > order.get_today_date() and order.get_returned_status != 'Returned' %}
+                                    <a href="/admin/manage_orders/edit_return/{{ order.get_order_id() }}"><span class="float-right" style="color:#8B8000;">{{order.get_return_date() }} ({{ order.get_returned_status() }})</span></a>
+                                {% else %}
+                                    <a href="/admin/manage_orders/edit_return/{{ order.get_order_id() }}"><span class="float-right" style="color:red;">{{order.get_return_date() }} ({{ order.get_returned_status() }})</span></a>
+                                {% endif %}
+                            </h6>
+                        </td>
+                    </tr>
+                    {% for book in order.get_rent_item() %}
+                    <tr class="products">
+                        {% if book != 'Returned' %}
+                        <td><img src={{ books_dict[book].get_img() }}></td>
+                        <td colspan="2" style="text-align:left;">{{ books_dict[book].get_title() }}</td>
+                        <td>{{ "$%.2f"|format((books_dict[book].get_price()|float)*0.1) }}</td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                {% endif %}
+                    <tr class="bottom-sticky">
+                        <td colspan="4">
+                            <h5>Total Price <span class="float_right">{{ "$%.2f"|format(order.get_total_price()) }}</span></h5>
+                        </td>
+                    </tr>
+                </tbody>
+                </table>
+            </div>
+        </div>
+        <hr>
+        {% endfor %}
+        {% endif %}
+    </div>
+
+    <div class="tab-pane fade" id="Confirmed-order" role="tabpanel" aria-labelledby="Confirmed-order-tab">
+        {% if confirm_order|length == 0 %}
+        <br>
+        <h4>You have no shipped orders.</h4>
+        {% else %}
+        {% for order in confirm_order %}
+        <div class="row">
+            <div class="order-card col-md-9 col-12" style="position: relative;">
+                <h2 style="text-transform: uppercase; font-weight: bold;">{{ order.get_order_status()}}</h2>
+                <p>Order #{{ order.get_order_id() }}</p>
+                <div class="row user-info" style="position: absolute; bottom: 0;">
+                    <p>Name: {{ order.get_name() }}</p>
+                    <div class="col-6">
+                        <h5 style="font-weight: 500;">Contact</h5>
+                        <p>Contact Number: {{ order.get_contact_num() }}</p>
+                        <p>Email: {{ order.get_email() }}</p>
+                    </div>
+                    <div class="col-6">
+                        <h5>Shipping</h5>
+                        <p>Shipping Method: {{ order.get_ship_method() }}</p>
+                        <p>Shipping Address: {{ order.get_ship_address() }}</p>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="col-md-3 col-12 order_summary">
+                <table>
+                <thead>
+                    <tr>
+                        <th colspan="4"><h5>Order Summary ({{ order.get_item_count() }})</h5></th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% if order.get_buy_item() != '' %}
+                    <tr class="label">
+                        <td colspan="4"><h6>Buy</h6></td>
+                    </tr>
+                    {% for book in order.get_buy_item() %}
+                    <tr class="products">
+                        <td><img src={{ books_dict[book].get_img() }}></td>
+                        <td style="text-align:left;">{{ books_dict[book].get_title() }}</td>
+                        <td>X{{ order.get_buy_item()[book] }}</td>
+                        <td>${{ books_dict[book].get_price() }}</td>
+                    {% endfor %}
+                {% endif %}
+                {% if order.get_rent_item() != '' %}
+                    <tr class="label">
+                        <td colspan="4">
+                            <h6>Rent
+                                {% if order.get_returned_status() == 'Returned' %}
+                                    <a href="/admin/manage_orders/edit_return/{{ order.get_order_id() }}"><span class="float-right">{{ order.get_return_date() }} ({{ order.get_returned_status() }})</span></a>
+                                {% elif order.get_return_date() > order.get_today_date() and order.get_returned_status != 'Returned' %}
+                                    <a href="/admin/manage_orders/edit_return/{{ order.get_order_id() }}"><span class="float-right" style="color:#8B8000;">{{order.get_return_date() }} ({{ order.get_returned_status() }})</span></a>
+                                {% else %}
+                                    <a href="/admin/manage_orders/edit_return/{{ order.get_order_id() }}"><span class="float-right" style="color:red;">{{order.get_return_date() }} ({{ order.get_returned_status() }})</span></a>
+                                {% endif %}
+                            </h6>
+                        </td>
+                    </tr>
+                    {% for book in order.get_rent_item() %}
+                    <tr class="products">
+                        {% if book != 'Returned' %}
+                        <td><img src={{ books_dict[book].get_img() }}></td>
+                        <td colspan="2" style="text-align:left;">{{ books_dict[book].get_title() }}</td>
+                        <td>{{ "$%.2f"|format((books_dict[book].get_price()|float)*0.1) }}</td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                {% endif %}
+                    <tr class="bottom-sticky">
+                        <td colspan="4">
+                            <h5>Total Price <span class="float_right">{{ "$%.2f"|format(order.get_total_price()) }}</span></h5>
+                        </td>
+                    </tr>
+                </tbody>
+                </table>
+            </div>
+        </div>
+        <hr>
+        {% endfor %}
+        {% endif %}
+    </div>
+
+    <div class="tab-pane fade" id="Shipped-order" role="tabpanel" aria-labelledby="Shipped-order-tab">
+        {% if ship_order|length == 0 %}
+        <br>
+        <h4>You have no received orders.</h4>
+        {% else %}
+        {% for order in ship_order %}
+        <div class="row">
+            <div class="order-card col-md-9 col-12" style="position: relative;">
+                <h2 style="text-transform: uppercase; font-weight: bold;">{{ order.get_order_status()}}</h2>
+                <p>Order #{{ order.get_order_id() }}</p>
+                <div class="row user-info" style="position: absolute; bottom: 0;">
+                    <p>Name: {{ order.get_name() }}</p>
+                    <div class="col-6">
+                        <h5 style="font-weight: 500;">Contact</h5>
+                        <p>Contact Number: {{ order.get_contact_num() }}</p>
+                        <p>Email: {{ order.get_email() }}</p>
+                    </div>
+                    <div class="col-6">
+                        <h5>Shipping</h5>
+                        <p>Shipping Method: {{ order.get_ship_method() }}</p>
+                        <p>Shipping Address: {{ order.get_ship_address() }}</p>
+                    </div>
+                    <div class="bottom-right-padding" style="text-align: right;">
+                        <a href="/my-orders/confirm-delivery/{{order.get_order_id}}" class="btn defaultbtn">Confirm Delivery</a>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="col-md-3 col-12 order_summary">
+                <table>
+                <thead>
+                    <tr>
+                        <th colspan="4"><h5>Order Summary ({{ order.get_item_count() }})</h5></th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% if order.get_buy_item() != '' %}
+                    <tr class="label">
+                        <td colspan="4"><h6>Buy</h6></td>
+                    </tr>
+                    {% for book in order.get_buy_item() %}
+                    <tr class="products">
+                        <td><img src={{ books_dict[book].get_img() }}></td>
+                        <td style="text-align:left;">{{ books_dict[book].get_title() }}</td>
+                        <td>X{{ order.get_buy_item()[book] }}</td>
+                        <td>${{ books_dict[book].get_price() }}</td>
+                    {% endfor %}
+                {% endif %}
+                {% if order.get_rent_item() != '' %}
+                    <tr class="label">
+                        <td colspan="4">
+                            <h6>Rent
+                            </h6>
+                        </td>
+                    </tr>
+                    {% for book in order.get_rent_item() %}
+                    <tr class="products">
+                        {% if book != 'Returned' %}
+                        <td><img src={{ books_dict[book].get_img() }}></td>
+                        <td colspan="2" style="text-align:left;">{{ books_dict[book].get_title() }}</td>
+                        <td>{{ "$%.2f"|format((books_dict[book].get_price()|float)*0.1) }}</td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                {% endif %}
+                    <tr class="bottom-sticky">
+                        <td colspan="4">
+                            <h5>Total Price <span class="float_right">{{ "$%.2f"|format(order.get_total_price()) }}</span></h5>
+                        </td>
+                    </tr>
+                </tbody>
+                </table>
+            </div>
+        </div>
+        <hr>
+        {% endfor %}
+        {% endif %}
+    </div>
+
+    <div class="tab-pane fade" id="delivered-order" role="tabpanel" aria-labelledby="delivered-order-tab">
+        {% if deliver_order|length == 0 %}
+        <br>
+        <h4>None of the orders have been delivered.</h4>
+        {% else %}
+        {% for order in deliver_order %}
+        <div class="row">
+            <div class="order-card col-md-9 col-12" style="position: relative;">
+                <h2 style="text-transform: uppercase; font-weight: bold;">{{ order.get_order_status()}}</h2>
+                <p>Order #{{ order.get_order_id() }}</p>
+                <div class="row user-info" style="position: absolute; bottom: 0;">
+                    <p>Name: {{ order.get_name() }}</p>
+                    <div class="col-6">
+                        <h5 style="font-weight: 500;">Contact</h5>
+                        <p>Contact Number: {{ order.get_contact_num() }}</p>
+                        <p>Email: {{ order.get_email() }}</p>
+                    </div>
+                    <div class="col-6">
+                        <h5>Shipping</h5>
+                        <p>Shipping Method: {{ order.get_ship_method() }}</p>
+                        <p>Shipping Address: {{ order.get_ship_address() }}</p>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="col-md-3 col-12 order_summary">
+                <table>
+                <thead>
+                    <tr>
+                        <th colspan="4"><h5>Order Summary ({{ order.get_item_count() }})</h5></th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% if order.get_buy_item() != '' %}
+                    <tr class="label">
+                        <td colspan="4"><h6>Buy</h6></td>
+                    </tr>
+                    {% for book in order.get_buy_item() %}
+                    <tr class="products">
+                        <td><img src={{ books_dict[book].get_img() }}></td>
+                        <td style="text-align:left;">{{ books_dict[book].get_title() }}</td>
+                        <td>X{{ order.get_buy_item()[book] }}</td>
+                        <td>${{ books_dict[book].get_price() }}</td>
+                    {% endfor %}
+                {% endif %}
+                {% if order.get_rent_item() != '' %}
+                    <tr class="label">
+                        <td colspan="4">
+                            <h6>Rent
+                                {% if order.get_returned_status() == 'Returned' %}
+                                    <a href="/admin/manage_orders/edit_return/{{ order.get_order_id() }}"><span class="float-right">{{ order.get_return_date() }} ({{ order.get_returned_status() }})</span></a>
+                                {% elif order.get_return_date() > order.get_today_date() and order.get_returned_status != 'Returned' %}
+                                    <a href="/admin/manage_orders/edit_return/{{ order.get_order_id() }}"><span class="float-right" style="color:#8B8000;">{{order.get_return_date() }} ({{ order.get_returned_status() }})</span></a>
+                                {% else %}
+                                    <a href="/admin/manage_orders/edit_return/{{ order.get_order_id() }}"><span class="float-right" style="color:red;">{{order.get_return_date() }} ({{ order.get_returned_status() }})</span></a>
+                                {% endif %}
+                            </h6>
+                        </td>
+                    </tr>
+                    {% for book in order.get_rent_item() %}
+                    <tr class="products">
+                        {% if book != 'Returned' %}
+                        <td><img src={{ books_dict[book].get_img() }}></td>
+                        <td colspan="2" style="text-align:left;">{{ books_dict[book].get_title() }}</td>
+                        <td>{{ "$%.2f"|format((books_dict[book].get_price()|float)*0.1) }}</td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                {% endif %}
+                    <tr class="bottom-sticky">
+                        <td colspan="4">
+                            <h5>Total Price <span class="float_right">{{ "$%.2f"|format(order.get_total_price()) }}</span></h5>
+                        </td>
+                    </tr>
+                </tbody>
+                </table>
+            </div>
+        </div>
+        <hr>
+        {% endfor %}
+        {% endif %}
+    </div>
+
+</div>
 {% endblock %}
 
 {% block scripts %}
