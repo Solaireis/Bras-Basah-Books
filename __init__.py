@@ -21,7 +21,7 @@ from forms import SignUpForm, LoginForm, ChangePasswordForm, \
                   Enquiry, UserEnquiry, Faq, FaqEntry, AddBookForm, \
                   Coupon, CreateCoupon, OrderForm, RequestCoupon, ReplyEnquiry, \
                   UpdateCoupon
-
+from Cart import Discount
 
 # CONSTANTS
 DEBUG = True            # Debug flag (True when debugging)
@@ -1055,6 +1055,16 @@ def checkout():
     total_price = 0
     buy_cart = {}
     rent_cart = []
+    # eden integration
+    discount = 0
+    discount_dict = retrieve_db('Discount',db)
+    if user_id in discount_dict:
+            user = discount_dict.get(user_id)
+            print(user)
+            discount = user.get_discount()
+            print(discount)
+    #end of eden integration
+
     try:
         books_dict = db['Books']
         db = shelve.open('database', 'c')
@@ -1090,9 +1100,15 @@ def checkout():
             for book in rent_cart:
                 total_price += float(books_dict[book].get_price()) * 0.1
                 total_price = float(("%.2f" % round(total_price, 2)))
+    #eden integration
+    before_discount = total_price
+    discount_applied = total_price * discount/100
+    total_price = total_price - discount_applied
     Orderform = OrderForm.OrderForm(request.form)
+
     return render_template("checkout.html", form=Orderform, total_price=total_price, buy_count=buy_count,\
-                           rent_count=rent_count, buy_cart=buy_cart, rent_cart=rent_cart, books_dict=books_dict)
+                           rent_count=rent_count, buy_cart=buy_cart, rent_cart=rent_cart, books_dict=books_dict\
+                               ,discount_applied=discount_applied, before_discount=before_discount)
 
 #
 # Create Check out session with Stripe
@@ -1984,6 +2000,7 @@ def apply_coupons():
                 flash('success')
             else:
                 print('no match for coupon')
+                flash('Invalid coupon code','error')
             
 
 
