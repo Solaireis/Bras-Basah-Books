@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results{% endblock %}
+
+{% block stylesheets %}
+
+<link rel="stylesheet" href="/static/css/home.css">
+<link rel="stylesheet" href="/static/css/allbooks.css">
+
+{% endblock %}
+
+{% block content %}
+
+<!-- breadcrumb -->
+    <div aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">All Books</li>
+          {% if sort_this in language_list %}
+        <li class="breadcrumb-item active" aria-current="page">{{ sort_this }}</li>
+          {% endif %}
+      </ol>
+    </div>
+
+    <!-- ----------------------------- Filter ----------------------------- -->
+    <div class="row justify-content-center">
+
+      <!-- ----------------------- Hide filters and sort by button ----------------------- -->
+      <div  id="expand">
+        <div class="right-filter">
+          <div class="dropdown" style="float:right;">
+            <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">Sort By</button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+              <li><a class="dropdown-item" href="/all_books/latest">Latest</a></li>
+              <li><a class="dropdown-item" href="/all_books/name_a_to_z">Name (A to Z)</a></li>
+              <li><a class="dropdown-item" href="/all_books/name_z_to_a">Name (Z to A)</a></li>
+              <li><a class="dropdown-item" href="/all_books/price_low_to_high">Price (Low to High)</a></li>
+              <li><a class="dropdown-item" href="/all_books/price_high_to_low">Price (High to Low)</a></li>
+            </ul>
+          </div>
+          <div class="dropdown" style="float:right;">
+            <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">Filter Language</button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton3">
+                {% if language_list|length == 0 %}
+                <li><a class="dropdown-item">No books at the moment</a></li>
+                {% else %}
+                {% for language in language_list %}
+              <li><a class="dropdown-item" href="/all_books/{{ language }}">{{ language }}</a></li>
+                {% endfor %}
+                {% endif %}
+            </ul>
+          </div>
+        </div>
+
+        <br><br>
+
+        <!-- All products -->
+        <div class="row justify-content-center">
+          <div class="col-12">
+              {% if sort_dict|length == 0 %}
+              <h2><center>Oops..</center></h2>
+              <h3><center>There is no books for sale at the moment.</center></h3>
+                {% else %}
+                <div class="row row-cols-2 row-cols-md-4 g-4">
+                  {% for book in sort_dict %}
+                  <div class="col">
+                    <a href="/book/{{books_dict[book].get_book_id()}}">
+                        <div class="card h-100">
+                        <img src="{{ books_dict[book].get_img() }}" class="card-img-top" alt="{{ books_dict[book].get_title() }}" width="259" height="371.56">
+                        <div class="card-body">
+                        <h5 class="card-title">{{ books_dict[book].get_title() }}</h5>
+                        <p class="card-text">${{ "%.2f"|format(books_dict[book].get_price()|float) }}</p>
+                        </div>
+                        </div>
+                    </a>
+                  </div>
+                  {% endfor %}
+                {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+  <script type="text/javascript">
+
+   </script>
+
+
+{% endblock %}

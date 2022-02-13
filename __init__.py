@@ -632,6 +632,45 @@ def account():
                            email=user.get_email())
 
 
+@app.route("/search-result/<sort_this>")
+def search_result(sort_this):
+    sort_dict = {}
+    books_dict = {}
+    language_list = []
+    try:
+        books_dict = {}
+        db = shelve.open('database', 'r')
+        books_dict = db['Books']
+        db.close()
+        for book in books_dict:
+            language = books_dict[book].get_language()
+            if language not in language_list:
+                language_list.append(language)
+                print(language_list)
+
+    except:
+        print("There are no books")
+
+    if books_dict != {}:
+        if sort_this == 'latest':
+            books_dict = dict(reversed(list(books_dict.items())))
+            sort_dict = books_dict
+        elif sort_this == 'name_a_to_z':
+            sort_dict = name_a_to_z(books_dict)
+        elif sort_this == 'name_z_to_a':
+            sort_dict = name_z_to_a(books_dict)
+        elif sort_this == 'price_low_to_high':
+            sort_dict = price_low_to_high(books_dict)
+        elif sort_this == 'price_high_to_low':
+            sort_dict = price_high_to_low(books_dict)
+        elif sort_this.capitalize() in language_list:
+            sort_dict = filter_language(sort_this)
+        else:
+            sort_dict = books_dict
+
+    return render_template("all_books.html", books_dict=books_dict, sort_dict=sort_dict, language_list=language_list)
+
+
 """    Admin Pages    """
 
 # Manage accounts page
