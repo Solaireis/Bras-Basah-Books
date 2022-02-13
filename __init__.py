@@ -1220,7 +1220,7 @@ def orderconfirm():
 #
 # Admin manage orders
 #
-@app.route("/admin/manage_orders")
+@app.route("/admin/manage-orders")
 def manage_orders():
     db_order = []
     delivery_method = []
