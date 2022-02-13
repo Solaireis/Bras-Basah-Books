@@ -1,3 +1,5 @@
+{% set is_admin = session["UserType"] == "Admin" %}
+{% set is_guest = session["UserType"] == "Guest" %}
 <!-- Brand name and Logo -->
 <nav class="navbar brand-nav d-none d-lg-block">
   <div class="container-fluid">
@@ -12,7 +14,7 @@
   <div class="container-fluid">
       <ul class="navbar-nav">
       {# Display a different nav bar for different admins #}
-      {% if session["UserType"] == "Admin" %}
+      {% if is_admin %}
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('add_book') }}" id="first-nav-item">Add Book</a>
         </li>
@@ -41,7 +43,7 @@
           <div class="dropdown">
             <button class="dropbtn dropdown-toggle">Coupon</button>
             <div class="dropdown-content">
-              <a href="{{ url_for('coupon_adm') }}"> Create Coupon</a>
+              <a href="{{ url_for('coupon_adm') }}">Create Coupon</a>
               <a href="{{ url_for('retrieve_coupons') }}">Coupon Dashboard</a>
             </div>
           </div>
@@ -69,7 +71,7 @@
       </ul>
 
       <ul class="nav justify-content-end">
-        {% if session["UserType"] != "Admin" %}
+        {% if not is_admin %}
         <form class="d-flex">
           <li class="">
             <input class="form-control" type="search" placeholder="Search..." aria-label="Search" id="search-field">
@@ -79,10 +81,26 @@
           </li>
         </form>
         {% endif %}
-        <li class="nav-item {{ 'me-2' if session['UserType'] == 'Admin' }}">
-          <a class="nav-link" href="{{ url_for('account') }}"><i class="fa fa-user nav-icon"></i></a>
+        <li class="nav-item {{ 'me-2' if is_admin }}">
+          <div class="dropdown">
+            <a class="nav-link" href="{{ url_for('login' if is_guest else 'account') }}"><i class="fa fa-user nav-icon"></i></a>
+            <div class="dropdown-content account-link-display">
+            {% if is_guest %}
+              <a href="{{ url_for('login') }}">Login</a>
+              <a href="{{ url_for('sign_up') }}">Sign Up</a>
+            {% else %}
+              <a href="{{ url_for('account') }}">Account</a>
+              {% if not is_admin %}
+              <a href="{{ url_for('my_orders') }}">Orders</a>
+              <a href="#">Wishlist</a>
+              <a href="#">Coupons</a>
+              {% endif %}
+              <a href="{{ url_for('logout') }}">Logout</a>
+            {% endif %}
+            </div>
+          </div>
         </li>
-        {% if session["UserType"] != "Admin" %}
+        {% if not is_admin %}
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('cart') }}"><i class="fa fa-shopping-cart nav-icon"></i></a>
         </li>
@@ -110,7 +128,7 @@
               </li>
             </td>
             <td>
-            {% if session["UserType"] != "Admin" %}
+            {% if not is_admin %}
               <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('cart') }}"><i class="fa fa-shopping-cart"></i><h5>Cart</h5></a>
               </li>
@@ -119,7 +137,7 @@
           </tr>
         </table>
         {# Display a different nav bar for different admins #}
-        {% if session["UserType"] == "Admin" %}
+        {% if is_admin %}
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('add_book') }}">Add Book</a>
         </li>

@@ -161,8 +161,13 @@ footer a:focus, footer a:hover {
   background-color: white;
   min-width: 200px;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
+  z-index: 3; /* I set it to 3 cause flash message needs to be below it*/
   padding: 0px;
+}
+/* Account link's dropdown */
+.dropdown-content.account-link-display {
+  right: 0;
+  min-width: 120px;
 }
 
 /* Links inside the dropdown */
