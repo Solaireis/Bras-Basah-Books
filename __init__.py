@@ -2594,6 +2594,21 @@ def reorder():
 
     return redirect(url_for("cart"))
 
+# User Sitemap
+@app.route('/user-sitemap',methods=["GET", "POST"])
+def user_sitemap():
+    return render_template("user_sitemap.html")
+
+
+# Terms of Use
+@app.route('/tos',methods=["GET", "POST"])
+def tos():
+    return render_template("tos.html")
+
+@app.route('/pp',methods=["GET", "POST"])
+def pp():
+    return render_template("privacypolicy.html")
+
 #
 # end of luqman's codes
 #
