@@ -72,9 +72,9 @@
 
       <ul class="nav justify-content-end">
         {% if not is_admin %}
-        <form class="d-flex">
+        <form class="d-flex" method="GET" action="{{ url_for('search_result', sort_this='all') }}">
           <li class="">
-            <input class="form-control" type="search" placeholder="Search..." aria-label="Search" id="search-field">
+            <input name="q" class="form-control" type="search" placeholder="Search..." aria-label="Search" id="search-field">
           </li>
           <li class="">
             <button class="btn nav-link" type="submit"><i class="fa fa-search"></i></button>
