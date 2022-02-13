@@ -21,7 +21,7 @@ from forms import SignUpForm, LoginForm, ChangePasswordForm, \
                   Enquiry, UserEnquiry, Faq, FaqEntry, AddBookForm, \
                   Coupon, CreateCoupon, OrderForm, RequestCoupon, ReplyEnquiry, \
                   UpdateCoupon
-
+from Cart import Discount 
 
 # CONSTANTS
 DEBUG = True            # Debug flag (True when debugging)
@@ -1131,6 +1131,15 @@ def checkout():
     total_price = 0
     buy_cart = {}
     rent_cart = []
+    # eden integration
+    discount = 0
+    discount_dict = retrieve_db('Discount',db)
+    if user_id in discount_dict:
+            user = discount_dict.get(user_id)
+            print(user)
+            discount = user.get_discount()
+            print(discount)
+
     try:
         books_dict = db['Books']
         db = shelve.open('database', 'c')
@@ -1164,11 +1173,18 @@ def checkout():
             rent_cart = user_cart[1]
             rent_count = len(user_cart[1])
             for book in rent_cart:
-                total_price += float(books_dict[book].get_price()) * 0.1
+                total_price += float(books_dict[book].get_price()) * 0.1  #implement discounts here
                 total_price = float(("%.2f" % round(total_price, 2)))
+        
+        #eden integration
+        before_discount = total_price
+        discount_applied = total_price * discount/100
+        total_price = total_price - discount_applied
+
     Orderform = OrderForm.OrderForm(request.form)
     return render_template("checkout.html", form=Orderform, total_price=total_price, buy_count=buy_count,\
-                           rent_count=rent_count, buy_cart=buy_cart, rent_cart=rent_cart, books_dict=books_dict)
+                           rent_count=rent_count, buy_cart=buy_cart, rent_cart=rent_cart, books_dict=books_dict\
+                               ,discount_applied=discount_applied, before_discount=before_discount)
 
 #
 # Create Check out session with Stripe
@@ -1991,9 +2007,6 @@ def retrieve_cu_coupons():
 #apply coupon
 @app.route('/apply-coupon', methods=['GET', 'POST'])
 def apply_coupons():
-    
-    
-
     #Kelly & Luqman cart function
     user_id = get_user().get_user_id()
     cart_dict = {}
@@ -2045,6 +2058,7 @@ def apply_coupons():
     if request.method == 'POST' and apply_coupon.validate():
         db = shelve.open('database','c')
         coupon_dict = retrieve_db('Coupon',db)
+        db.close()
 
         coupon_applied = None
         for key in coupon_dict:
@@ -2058,11 +2072,49 @@ def apply_coupons():
                 total_price = total_price - total_price * (discount / 100)
                 print('total price',total_price)
                 flash('success')
+                db = shelve.open('database','c')
+                discount_dict = retrieve_db('Discount',db)
+                if discount_dict:
+                    for key in discount_dict: #create the discount
+                        if key == user_id:
+                            user = discount_dict.get(key)
+                            user.set_discount(discount)
+                            db['Discount'] = discount_dict
+                            db.close()
+                            print("success")
+                            return render_template("coupon/apply_coupon.html",form=apply_coupon, total_price=total_price,\
+                                 buy_count=buy_count, rent_count=rent_count, buy_cart=buy_cart, rent_cart=rent_cart,\
+                                books_dict=books_dict, discount_applied = discount_applied)
+                        else:
+                            user_discount = Discount(discount)
+                            print("no error 1")
+                            discount_dict[user_id] = user_discount
+                            print("no error 2")
+                            db['Discount'] = discount_dict
+                            print("no error 3")
+                            db.close()
+                            print("succcess")
+                            return render_template("coupon/apply_coupon.html",form=apply_coupon, total_price=total_price,\
+                                 buy_count=buy_count, rent_count=rent_count, buy_cart=buy_cart, rent_cart=rent_cart,\
+                                books_dict=books_dict, discount_applied = discount_applied)
+                else:
+                    user_discount = Discount(discount)
+                    print("no error 4")
+                    discount_dict[user_id] = user_discount
+                    print("no error 5")
+                    db['Discount'] = discount_dict
+                    print("no error 6")
+                    db.close()
+                    print("succcess")
+                    return render_template("coupon/apply_coupon.html",form=apply_coupon, total_price=total_price,\
+                                 buy_count=buy_count, rent_count=rent_count, buy_cart=buy_cart, rent_cart=rent_cart,\
+                                books_dict=books_dict, discount_applied = discount_applied)
             else:
                 print('no match for coupon')
+                flash('Invalid coupon code','error')
             
 
-
+    
     return render_template("coupon/apply_coupon.html",form=apply_coupon, total_price=total_price, buy_count=buy_count,\
                            rent_count=rent_count, buy_cart=buy_cart, rent_cart=rent_cart,\
                                 books_dict=books_dict, discount_applied = discount_applied)
