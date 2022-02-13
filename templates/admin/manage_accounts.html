@@ -25,7 +25,7 @@
   <div class="row">
     {# Render sidebar #}
     {{ admin_sidebar("Manage Accounts") }}
-    <div class="col-lg-10 py-3 px-5">
+    <div class="d-flex flex-column col-lg-10 py-3 px-5">
       <div class="d-flex">
         <h2 class="me-auto">User account overview</h2>
         <button type="button" class="btn btn-primary" id="addUserButton" data-bs-toggle="modal" data-bs-target="#addUser">
@@ -77,9 +77,9 @@
           </tbody>
         </table>
       </div>
-      <div class="account-footer clearfix">
+      <div class="account-footer clearfix mt-auto">
         <div class="hint-text">Showing <b>{{ entries_range[0] }}-{{ entries_range[1] }}</b> out of <b>{{ total_entries }}</b> users</div>
-        <ul class="pagination">
+        <ul class="pagination mb-0">
           <li class="page-item {{ 'disabled' if first_page == active_page }}">
             <a class="page-link" href="{{ generate_link(first_page) }}" data-bs-toggle="tooltip" title="Start"><span>&laquo;</span></a>
           </li>
