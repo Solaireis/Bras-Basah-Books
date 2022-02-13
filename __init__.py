@@ -2160,7 +2160,7 @@ def add_book():
 
 
 # Inventory system for admin
-@app.route('/inventory')
+@app.route('/admin/inventory')
 def inventory():
 
     try:
@@ -2177,7 +2177,7 @@ def inventory():
         book = books_dict.get(key)
         books_list.append(book)
 
-    return render_template('inventory.html', count=len(books_list), books_list=books_list)
+    return render_template('admin/inventory.html', count=len(books_list), books_list=books_list)
 
 
 # Update Book
