@@ -133,3 +133,16 @@ th{
   width: 100%;
   float: left;
 }
+
+#exampleModal .buying-cart td, #exampleModal .buying-cart .fa-times, .update-btn{
+    color: #4b8282 !important;
+}
+
+.update-btn{
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+.quantity-selector{
+    width: 100%;
+}
