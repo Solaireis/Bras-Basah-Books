@@ -2,6 +2,10 @@
   display: none;
 }
 
+.left-filter{
+    margin-top: 50px;
+}
+
 h5{
   cursor: pointer;
 }
