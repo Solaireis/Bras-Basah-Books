@@ -16,10 +16,10 @@
       {# Display a different nav bar for different admins #}
       {% if is_admin %}
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('inventory') }}" id="first-nav-item">Inventory</a>
+          <a class="nav-link" href="{{ url_for('add_book') }}" id="first-nav-item">Add Book</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('add_book') }}">Add Book</a>
+          <a class="nav-link" href="{{ url_for('inventory') }}">Inventory</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('manage_orders') }}">Manage Orders</a>
@@ -53,10 +53,10 @@
           <a class="nav-link" href="{{ url_for('home') }}" id="first-nav-item">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">English Books</a>
+          <a class="nav-link" href="/all_books/English">English Books</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Chinese Books</a>
+          <a class="nav-link" href="/all_books/Chinese">Chinese Books</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/all_books/all">All Books</a>
@@ -92,6 +92,7 @@
               <a href="{{ url_for('account') }}">Account</a>
               {% if not is_admin %}
               <a href="{{ url_for('my_orders') }}">Orders</a>
+              <a href="#">Wishlist</a>
               <a href="{{url_for('request_coupons')}}">Apply Coupons</a>
               <a href="{{url_for('retrieve_cu_coupons')}}">Retrieve Coupons</a>
               {% endif %}
@@ -139,10 +140,10 @@
         {# Display a different nav bar for different admins #}
         {% if is_admin %}
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('inventory') }}">Inventory</a>
+          <a class="nav-link" href="{{ url_for('add_book') }}">Add Book</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('add_book') }}">Add Book</a>
+          <a class="nav-link" href="{{ url_for('inventory') }}">Inventory</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('manage_orders') }}">Manage Orders</a>
@@ -170,10 +171,10 @@
           <a class="nav-link" href="{{ url_for('home') }}" id="">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">English Books</a>
+          <a class="nav-link" href="/all_books/English">English Books</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Chinese Books</a>
+          <a class="nav-link" href="/all_books/Chinese">Chinese Books</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/all_books/all">All Books</a>
