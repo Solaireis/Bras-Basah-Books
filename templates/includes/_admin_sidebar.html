@@ -2,9 +2,15 @@
 {% macro admin_sidebar(active) %}
   {% set links_dict = {
     "Dashboard": url_for("home"),
+    "Add Book": url_for("add_book"),
     "Inventory": url_for("home"),
+    "Manage Orders": url_for("manage_orders"),
     "Manage Accounts": url_for("home"),
-    "Create Coupons": url_for("home")
+    "Enquiry Dashboard": url_for("enquiry_retrieve_adm"),
+    "Create FAQ": url_for("create_faq"),
+    "FAQ Dashboard": url_for("faq_dashboard"),
+    "Create Coupons": url_for("coupon_adm"),
+    "Coupon Dashboard": url_for("retrieve_coupons")
   } %}
   {% do links_dict.update({active: "#"}) %}
   {{ render_sidebar(links_dict) }}
