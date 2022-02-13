@@ -26,14 +26,14 @@
           <a class="nav-link" href="{{ url_for('manage_accounts') }}">Manage Accounts</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('enquiry_retrieve_adm') }}">Contact Us Admin</a>
+          <a class="nav-link" href="{{ url_for('enquiry_retrieve_adm') }}">Contact Us dashboard</a>
         </li>
         <li class="nav-item me-3">
           <div class="dropdown">
             <button class="dropbtn dropdown-toggle">FAQ</button>
             <div class="dropdown-content">
-              <a href="#">FAQ Admin</a>
-              <a href="#">Retrieve FAQ</a>
+              <a href="{{ url_for('create_faq') }}">Create Faq</a>
+              <a href="{{url_for('faq_dashboard') }}">FAQ dashboard</a>
             </div>
           </div>
         </li>
@@ -41,7 +41,7 @@
           <div class="dropdown">
             <button class="dropbtn dropdown-toggle">Coupon</button>
             <div class="dropdown-content">
-              <a href="{{ url_for('coupon_adm') }}">Coupon</a>
+              <a href="{{ url_for('coupon_adm') }}"> Create Coupon</a>
               <a href="{{ url_for('retrieve_coupons') }}">Coupon Dashboard</a>
             </div>
           </div>
