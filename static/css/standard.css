@@ -356,11 +356,6 @@ footer .fa-brands:hover, .footer-link:hover, .footer-link2:hover{
 /* --------------------------------------------------------------------------
     Buttons
 -------------------------------------------------------------------------- */
-.btn-warning {
-  background-color: #4b8282 !important;
-  color: #fff !important;
-  border: 0 !important;
-}
 .btn-warning:hover {
   background-color: #588B8B;
 }
@@ -378,6 +373,10 @@ footer .fa-brands:hover, .footer-link:hover, .footer-link2:hover{
 button:focus, .btn:focus {
   border-color: #97bdbd !important;
   box-shadow: 0 0 0 0.25rem rgba(72, 161, 161, 0.25) !important;
+}
+button.nav-link:focus {
+  border-color: #e9ecef #e9ecef #dee2e6 !important;
+  box-shadow: none !important;
 }
 
 .btn.btn-primary {
