@@ -21,7 +21,7 @@ from forms import SignUpForm, LoginForm, ChangePasswordForm, \
                   Enquiry, UserEnquiry, Faq, FaqEntry, AddBookForm, \
                   Coupon, CreateCoupon, OrderForm, RequestCoupon, ReplyEnquiry, \
                   UpdateCoupon
-from Cart import Discount 
+
 
 # CONSTANTS
 DEBUG = True            # Debug flag (True when debugging)
@@ -810,111 +810,35 @@ def manage_accounts():
 
 
 #
-#
 # Start of Chee Qing's Codes
-#
 #
 
 #
 # allbooks
 #
-@app.route("/all_books/<sort_this>")
-def all_books(sort_this):
+@app.route("/allbooks")
+def allbooks():
     books = []
-    sort_dict = {}
-    books_dict = {}
     try:
         books_dict = {}
         db = shelve.open('database', 'r')
         books_dict = db['Books']
         db.close()
+
     except:
         print("There are no books")
 
-    if sort_this == 'latest':
-        books_dict = dict(reversed(list(books_dict.items())))
-        sort_dict = books_dict
-    elif sort_this == 'name_a_to_z':
-        sort_dict = name_a_to_z(books_dict)
-    elif sort_this == 'name_z_to_a':
-        sort_dict = name_z_to_a(books_dict)
-    elif sort_this == 'price_low_to_high':
-        sort_dict = price_low_to_high(books_dict)
-    elif sort_this == 'price_high_to_low':
-        sort_dict = price_high_to_low(books_dict)
-    else:
-        sort_dict = books_dict
+    books_dict = dict(reversed(list(books_dict.items())))
 
-    return render_template("all_books.html", books_dict=books_dict, sort_dict=sort_dict)
+    for book in books_dict:
+        books.append(books_dict[book].get_title())
 
-# Sort name from a to z
-def name_a_to_z(books_dict):
-    sort_dict = {}
-    unsorted_dict = {}
-    if books_dict != {}:
-        for book in books_dict:
-            unsorted_dict.update({book: books_dict[book].get_title()})
-        print(unsorted_dict)
-        unsorted_dict = sorted(unsorted_dict.items(), key = lambda kv:(kv[1], kv[0]))
-        unsorted_dict = {k: v for k, v in unsorted_dict}
-        print(unsorted_dict)
-
-        for id in unsorted_dict:
-            if id in books_dict:
-                sort_dict.update({id: books_dict[id]})
-    return sort_dict
-
-# Sort name from z to a
-def name_z_to_a(books_dict):
-    sort_dict = {}
-    unsorted_dict = {}
-    if books_dict != {}:
-        for book in books_dict:
-            unsorted_dict.update({book: books_dict[book].get_title()})
-        print(unsorted_dict)
-        unsorted_dict = sorted(unsorted_dict.items(), key = lambda kv:(kv[1], kv[0]), reverse=True)
-        unsorted_dict = {k: v for k, v in unsorted_dict}
-        print(unsorted_dict)
-
-        for id in unsorted_dict:
-            if id in books_dict:
-                sort_dict.update({id: books_dict[id]})
-    return sort_dict
-
-# Sort price from low to high
-def price_low_to_high(books_dict):
-    sort_dict = {}
-    unsorted_dict = {}
-    if books_dict != {}:
-        for book in books_dict:
-            unsorted_dict.update({book: float(books_dict[book].get_price())})
-        print(unsorted_dict)
-        unsorted_dict = sorted(unsorted_dict.items(), key = lambda kv:(kv[1], kv[0]))
-        unsorted_dict = {k: v for k, v in unsorted_dict}
-        print(unsorted_dict)
-
-        for id in unsorted_dict:
-            if id in books_dict:
-                sort_dict.update({id: books_dict[id]})
-    return sort_dict
-
-# Sort price from high to low
-def price_high_to_low(books_dict):
-    sort_dict = {}
-    unsorted_dict = {}
-    if books_dict != {}:
-        for book in books_dict:
-            unsorted_dict.update({book: float(books_dict[book].get_price())})
-        print(unsorted_dict)
-        unsorted_dict = sorted(unsorted_dict.items(), key = lambda kv:(kv[1], kv[0]), reverse=True)
-        unsorted_dict = {k: v for k, v in unsorted_dict}
-        print(unsorted_dict)
-
-        for id in unsorted_dict:
-            if id in books_dict:
-                sort_dict.update({id: books_dict[id]})
-    return sort_dict
-
+    print(books)
+    books.sort(reverse=True)
+    print(books)
+    #sorted_dict = sorted(books.get_title(), key=lambda kv:(kv[1], kv[0]))
+    #print(sorted_dict)
+    return render_template("all_books.html", books_dict=books_dict)
 
 #
 # add to buying cart
@@ -1131,15 +1055,6 @@ def checkout():
     total_price = 0
     buy_cart = {}
     rent_cart = []
-    # eden integration
-    discount = 0
-    discount_dict = retrieve_db('Discount',db)
-    if user_id in discount_dict:
-            user = discount_dict.get(user_id)
-            print(user)
-            discount = user.get_discount()
-            print(discount)
-
     try:
         books_dict = db['Books']
         db = shelve.open('database', 'c')
@@ -1173,18 +1088,11 @@ def checkout():
             rent_cart = user_cart[1]
             rent_count = len(user_cart[1])
             for book in rent_cart:
-                total_price += float(books_dict[book].get_price()) * 0.1  #implement discounts here
+                total_price += float(books_dict[book].get_price()) * 0.1
                 total_price = float(("%.2f" % round(total_price, 2)))
-        
-        #eden integration
-        before_discount = total_price
-        discount_applied = total_price * discount/100
-        total_price = total_price - discount_applied
-
     Orderform = OrderForm.OrderForm(request.form)
     return render_template("checkout.html", form=Orderform, total_price=total_price, buy_count=buy_count,\
-                           rent_count=rent_count, buy_cart=buy_cart, rent_cart=rent_cart, books_dict=books_dict\
-                               ,discount_applied=discount_applied, before_discount=before_discount)
+                           rent_count=rent_count, buy_cart=buy_cart, rent_cart=rent_cart, books_dict=books_dict)
 
 #
 # Create Check out session with Stripe
@@ -1304,12 +1212,11 @@ def orderconfirm():
         print(cart_dict, 'updated database[cart]')
         print(db_order, 'updated databas[order]')
     except KeyError:
-        return redirect(url_for("my_orders"))
+        return redirect(url_for("home"))
 
     db.close()
     return render_template("order_confirmation.html")
 
-      
 #
 # Admin manage orders
 #
@@ -2008,6 +1915,9 @@ def retrieve_cu_coupons():
 #apply coupon
 @app.route('/apply-coupon', methods=['GET', 'POST'])
 def apply_coupons():
+    
+    
+
     #Kelly & Luqman cart function
     user_id = get_user().get_user_id()
     cart_dict = {}
@@ -2059,7 +1969,6 @@ def apply_coupons():
     if request.method == 'POST' and apply_coupon.validate():
         db = shelve.open('database','c')
         coupon_dict = retrieve_db('Coupon',db)
-        db.close()
 
         coupon_applied = None
         for key in coupon_dict:
@@ -2073,49 +1982,11 @@ def apply_coupons():
                 total_price = total_price - total_price * (discount / 100)
                 print('total price',total_price)
                 flash('success')
-                db = shelve.open('database','c')
-                discount_dict = retrieve_db('Discount',db)
-                if discount_dict:
-                    for key in discount_dict: #create the discount
-                        if key == user_id:
-                            user = discount_dict.get(key)
-                            user.set_discount(discount)
-                            db['Discount'] = discount_dict
-                            db.close()
-                            print("success")
-                            return render_template("coupon/apply_coupon.html",form=apply_coupon, total_price=total_price,\
-                                 buy_count=buy_count, rent_count=rent_count, buy_cart=buy_cart, rent_cart=rent_cart,\
-                                books_dict=books_dict, discount_applied = discount_applied)
-                        else:
-                            user_discount = Discount(discount)
-                            print("no error 1")
-                            discount_dict[user_id] = user_discount
-                            print("no error 2")
-                            db['Discount'] = discount_dict
-                            print("no error 3")
-                            db.close()
-                            print("succcess")
-                            return render_template("coupon/apply_coupon.html",form=apply_coupon, total_price=total_price,\
-                                 buy_count=buy_count, rent_count=rent_count, buy_cart=buy_cart, rent_cart=rent_cart,\
-                                books_dict=books_dict, discount_applied = discount_applied)
-                else:
-                    user_discount = Discount(discount)
-                    print("no error 4")
-                    discount_dict[user_id] = user_discount
-                    print("no error 5")
-                    db['Discount'] = discount_dict
-                    print("no error 6")
-                    db.close()
-                    print("succcess")
-                    return render_template("coupon/apply_coupon.html",form=apply_coupon, total_price=total_price,\
-                                 buy_count=buy_count, rent_count=rent_count, buy_cart=buy_cart, rent_cart=rent_cart,\
-                                books_dict=books_dict, discount_applied = discount_applied)
             else:
                 print('no match for coupon')
-                flash('Invalid coupon code','error')
             
 
-    
+
     return render_template("coupon/apply_coupon.html",form=apply_coupon, total_price=total_price, buy_count=buy_count,\
                            rent_count=rent_count, buy_cart=buy_cart, rent_cart=rent_cart,\
                                 books_dict=books_dict, discount_applied = discount_applied)
@@ -2270,7 +2141,7 @@ def add_book():
 
         else:
             print('Allowed image types are -> png, jpg, jpeg')
-            return render_template('admin/add_book.html', form=add_book_form)
+            return render_template('add_book.html', form=add_book_form)
 
         print("Book image uploaded under " + str(path))
 
@@ -2450,13 +2321,14 @@ def book_info2(id):
 
 
 # My Orders for customer
-@app.route("/user/my-orders")
+@app.route("/my-orders")
 def my_orders():
     db_order = []
     new_order = []
     confirm_order = []
     ship_order = []
     deliver_order = []
+    canceled_order = []
     books_dict = {}
     try:
         db = shelve.open('database')
@@ -2476,6 +2348,8 @@ def my_orders():
             ship_order.append(order)
         elif order.get_order_status() == 'Delivered':
             deliver_order.append(order)
+        elif order.get_order_status() == 'Canceled':
+            canceled_order.append(order)
         else:
             print(order, "Wrong order status")
 
@@ -2485,13 +2359,11 @@ def my_orders():
     confirm_order = list(reversed(confirm_order))
     ship_order = list(reversed(ship_order))
     deliver_order = list(reversed(deliver_order))
-    # print('new order', new_order)
-    # print('confirm order', confirm_order)
-    # print('ship order',ship_order)
-    # print('deliver order',deliver_order)
+    canceled_order = list(reversed(canceled_order))
 
+    print("canceled_order: ", canceled_order)
     return render_template('user/my_orders.html', all_order=db_order, new_order=new_order, \
-                           confirm_order=confirm_order, ship_order=ship_order, deliver_order=deliver_order, \
+                           confirm_order=confirm_order, ship_order=ship_order, deliver_order=deliver_order, canceled_order=canceled_order, \
                            books_dict=books_dict)
 
 
@@ -2518,6 +2390,49 @@ def confirm_delivery(order_id):
     db['Order'] = db_order
     db.close()
     return redirect(request.referrer)
+
+# Re-order cancelled order
+@app.route("/reorder", methods=['GET', 'POST'])
+def reorder():
+    db_order = []
+    reorder_cart = []
+    books_dict = {}
+    try:
+        db = shelve.open('database')
+        books_dict = db['Books']
+        db_order = db['Order']
+        print(db_order, "orders in database")
+        db.close()
+
+    except:
+        print("There might not have any orders as of now.")
+
+    for order in db_order:
+        if order.get_order_status() == 'Canceled':
+            reorder_cart.append(order)
+        else:
+            print(order, "Wrong order status")
+
+    cart_dict = {}
+
+    for order in reorder_cart:
+        user_id = get_user().get_user_id()
+        cart_db = shelve.open('database', 'c')
+        try:
+            cart_dict = cart_db['Cart']
+            print(cart_dict, "original database")
+
+        except:
+            print("Error while retrieving data from cart.db")
+
+        orderlist = []
+        orderlist.append(order.get_buy_item())
+        orderlist.append(order.get_rent_item())
+        cart_dict[user_id] = orderlist
+        cart_db['Cart'] = cart_dict
+
+    return redirect(url_for("cart"))
+
 #
 # end of luqman's codes
 #
@@ -2630,3 +2545,5 @@ def test_rand(num,x=('James','Robert','John','Michael','William','David','Richar
 
 if __name__ == "__main__":
     app.run(debug=DEBUG)  # Run app
+
+    

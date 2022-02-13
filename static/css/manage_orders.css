@@ -12,11 +12,12 @@
 
 /* order card */
 .order-card{
-    background: white;
+    background: #FFF9F3;
     margin-top: 10px;
     padding: 15px;
     border-radius: 10px;
     min-height: 300px;
+    border: #d3e6e6 solid 1px;
 }
 
 .order-date{
@@ -25,13 +26,17 @@
 }
 
 .order-id{
-    font-size: 2em;
+    font-size: 1.9em;
 }
 
 .order-card form{
-    padding: 15px;
-    font-size: 1.3em;
+    padding: 25px;
+    font-size: 1em;
     font-weight: normal;
+}
+
+.ship{
+    font-size:0.9em;
 }
 
 .order-card form input[type=submit]{
@@ -45,8 +50,8 @@
     opacity: 0.9;
 }
 
-.user-info h5{
-    font-size: 1.4em;
+.user-info h6{
+    font-size: 1.3em;
 }
 
 .user-info p{
@@ -55,11 +60,15 @@
 }
 
 
-/* Order Summary */
+/* Order Summary #4b8282 */
 .order_summary{
     overflow-y: auto;
-    height: 350px;
+    height: 400px;
     margin-top: 10px;
+}
+
+.order_summary table td{
+    background: #FFF9F3;
 }
 
 .order_summary thead th{
@@ -82,6 +91,7 @@
     border-bottom-right-radius: 8px;
     border-bottom-left-radius: 8px;
     padding: 12px;
+    background:#d3e6e6;
 }
 
 .float_right{
