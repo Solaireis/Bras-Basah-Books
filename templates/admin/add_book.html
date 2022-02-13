@@ -3,130 +3,131 @@
 {% block title %}Add Book{% endblock %}
 
 {% block stylesheets %}
+<link rel="stylesheet" href="/static/css/user.css">
 <link rel="stylesheet" href="/static/css/addbook.css">
 {% endblock %}
 
-{% block navbar %}
-  {% include 'includes/_navbar.html' %}
-{% endblock %}
-
 {% block content %}
+{% from "includes/_render_breadcrumb.html" import render_breadcrumb %}
+{% from "includes/_admin_sidebar.html" import admin_sidebar %}
 {% from "includes/_form.html" import render_field %}
 
-<!--<h1 class="display-4 padding-top">Add Book</h1>-->
 
-<div class="padding-bottom" >
-<a href="{{ url_for('inventory') }}" style="color: #588B8B;">> Back to inventory</a>
-</div>
-<div class="d-flex justify-content-center align-items-center h-100">
-<div class = "card">
-<div class="card-header">
+{# Render breadcrumbs #}
+{{ render_breadcrumb({
+  "Home": url_for("home"),
+  "Inventory": url_for("inventory"),
+  "Add Book": "#"
+}) }}
 
-<h2 class="m-0">Add Book</h2>
-</div>
-
-<form method="POST" enctype="multipart/form-data" action="">
-
+{# Container to contain display for user related things #}
+<div class="container user-container">
   <div class="row">
-    <div class="col grid-form-spacer">
-      <div class="form-group">
-        {{ render_field(form.language, class="form-control") }}
+    {# Render sidebar #}
+    {{ admin_sidebar("Add Book") }}
+    <div class="d-flex flex-column col-lg-10 py-3 px-5">
+      <h2>Add Book</h2>
+      <hr>
+      <form method="POST" enctype="multipart/form-data" action="">
 
-        <details>
-          <summary>
-            <span class="icon">Add new</span>
-          </summary>
-          <p>
-            {{form.language2}}
-          </p>
-        </details>
+        <div class="row">
+          <div class="col-md grid-form-spacer">
+            <div class="form-group">
+              {{ render_field(form.language, class="form-control") }}
 
-      </div>
-    </div>
-    <div class="col grid-form-spacer">
-      <div class="form-group">
-        {{ render_field(form.category, class="form-control") }}
+              <details>
+                <summary>
+                  <span class="icon">Add new</span>
+                </summary>
+                <p>
+                  {{form.language2}}
+                </p>
+              </details>
 
-        <details>
-          <summary>
-            <span class="icon">Add new</span>
-          </summary>
-          <p>
-            {{form.category2}}
-          </p>
-        </details>
+            </div>
+          </div>
+          <div class="col-md grid-form-spacer">
+            <div class="form-group">
+              {{ render_field(form.category, class="form-control") }}
+
+              <details>
+                <summary>
+                  <span class="icon">Add new</span>
+                </summary>
+                <p>
+                  {{form.category2}}
+                </p>
+              </details>
 
 
-      </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md grid-form-spacer">
+            <div class="form-group">
+              {{ render_field(form.age, class="form-control") }}
+            </div>
+          </div>
+          <div class="col-md grid-form-spacer">
+            <div class="form-group">
+              {{ render_field(form.action, class="form-check", style="list-style-type:none") }}
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md d-flex flex-column">
+            <div class="form-group grid-form-spacer">
+              {{ render_field(form.title, class="form-control") }}
+            </div>
+            <div class="form-group grid-form-spacer">
+              {{ render_field(form.author, class="form-control") }}
+            </div>
+            <div class="form-group grid-form-spacer">
+              {{ render_field(form.price, class="form-control") }}
+            </div>
+            <div class="form-group grid-form-spacer">
+              {{ render_field(form.qty, class="form-control") }}
+            </div>
+            <div class="form-group grid-form-spacer">
+              {{ render_field(form.desc, class="form-control", rows="10") }}
+            </div>
+            <div class="form-group mt-auto">
+              <input type="submit" value="Add Book" class="btn btn-primary"/>
+            </div>
+          </div>
+
+          <div class="col-md d-flex flex-column">
+            <div class="form-group grid-form-spacer">
+              <label for="bookCoverField">Book Cover</label>
+              <input type="file" class="form-control" id="bookCoverField" required name="bookimg" accept="image/*" onchange="showBook();">
+              <div class="book-cover-field mt-2">
+                <div class="img-wrapper img-2-3 img-thumbnail">
+                    <img class="d-none" id="bookcover" alt="Book Cover" src="">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-auto">
+          
+        </div>
+      </form>
     </div>
   </div>
-
-  <div class="row">
-    <div class="col grid-form-spacer">
-      <div class="form-group">
-        {{ render_field(form.age, class="form-control") }}
-      </div>
-    </div>
-    <div class="col grid-form-spacer">
-      <div class="form-group">
-        {{ render_field(form.action, class="form-check", style="list-style-type:none") }}
-      </div>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col grid-form-spacer">
-      <div class="form-group">
-        {{ render_field(form.title, class="form-control") }}
-      </div>
-    </div>
-    <div class="col grid-form-spacer">
-      <div class="form-group">
-        {{ render_field(form.author, class="form-control") }}
-      </div>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col grid-form-spacer">
-      <div class="form-group">
-        {{ render_field(form.price, class="form-control") }}
-      </div>
-    </div>
-    <div class="col grid-form-spacer">
-      <div class="form-group">
-        {{ render_field(form.qty, class="form-control") }}
-      </div>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col grid-form-spacer">
-      <div class="form-group">
-        {{ render_field(form.desc, class="form-control") }}
-      </div>
-    </div>
-    <div class="col grid-form-spacer">
-<!--      <div class="form-group">-->
-<!--        {{ render_field(form.img, class="form-control") }}-->
-<!--      </div>-->
-      <div class="form-group">
-        <input type="file" required name="bookimg" accept="image/*" onchange="document.getElementById('bookcover').src = window.URL.createObjectURL(this.files[0])">
-        <img id="bookcover" alt="Book Cover" src="" width="100px" height="150px">
-      </div>
-    </div>
-  </div>
-
-  <div class="grid-form-spacer submitpadding">
-    <input type="submit" value="Add Book" class="btn btn-primary themecolor submitcenter"/>
-  </div>
-</form>
-
-</div>
 </div>
 {% endblock %}
-
-{% block footer %}
-  {% include 'includes/_footer.html' %}
+{% block scripts %}
+<script>
+function showBook() {
+  let field = document.getElementById("bookCoverField");
+  let bookcover = document.getElementById('bookcover');
+  bookcover.src = window.URL.createObjectURL(field.files[0]);
+  bookcover.classList.remove("d-none");
+}
+</script>
 {% endblock %}
 
