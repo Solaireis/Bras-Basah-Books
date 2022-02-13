@@ -4,80 +4,98 @@
 {% block stylesheets %}
 
 <link rel="stylesheet" href="/static/css/adm_dashboard.css">
+<link rel="stylesheet" href="/static/css/user.css">
 
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid container-padding-50">
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-sm-12">
-                    <h1>FAQ overview</h1>
 
-                </div>
+{% from "includes/_render_breadcrumb.html" import render_breadcrumb %}
+{% from "includes/_admin_sidebar.html" import admin_sidebar %}
+
+{# Render breadcrumbs #}
+{{ render_breadcrumb({
+"Home": url_for("home"),
+"Faq Dashboard": "#"
+}) }}
+
+{# Container to contain display for user related things #}
+<div class="container user-container">
+    <div class="row">
+        {# Render sidebar #}
+        {{ admin_sidebar("FAQ Dashboard") }} {# changes which side is active #}
+        <div class="col-lg-10 py-3 px-5"> {# sets navbar to the side #}
+            <h2>FAQ Dashboard</h2>
+            <hr>
+            <div class="col-sm-12">
+                <table class="table table-light" >
+                    <thead>
+                        <tr>
+                            <th>
+                                Total FAQ:
+                            </th>
+
+                            {% if count == 0 %}
+                            <th colspan="4">0</th>
+                            {% elif count == 1 %}
+                            <th colspan="4">1</th>
+                            {% else %}
+                            <th colspan="4"> {{ count }}</th>
+                            {% endif %}
+
+                        </tr>
+                        <tr>
+                            <th> FAQ ID</th>
+                            <th>Title</th>
+                            <th>Desc</th>
+                            <th colspan = "2"> Actions</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for faq in faq_list %}
+                        <tr>
+                            <td>{{faq.get_count()}}</td>
+                            <td>{{faq.get_title()}}</td>
+                            <td>{{faq.get_desc()}}</td>
+                            <td>
+                                <a href="{{url_for('update_faq',id = faq.get_count())}}" class="btn btn-warning">Update</a>
+                            </td>
+                            <td>
+                                
+                                <!-- Button trigger modal -->
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal{{loop.index}}">
+                                    Delete
+                                </button>
+                                
+                                <!-- Modal -->
+                                <div class="modal fade" id="exampleModal{{loop.index}}" tabindex="-1" aria-labelledby="exampleModalLabel{{loop.index}}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel{{loop.index}}">Modal title</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Are you sure you want to delete</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                                        <form action="{{url_for('delete_faq',id= faq.get_count())}}" method="POST">
+                                            <input type="submit" value="Delete" class="btn btn-danger">
+                                        </form>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
             </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <h3>View other Dashboard</h3>
-                            <ul class="hide-bp">
-                                <li class="list-padding"><a class="dashboard-links" href="#">Admin Dashboard</a></li>
-                                <li class="list-padding"><a class="dashboard-links" href="#">Inventory</a></li>
-                                <li class="list-padding"><a class="dashboard-links" href="#">Manage Accounts</a></li>
-                                <li class="list-padding"><a class="dashboard-links" href="#">Enquiry</a></li>
-                                <li class="list-padding"><a class="dashboard-links" href="#">FAQ</a></li>
-                             </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-12">
-                    <table class="table table-light" >
-                        <thead>
-                            <tr>
-                                <th>
-                                    Total FAQ:
-                                </th>
 
-                                {% if count == 0 %}
-                                <th colspan="3">0</th>
-                                {% elif count == 1 %}
-                                <th colspan="3">1</th>
-                                {% else %}
-                                <th colspan="3"> {{ count }}</th>
-                                {% endif %}
-
-                            </tr>
-                            <tr>
-                                <th> FAQ ID</th>
-                                <th>Title</th>
-                                <th>Desc</th>
-                                <th colspan = "2"> Actions</th>
-
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {% for faq in faq_list %}
-                            <tr>
-                                <td>{{faq.get_count()}}</td>
-                                <td>{{faq.get_title()}}</td>
-                                <td>{{faq.get_desc()}}</td>
-                                <td>
-                                    <a href ="/update-faq/{{faq.get_count()}}" class="btn btn-warning">Update</a>
-                                </td>
-                                <td>
-                                    <form action="{{url_for('delete_faq',id= faq.get_count())}}" method="POST">
-                                        <input type="submit" value="Delete" class="btn btn-danger">
-                                    </form>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
         </div>
     </div>
 </div>

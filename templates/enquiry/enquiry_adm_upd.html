@@ -3,16 +3,32 @@
 {% block stylesheets %}
 
 <link rel="stylesheet" href="/static/css/adm_dashboard.css">
+<link rel="stylesheet" href="/static/css/user.css">
 
 {% endblock %}
 {% block content %}
+
 {% from "includes/_form.html" import render_field %}
-<div class="container-padding-50"></div>
-<div class="card ">
-  <div class="card-body">
-      <h1 class="display-4 rubik">Reply to Customer</h1>
-      <h3> Here you reply to Customer</h3>
-      <div class="container-padding-20"></div>
+{% from "includes/_render_breadcrumb.html" import render_breadcrumb %}
+{% from "includes/_admin_sidebar.html" import admin_sidebar %}
+
+{# Render breadcrumbs #}
+{{ render_breadcrumb({
+  "Home": url_for("home"),
+  "Update Enquiry": "#"
+}) }}
+
+{# Container to contain display for user related things #}
+<div class="container user-container">
+  <div class="row">
+    {# Render sidebar #}
+    {{ admin_sidebar("Enquiry Dashboard") }}
+    <div class="col-lg-10 py-3 px-5">
+      <div class="d-flex flex-column">
+        <h2 class="m-0">Reply Enquiry Customer</h2>
+        <p class="m-0">Here you reply to Customer Enquiry</p>
+      </div>
+      <hr>
       <form method="POST" action="">
         <div class="form-group container-padding-20">
           {{ render_field(form.name, class="form-control") }}
@@ -36,8 +52,11 @@
         <input type="submit" value="Submit Form" class="btn btn-warning"/>
         <input type="reset" value="Clear Values" class="btn btn-danger"/>
         </form>
+    </div>
   </div>
 </div>
+
+
 <div class="container-padding-50"></div>
 
 
