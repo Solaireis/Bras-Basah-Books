@@ -3,9 +3,3 @@ __pycache__/
 */__pycache__/
 .venv/
 .vscode/
-
-# database files
-database.*
-
-# profile pic images
-static/img/profile-pic/*
