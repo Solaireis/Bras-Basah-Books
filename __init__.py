@@ -2396,7 +2396,7 @@ def book_info2(id):
 
 
 # My Orders for customer
-@app.route("/my-orders")
+@app.route("/user/my-orders")
 def my_orders():
     db_order = []
     new_order = []
@@ -2436,7 +2436,7 @@ def my_orders():
     # print('ship order',ship_order)
     # print('deliver order',deliver_order)
 
-    return render_template('my_orders2.html', all_order=db_order, new_order=new_order, \
+    return render_template('user/my_orders.html', all_order=db_order, new_order=new_order, \
                            confirm_order=confirm_order, ship_order=ship_order, deliver_order=deliver_order, \
                            books_dict=books_dict)
 

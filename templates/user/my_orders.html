@@ -10,6 +10,8 @@
 {% endblock %}
 
 {% block content %}
+{% from "includes/_render_breadcrumb.html" import render_breadcrumb %}
+{% from "includes/_user_sidebar.html" import user_sidebar %}
     <div aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/">Home</a></li>
