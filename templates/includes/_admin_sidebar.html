@@ -1,7 +1,6 @@
 {% from "includes/_render_sidebar.html" import render_sidebar %}
 {% macro admin_sidebar(active) %}
   {% set links_dict = {
-    "Dashboard": url_for("home"),
     "Add Book": url_for("add_book"),
     "Inventory": url_for("home"),
     "Manage Orders": url_for("manage_orders"),
