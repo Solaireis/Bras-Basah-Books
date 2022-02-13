@@ -1591,7 +1591,7 @@ def create_faq():
 
         db.close()  #close database
 
-        return redirect(url_for('home')) #redirect to home page
+        flash("FAQ has been created") #flash message
     return render_template("faq/create_faq.html", form=create_faq_form) #render template
 
 #
