@@ -33,8 +33,3 @@ h5 i:hover{
   padding: 0;
   margin-left: 20px;
 }
-
-.dropdown-menu .active{
-  background-color: #4b8282;
-  color: white;
-}

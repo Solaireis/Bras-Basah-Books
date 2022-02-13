@@ -68,7 +68,7 @@
 
                         <td class="col-2"><a href="/book/{{ key }}"><img src="{{ books_dict[key].get_img() }}" alt="book cover"></a></td>
                         <td class="col-5"><a href="/book/{{ key }}"><h4>{{ books_dict[key].get_title() }}</h4></a>#{{ key }}</td>
-                        <td class="col-2"><h5>${{ books_dict[key].get_price() }}</h5></td>
+                        <td class="col-2"><h5>${{ "%.2f"|format(books_dict[key].get_price()|float) }}</h5></td>
                         <td class="col-2"><input type="number" class="quantity-selector" name="quantity" min="0" value={{ buy_cart[key] }}>
                         <button type="submit" class="btn update-btn" onclick="update_cart()">Update</button></td>
                     </form>
@@ -81,7 +81,7 @@
                     <form method="POST" action="/update_cart/{{ key }}">
                         <td rowspan="col-2"><a href="/book/{{ book }}"><img src={{ books_dict[key].get_img() }} alt="book cover"></a></td>
                         <td class="col-5"><a href="/book/{{ book }}"><p>{{ books_dict[key].get_title() }}</p></a>#{{ key }}</td>
-                        <td class="col-1"><p>${{ books_dict[key].get_price() }}</p></td>
+                        <td class="col-1"><p>${{ "%.2f"|format(books_dict[key].get_price()|float) }}</p></td>
                         <td class="col-2"><input type="number" class="quantity-selector" name="quantity" min="0" value={{ buy_cart[key] }}>
                         <button style="font-size:0.8em; padding:0px;" type="submit" class="btn update-btn" onclick="update_cart()">Update</button></td>
                     </form>
