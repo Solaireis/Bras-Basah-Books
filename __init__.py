@@ -1,4 +1,5 @@
 # Import modules
+from random import randint
 from flask import Flask, render_template, request, redirect, url_for, session, flash 
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, BadData
@@ -756,11 +757,14 @@ def manage_accounts():
 
     # Get users database
     with shelve.open("database") as db:
-        all_users = list(retrieve_db("Customers", db).values())
+        all_users = tuple(retrieve_db("Customers", db).values())
 
         # If is master admin
         if admin.is_master():
-            all_users = list(retrieve_db("Admins", db).values()) + all_users
+            # Removed master admin from list
+            admins_db = retrieve_db("Admins", db)
+            admins_db.pop(retrieve_db("UsernameToUserID", db)["admin"], None)
+            all_users = tuple(admins_db.values()) + all_users
 
     # Set page number
     last_page = math.ceil(len(all_users)/ACCOUNTS_PER_PAGE)
@@ -2432,7 +2436,10 @@ def test2(user_type):
 
     return redirect(url_for("test"))
 @app.route("/test/random/<int:num>")
-def test_rand(num):
+def test_rand(num,x=('James','Robert','John','Michael','William','David','Richard','Joseph','Thomas','Charles','Christopher','Daniel','Matthew','Anthony','Mark','Donald','Steven','Paul','Andrew','Joshua','Kenneth','Kevin','Brian','George','Edward','Ronald','Timothy','Jason','Jeffrey','Ryan','Jacob','Gary','Nicholas','Eric','Jonathan','Stephen','Larry','Justin','Scott','Brandon','Benjamin','Samuel','Gregory','Frank','Alexander','Raymond','Patrick','Jack','Dennis','Jerry','Tyler','Aaron','Jose','Adam','Henry','Nathan','Douglas','Zachary','Peter','Kyle','Walter','Ethan','Jeremy','Harold','Keith','Christian','Roger','Noah','Gerald','Carl','Terry','Sean','Austin','Arthur','Lawrence','Jesse','Dylan','Bryan','Joe','Jordan','Billy','Bruce','Albert','Willie','Gabriel','Logan','Alan','Juan','Wayne','Roy','Ralph','Randy','Eugene','Vincent','Russell','Elijah','Louis','Bobby','Philip','Johnny','Mary','Patricia','Jennifer','Linda','Elizabeth','Barbara','Susan','Jessica','Sarah','Karen','Nancy','Lisa','Betty','Margaret','Sandra','Ashley','Kimberly','Emily','Donna','Michelle','Dorothy','Carol','Amanda','Melissa','Deborah','Stephanie','Rebecca','Sharon','Laura','Cynthia','Kathleen','Amy','Shirley','Angela','Helen','Anna','Brenda','Pamela','Nicole','Emma','Samantha','Katherine','Christine','Debra','Rachel','Catherine','Carolyn','Janet','Ruth','Maria','Heather','Diane','Virginia','Julie','Joyce','Victoria','Olivia','Kelly','Christina','Lauren','Joan','Evelyn','Judith','Megan','Cheryl','Andrea','Hannah','Martha','Jacqueline','Frances','Gloria','Ann','Teresa','Kathryn','Sara','Janice','Jean','Alice','Madison','Doris','Abigail','Julia','Judy','Grace','Denise','Amber','Marilyn','Beverly','Danielle','Theresa','Sophia','Marie','Diana','Brittany','Natalie','Isabella','Charlotte','Rose','Alexis','Kayla'),y=('Smith','Johnson','Williams','Jones','Brown','Davis','Miller','Wilson','Moore','Taylor','Anderson','Thomas','Jackson','White','Harris','Martin','Thompson','Garcia','Martinez','Robinson','Clark','Rodriguez','Lewis','Lee','Walker','Hall','Allen','Young','Hernandez','King','Wright','Lopez','Hill','Scott','Green','Adams','Baker','Gonzalez','Nelson','Carter','Mitchell','Perez','Roberts','Turner','Phillips','Campbell','Parker','Evans','Edwards','Collins','Stewart','Sanchez','Morris','Rogers','Reed','Cook','Morgan','Bell','Murphy','Bailey','Rivera','Cooper','Richardson','Cox','Howard','Ward','Torres','Peterson','Gray','Ramirez','James','Watson','Brooks','Kelly','Sanders','Price','Bennett','Wood','Barnes','Ross','Henderson','Coleman','Jenkins','Perry','Powell','Long','Patterson','Hughes','Flores','Washington','Butler','Simmons','Foster','Gonzales','Bryant','Alexander','Russell','Griffin','Diaz','Hayes')):
+    import random
+    lx = len(x)-1
+    ly = len(y)-1
     with shelve.open("database") as db:
         # Get DB
         customers_db = retrieve_db("Customers", db)
@@ -2440,18 +2447,24 @@ def test_rand(num):
         email_to_user_id = retrieve_db("EmailToUserID", db)
 
         maxno = len(customers_db)+1
-
+        n=0
         for i in range(maxno, maxno+num):
-            customer = Customer(f"rand{i}", f"{i}@rand.cust", f"Password{i}")
-            customers_db[customer.get_user_id()] = customer
-            username_to_user_id["quick_switch_customer"] = customer.get_user_id()
-            email_to_user_id["quick@switch.customer"] = customer.get_user_id()
+            rand1, rand2 = x[random.randint(0,lx)], y[random.randint(0,ly)]
+            username,mail,name,gender=f"{rand1.lower()}{('_','')[random.randint(0,1)]}{rand2.lower()}{('_','')[random.randint(0,1)]}{random.randint(0,999):03}",f"{rand1.lower()}{('_','')[random.randint(0,1)]}{rand2.lower()}@{'exyz'[random.randint(0,3)]}mail.{('com','org','net')[random.randint(0,2)]}",f"{rand1}{(f' {rand2}','')[random.randint(0,1)]}",("O","MF"[random.randint(0,1)])[bool(random.randint(0,40))]
+            customer = Customer(username,mail,f"Password{i}")
+            if username not in username_to_user_id and mail not in email_to_user_id:
+                n+=1
+                customer.set_name(('',name)[bool(random.randint(0,8))])
+                customer.set_gender(('',gender)[bool(random.randint(0,3))])
+                customers_db[customer.get_user_id()] = customer
+                username_to_user_id["quick_switch_customer"] = customer.get_user_id()
+                email_to_user_id["quick@switch.customer"] = customer.get_user_id()
 
         # Save changes
         db["Customers"] = customers_db
         db["UsernameToUserID"] = username_to_user_id
         db["EmailToUserID"] = email_to_user_id
-    return f"{num} customers created"
+    return f"{n} customers created"
 
 if __name__ == "__main__":
     app.run(debug=DEBUG)  # Run app
