@@ -342,8 +342,12 @@ footer .fa-brands:hover, .footer-link:hover, .footer-link2:hover{
   height: 100%;
   object-fit: cover;
 }
+
+.img-2-3{
+  padding-top: 150%; /* 2:3 Aspect Ratio */
+}
 .img-1-1 {
-  padding-top: 100%; /* 8:5 Aspect Ratio */
+  padding-top: 100%; /* 1:1 Aspect Ratio */
 }
 .img-8-5 {
   padding-top: 62.5%; /* 8:5 Aspect Ratio */

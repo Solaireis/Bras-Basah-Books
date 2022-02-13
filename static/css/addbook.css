@@ -1,5 +1,4 @@
-.grid-form-spacer {
-    padding: 50px;
+.grid-form-spacer { /* Jabriel did some edits */
     padding-bottom: 10px;
     padding-top: 10px;
 }
@@ -7,14 +6,6 @@
 .submitcenter {
     margin:0 auto;
     display:block;
-}
-
-.themecolor {
-    background-color: #588B8B;
-}
-
-.themecolor:hover {
-    background-color: #588B8B;
 }
 
 .padding-top {
