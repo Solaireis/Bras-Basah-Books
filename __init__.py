@@ -29,9 +29,9 @@ TOKEN_MAX_AGE = 900     # Max age of token (15 mins)
 ACCOUNTS_PER_PAGE = 10  # Number of accounts to display per page (manage account page)
 
 # For image file upload (Eden having issues with this)
-#BOOK_IMG_UPLOAD_FOLDER = '1566-App-dev-Team-2/static/img/books'
+BOOK_IMG_UPLOAD_FOLDER = '1566-App-dev-Team-2/static/img/books'
 # For image file upload Everyone
-BOOK_IMG_UPLOAD_FOLDER = 'static/img/books'
+#BOOK_IMG_UPLOAD_FOLDER = 'static/img/books'
 PROFILE_PIC_UPLOAD_FOLDER = "static/img/profile-pic"
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
 
@@ -1858,36 +1858,41 @@ def coupon_adm():
         db = shelve.open('database', 'c')
         coupon_dict = retrieve_db('Coupon',db)
 
-        if coupon_dict: # if dictionary has items
-            for key in coupon_dict:
-                coupon = coupon_dict.get(key)
+        dict_list = list(coupon_dict.keys())
+        if coupon_dict:
+            empty = "Y"
+        else:
+            empty ="N"
+
+        is_exist = False
+        if empty == "Y": # if dictionary has items
+            print("dictionary has items")
+            for key in dict_list:
+    
                 # checks if there is already a coupon with the same coupon code
-                if coupon.get_coupon_code_id() == create_coupon.coupon_code.data:
+                if  key == create_coupon.coupon_code.data:
                     flash("Coupon code already exists" , "error")
                     #session["CodeExist"] = "exist"
-                else:
-                    print("First coupon no need run the key check!") # debugging purposes
-                    coupon = Coupon(create_coupon.name.data,create_coupon.discount.data,create_coupon.coupon_code.data,\
-                        create_coupon.startdate.data,create_coupon.enddate.data)
-                    coupon_dict[coupon.get_coupon_code_id()] = coupon
-                    db['Coupon'] = coupon_dict
-                    db.close() 
-                    flash ("Coupon created successfully", "success")
+                    is_exist =True
+                    break
+                
             
-        else: # assuming if the dictionary does not exist with items in it (working!)
+        if not is_exist: # assuming if the dictionary does not exist with items in it (working!)
             print('Coupons dict empty, making new dictionary')
             coupon = Coupon(create_coupon.name.data,create_coupon.discount.data,create_coupon.coupon_code.data,\
                 create_coupon.startdate.data,create_coupon.enddate.data)
             coupon_dict[coupon.get_coupon_code_id()] = coupon
             db['Coupon'] = coupon_dict
-            db.close() 
-            flash ("coupon created successfully", "success")
+             
+            
         # print('Coupons dict empty, making new dictionary')
         # coupon = Coupon(create_coupon.name.data,create_coupon.discount.data,create_coupon.coupon_code.data,\
         #     create_coupon.startdate.data,create_coupon.enddate.data)
         # coupon_dict[coupon.get_coupon_code_id()] = coupon
         # db['Coupon'] = coupon_dict
         # db.close()
+        flash ("coupon created successfully", "success")
+        db.close()
     return render_template("coupon/create_coupons.html", form=create_coupon)
 
     
@@ -2096,6 +2101,43 @@ def apply_coupons():
                 total_price = total_price - total_price * (discount / 100)
                 print('total price',total_price)
                 flash('success')
+                db = shelve.open('database','c')
+                discount_dict = retrieve_db('Discount',db)
+                if discount_dict:
+                    for key in discount_dict: #create the discount
+                        if key == user_id:
+                            user = discount_dict.get(key)
+                            user.set_discount(discount)
+                            db['Discount'] = discount_dict
+                            db.close()
+                            print("success")
+                            return render_template("coupon/apply_coupon.html",form=apply_coupon, total_price=total_price,\
+                                 buy_count=buy_count, rent_count=rent_count, buy_cart=buy_cart, rent_cart=rent_cart,\
+                                books_dict=books_dict, discount_applied = discount_applied)
+                        else:
+                            user_discount = Discount(discount)
+                            print("no error 1")
+                            discount_dict[user_id] = user_discount
+                            print("no error 2")
+                            db['Discount'] = discount_dict
+                            print("no error 3")
+                            db.close()
+                            print("succcess")
+                            return render_template("coupon/apply_coupon.html",form=apply_coupon, total_price=total_price,\
+                                 buy_count=buy_count, rent_count=rent_count, buy_cart=buy_cart, rent_cart=rent_cart,\
+                                books_dict=books_dict, discount_applied = discount_applied)
+                else:
+                    user_discount = Discount(discount)
+                    print("no error 4")
+                    discount_dict[user_id] = user_discount
+                    print("no error 5")
+                    db['Discount'] = discount_dict
+                    print("no error 6")
+                    db.close()
+                    print("succcess")
+                    return render_template("coupon/apply_coupon.html",form=apply_coupon, total_price=total_price,\
+                                 buy_count=buy_count, rent_count=rent_count, buy_cart=buy_cart, rent_cart=rent_cart,\
+                                books_dict=books_dict, discount_applied = discount_applied)
             else:
                 print('no match for coupon')
                 flash('Invalid coupon code','error')
