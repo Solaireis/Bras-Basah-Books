@@ -16,10 +16,10 @@
       {# Display a different nav bar for different admins #}
       {% if is_admin %}
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('inventory') }}">Inventory</a>
+          <a class="nav-link" href="{{ url_for('inventory') }}" id="first-nav-item">Inventory</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('add_book') }}" id="first-nav-item">Add Book</a>
+          <a class="nav-link" href="{{ url_for('add_book') }}">Add Book</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('manage_orders') }}">Manage Orders</a>
