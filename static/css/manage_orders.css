@@ -125,3 +125,8 @@ th{
     width: 50px;
     text-align: center;
 }
+
+.bottom-right-padding{
+    padding-right: 20px;
+    padding-bottom: 10px;
+}
