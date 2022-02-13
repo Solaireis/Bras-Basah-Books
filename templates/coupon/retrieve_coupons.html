@@ -5,90 +5,113 @@
 
 <link rel="stylesheet" href="/static/css/adm_dashboard.css">
 
+<link rel="stylesheet" href="/static/css/user.css"> 
+
 {% endblock %}
 
 {% block content %}
 {% from "includes/_form.html" import render_field %}
-<div class="container-fluid container-padding-50">
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-sm-12">
-                    <h1 class="display-4, main-header">Coupon dashboard</h1>
-                </div>
-            </div>
 
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <h3 class="">View other Dashboards</h3>
-                            <ul class="hide-bp">
-                                <li class="list-padding"><a class="dashboard-links" href="#">Admin Dashboard</a></li>
-                                <li class="list-padding"><a class="dashboard-links" href="#">Inventory</a></li>
-                                <li class="list-padding"><a class="dashboard-links" href="#">Manage Accounts</a></li>
-                                <li class="list-padding"><a class="dashboard-links" href="#">Enquiry</a></li>
-                                <li class="list-padding"><a class="dashboard-links" href="#">FAQ</a></li>
-                             </ul>
+{% from "includes/_render_breadcrumb.html" import render_breadcrumb %}
+{% from "includes/_admin_sidebar.html" import admin_sidebar %}
+
+{# Render breadcrumbs #}
+{{ render_breadcrumb({
+  "Home": url_for("home"),
+  "Retrieve Coupons": "#"
+}) }}
+
+{# Container to contain display for user related things #}
+<div class="container user-container">
+  <div class="row">
+    {# Render sidebar #}
+    {{ admin_sidebar("Coupon Dashboard") }}
+    <div class="col-lg-10 py-3 px-5">
+      <div class="d-flex flex-column">
+        <h2 class="m-0">Coupon Retrieve</h2>
+        <p class="m-0">Here you Retrieve coupons</p>
+      </div>
+      <hr>
+      <table class="table table-light" >
+        <thead>
+            <tr>
+              <th>
+                Total Coupons Active:
+              </th>
+              {% if count == 0 %}
+              <th colspan="7">0</th>
+              {% elif count == 1 %}
+              <th colspan="7"> 1 </th>
+              {% else %}
+              <th colspan="7">{{ count }} </th>
+              {% endif %}
+
+            </tr>
+            <tr>
+                <th> Coupon No</th>
+                <th>Name</th>
+                <th>Discount</th>
+                <th>Coupon Code</th>
+                <th>start date</th>
+                <th>end date</th>
+                <th>status</th>
+                <th colspan = "2" style="text-align:center;"> Actions</th>
+
+            </tr>
+        </thead>
+        <tbody>
+        {% for coupon in coupon_list %}
+            <tr>
+                <td>{{loop.index}}</td> <!-- loop index, so 1 , 2 , 3, 4-->
+                <td>{{coupon.get_name()}}</td>
+                <td>{{coupon.get_discount()}}</td>
+                <td>{{coupon.get_coupon_code_id()}}</td>
+                <td>{{coupon.get_start_date()}}</td>
+                <td>{{coupon.get_end_date()}}</td>
+                <td>{{coupon.get_expired()}}</td>
+
+                <td>
+                    <a href="{{url_for('update_coupons',id = coupon.get_coupon_code_id())}}"  class="btn btn-warning">Update</a>
+                </td>
+                <td>
+                
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal{{loop.index}}">
+                        Delete
+                    </button>
+                    
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal{{loop.index}}" tabindex="-1" aria-labelledby="exampleModalLabel{{loop.index}}" aria-hidden="true">
+                        <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel{{loop.index}}">Modal title</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Are you sure you want to delete</p>
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                            <form action="{{url_for('delete_coupons',id= coupon.get_coupon_code_id())}}" method="POST">
+                                <input type="submit" value="Delete" class="btn btn-danger">
+                            </form>
+                            </div>
+                        </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-sm-12">
-                <table class="table table-light" >
-                    <thead>
-                        <tr>
-                          <th>
-                            Total Coupons Active:
-                          </th>
-                          {% if count == 0 %}
-                          <th colspan="7">0</th>
-                          {% elif count == 1 %}
-                          <th colspan="7"> 1 </th>
-                          {% else %}
-                          <th colspan="7">{{ count }} </th>
-                          {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
 
-                        </tr>
-                        <tr>
-                            <th> Coupon No</th>
-                            <th>Name</th>
-                            <th>Discount</th>
-                            <th>Coupon Code</th>
-                            <th>start date</th>
-                            <th>end date</th>
-                            <th>status</th>
-                            <th colspan = "2" style="text-align:center;"> Actions</th>
-
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% for coupon in coupon_list %}
-                        <tr>
-                            <td>{{loop.index}}</td> <!-- loop index, so 1 , 2 , 3, 4-->
-                            <td>{{coupon.get_name()}}</td>
-                            <td>{{coupon.get_discount()}}</td>
-                            <td>{{coupon.get_coupon_code_id()}}</td>
-                            <td>{{coupon.get_start_date()}}</td>
-                            <td>{{coupon.get_end_date()}}</td>
-                            <td>{{coupon.get_expired()}}</td>
-                            <td>
-                                <a href ="/update-coupon/{{coupon.get_coupon_code_id()}}" class="btn btn-warning">Update</a>
-                            </td>
-                            <td>
-                                <form action="{{url_for('delete_coupons',id=coupon.get_coupon_code_id())}}" method="POST">
-                                    <input type="submit" value="Delete" class="btn btn-danger">
-                                </form>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-
-                    </table>
-                </div>
-            </div>
-        </div>
+        </table>
     </div>
+  </div>
 </div>
+
+
 
 <div class="container-padding-50"></div>
 {% endblock %}
