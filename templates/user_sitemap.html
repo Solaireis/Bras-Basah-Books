@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block content %}
+
+{%block Stylesheets %}
+<link rel="stylesheet" href="/static/css/about.css">
+{%endblock%}
+
+
+<div class="container overflow-hidden">
+    <div class="container-bg">
+
+        <div class="row gy-5">
+            <div class="col-12">
+                <div class="p-3">
+                    <h1>Books</h1>
+                        <ul>
+                            <li>
+                                <a href="/all_books/all">All Books</a>
+                            </li>
+                            <li>
+                                <a href="/all_books/English">English Books</a>
+                            </li>
+                            <li>
+                                <a href="/all_books/Chinese">Chinese Books</a>
+                            </li>
+                        </ul>
+
+                    <h1>Account</h1>
+                        <ul>
+                            <li>
+                                <a href="/user/account">My Account</a>
+                            </li>
+                            <li>
+                                <a href="/my-orders">My Orders</a>
+                            </li>
+                            <li>
+                                <a href="/retrieve-customer-coupons">My Coupons</a>
+                            </li>
+                            <li>
+                                <a href="/user/password/forget">Forget Password</a>
+                            </li>
+                            <li>
+                                <a href="/user/password/change">Change Password</a>
+                            </li>
+                        </ul>
+                    <h1>Others</h1>
+                        <ul>
+                            <li>
+                                <a  href="/faq">FAQ</a>
+                            </li>
+                            <li>
+                                <a  href="/user/enquiry">Create Enquiry</a>
+                            </li>
+                            <li>
+                                <a  href="/view-enq">View My Enquiries</a>
+                            </li>
+                        </ul>
+                        <h1>About</h1>
+                        <ul>
+                            <li>
+                                <a  href="/about">About Us</a>
+                            </li>
+                            <li>
+                                <a  href="/tos">Terms of Use</a>
+                            </li>
+                            <li>
+                                <a  href="/pp">Privacy Policy</a>
+                            </li>
+                        </ul>
+                </div>
+            </div>
+        </div>
+
+
+</div>
+
+{% endblock %}
