@@ -2083,7 +2083,7 @@ lang_list = [('', 'Select'), ('English', 'English'), ('Chinese', 'Chinese'), ('M
 cat_list = [('', 'Select'), ('Action & Adventure', 'Action & Adventure'), ('Classic', 'Classic'), ('Comic', 'Comic'), ('Detective & Mystery', 'Detective & Mystery')]
 
 
-@app.route('/add-book', methods=['GET', 'POST'])
+@app.route('/admin/add-book', methods=['GET', 'POST'])
 def add_book():
     add_book_form = AddBookForm(request.form)
     add_book_form.language.choices = lang_list
@@ -2156,7 +2156,7 @@ def add_book():
         flash("Book successfully added!")
         # return redirect(url_for('inventory'))
 
-    return render_template('add_book.html', form=add_book_form)
+    return render_template('admin/add_book.html', form=add_book_form)
 
 
 # Inventory system for admin
