@@ -1,7 +1,4 @@
 
-from webbrowser import get
-
-
 class SCart():
     buy_dict = {}
     rent_dict = []
