@@ -12,8 +12,41 @@
 <nav class="navbar navbar-expand-lg d-none d-lg-block">
   <div class="container-fluid">
       <ul class="navbar-nav">
+      {# Display a different nav bar for different admins #}
+      {% if session["UserType"] == "Admin" %}
         <li class="nav-item">
-          <a class="nav-link" href="/" id="first-nav-item">Home</a>
+          <a class="nav-link" href="{{ url_for('add_book') }}" id="first-nav-item">Add Book</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('inventory') }}">View Inventory</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('manage_orders') }}">Manage Orders</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('enquiry_retrieve_adm') }}">Contact Us Admin</a>
+        </li>
+        <li class="nav-item me-3">
+          <div class="dropdown">
+            <button class="dropbtn dropdown-toggle">FAQ</button>
+            <div class="dropdown-content">
+              <a href="#">FAQ Admin</a>
+              <a href="#">Retrieve FAQ</a>
+            </div>
+          </div>
+        </li>
+        <li class="nav-item me-3">
+          <div class="dropdown">
+            <button class="dropbtn dropdown-toggle">Coupon</button>
+            <div class="dropdown-content">
+              <a href="{{ url_for('coupon_adm') }}">Coupon</a>
+              <a href="{{ url_for('retrieve_coupons') }}">Coupon Dashboard</a>
+            </div>
+          </div>
+        </li>
+      {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('home') }}" id="first-nav-item">Home</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">English Books</a>
@@ -22,18 +55,17 @@
           <a class="nav-link" href="#">Chinese Books</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/allbooks">All Books</a>
+          <a class="nav-link" href="{{ url_for('allbooks') }}">All Books</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/about">About</a>
+          <a class="nav-link" href="{{ url_for('about') }}">About</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/enquiry">Contact Us</a>
+          <a class="nav-link" href="{{ url_for('enquiry_cust') }}">Contact Us</a>
         </li>
+      {% endif %}
 
-        <!-- put a jinja argument here to only show if user account is an admin -->
-        {% if session['UserType'] == 'Admin' %}
-          <li class="">
+          {# <li class="">
             <div class="dropdown">
               <button class="dropbtn dropdown-toggle">Admin</button>
               <div class="dropdown-content">
@@ -47,9 +79,7 @@
                 <a href="/retrieve-coupons">Coupon Dashboard</a>
               </div>
             </div>
-          </li>
-        {% endif %}
-        
+          </li> #}
       </ul>
 
       <ul class="nav justify-content-end">
