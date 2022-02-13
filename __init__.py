@@ -1381,7 +1381,7 @@ def edit_return(order_id):
 #
 # Create Enquiry/Contact Us (customer/guest)
 #
-@app.route("/enquiry", methods=['GET', 'POST'])
+@app.route("/user/enquiry", methods=['GET', 'POST'])
 def enquiry_cust():
     create_enquiry_form = Enquiry(request.form) #create enquiry form
     if request.method == 'POST' and create_enquiry_form.validate(): #if form is submitted and validated
@@ -1430,7 +1430,7 @@ def enquiry_cust():
 # retrieve customers(admin)
 #
 
-@app.route("/enquiry-adm") #admin dashboard
+@app.route("/admin/enquiry") #admin dashboard
 def enquiry_retrieve_adm():
     db = shelve.open('database','c') #open database
     enquiry_dict = retrieve_db('Enquiry', db )  # refer to the retrieve_db function
