@@ -3,7 +3,8 @@
   {% set links_dict = {
     "My Account": url_for("account"),
     "My Orders": url_for("my_orders"),
-    "My Coupons": url_for("retrieve_cu_coupons")
+    "My Coupons": url_for("retrieve_cu_coupons"),
+    "My Enquiry": url_for("view_enq")
   } %}
   {% do links_dict.update({active: "#"}) %}
   {{ render_sidebar(links_dict) }}

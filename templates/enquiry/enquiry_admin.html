@@ -29,12 +29,12 @@
             <div>
                 <nav>
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                        <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Answered</button>
-                        <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Unanswered</button>
+                        <button class="nav-link " id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Answered</button>
+                        <button class="nav-link active" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Unanswered</button>
                     </div>
                 </nav>
                 <div class="tab-content" id="nav-tabContent">
-                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                    <div class="tab-pane fade " id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
                         <div class="table-responsive">
                             <table class="table table-light" >
                                 <thead>
@@ -84,11 +84,11 @@
                     
                                         {% if enquiry.get_UserType() == "Customer" %}
                                         <td>
-                                            <a href ="/update-enq/{{enquiry.get_count()}}" class="btn btn-warning">Reply</a>
+                                            <a href ="{{url_for('update_enq',id=enquiry.get_count())}}" class="btn btn-warning">Reply</a>
                                         </td>
                                         {% elif enquiry.get_UserType() == "Guest" %}
                                         <td>
-                                            <a href ="/mail-enq/{{enquiry.get_count()}}" class="btn btn-warning">Reply</a>
+                                            <a href =" {{url_for('mail_enq',id=enquiry.get_count())}}" class="btn btn-warning">Reply</a>
                                         </td>
                     
                                         {% endif %}
@@ -105,7 +105,7 @@
                         </div>
                         
                     </div>
-                    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                    <div class="tab-pane fade show active" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
                         <div class="table-responsive">
                             <table class="table table-light" >
                                 <thead>
@@ -155,20 +155,46 @@
                     
                                         {% if enquiry.get_UserType() == "Customer" %}
                                         <td>
-                                            <a href ="/update-enq/{{enquiry.get_count()}}" class="btn btn-warning">Reply</a>
+                                            <a href ="{{url_for('update_enq',id=enquiry.get_count())}}" class="btn btn-warning">Reply</a>
                                         </td>
                                         {% elif enquiry.get_UserType() == "Guest" %}
                                         <td>
-                                            <a href ="/mail-enq/{{enquiry.get_count()}}" class="btn btn-warning">Reply</a>
+                                            <a href =" {{url_for('mail_enq',id=enquiry.get_count())}}" class="btn btn-warning">Reply</a>
                                         </td>
                     
                                         {% endif %}
                                         <td>
-                                            <form action="{{url_for('delete_enq',id=enquiry.get_count())}}" method="POST">
-                                                <input type="submit" value="Delete" class="btn btn-danger">
-                                            </form>
+                                    
+                                            <!-- Button trigger modal -->
+                                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal{{loop.index}}">
+                                                Delete
+                                            </button>
+                                            
+                                            <!-- Modal -->
+                                            <div class="modal fade" id="exampleModal{{loop.index}}" tabindex="-1" aria-labelledby="exampleModalLabel{{loop.index}}" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel{{loop.index}}">Modal title</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p>Are you sure you want to delete</p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    <form action="{{url_for('delete_enq',id=enquiry.get_count())}}" method="POST">
+                                                        <input type="submit" value="Delete" class="btn btn-danger">
+                                                    </form>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                            </div>
+
                                         </td>
                                     </tr>
+
+                                    
                                 {% endfor %}
                                 </tbody>
                             </table>
@@ -180,6 +206,10 @@
     </div>
 </div>
         
+
+
+
+
 
 {% endblock %}
 

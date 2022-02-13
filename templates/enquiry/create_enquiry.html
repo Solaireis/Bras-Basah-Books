@@ -4,15 +4,29 @@
 
 <link rel="stylesheet" href="/static/css/adm_dashboard.css">
 
+
 {% endblock %}
 {% block content %}
+{% from "includes/_render_breadcrumb.html" import render_breadcrumb %}
+{% from "includes/_admin_sidebar.html" import admin_sidebar %}
+
+
+
 {% from "includes/_form.html" import render_field %}
-<div class="container-padding-50"></div>
+<div class="container-padding-20">
+  {# Render breadcrumbs #}
+  {{ render_breadcrumb({
+  "Home": url_for("home"),
+  "Create Enquiry": "#"
+  }) }}
+</div>
 <div class="card ">
+  <div class="card-header container-padding-20">
+    <h1 class="display-4 rubik">Enquiry Form</h1>
+    <h4> have any enquiries? Feel free to fill up this enquiry form!</h4>
+  </div>
   <div class="card-body">
-      <h1 class="display-4 rubik">Enquiry Form</h1>
-      <h3> have any enquiries? Feel free to fill up this enquiry form!</h3>
-      <div class="container-padding-20"></div>
+      <div class=""></div>
       <form method="POST" action="">
         <div class="form-group container-padding-20">
           {{ render_field(form.name, class="form-control") }}

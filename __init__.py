@@ -1505,19 +1505,19 @@ def enquiry_cust():
                 customer.add_enquiry(count) #add enquiry id to customer
                 customer_dict[session["UserID"]] = customer #update customer details in database
                 db['Customers'] = customer_dict #update customer details in database
+                
         except:
             print("No database found for session") 
-
+            flash("error","error") #flags out for debugging
 
         enquiry = UserEnquiry(create_enquiry_form.name.data, create_enquiry_form.email.data,\
              create_enquiry_form.enquiry_type.data, create_enquiry_form.comments.data, user_id, user_type) # submit form details
         enquiry_dict[enquiry.get_count()] = enquiry #add enquiry details to dictionary
         db['Enquiry'] = enquiry_dict #save to database
+        flash ("Enquiry has been submitted") #flash message
 
         db.close() #close database
-
-        return redirect(url_for('home')) #redirect to home page
-
+        
     return render_template("enquiry/create_enquiry.html", form=create_enquiry_form) #render template
 
 #
@@ -1613,6 +1613,7 @@ def update_enq(id):
 
         db['Enquiry'] = enquiry_dict #saves to db
         db.close() #close database
+        flash ('Enquiry updated')
         return redirect(url_for('enquiry_retrieve_adm'))
 
     else:
