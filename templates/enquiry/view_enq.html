@@ -4,95 +4,86 @@
 {% block stylesheets %}
 
 <link rel="stylesheet" href="/static/css/adm_dashboard.css">
+<link rel="stylesheet" href="/static/css/user.css">
 
 {% endblock %}
 {% block content %}
-<div class="container-fluid container-padding-50">
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-sm-12">
-                    <h1 class="display-4, main-header">Enquiry Dashboard</h1>
-                </div>
-            </div>
+{% from "includes/_render_breadcrumb.html" import render_breadcrumb %}
+{% from "includes/_user_sidebar.html" import user_sidebar %}
+{% from "includes/_login_render_field.html" import render_field %}
 
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <h3 class="">View other Dashboards</h3>
-                            <ul class="hide-bp">
-                                <li class="list-padding"><a class="dashboard-links" href="#">Admin Dashboard</a></li>
-                                <li class="list-padding"><a class="dashboard-links" href="#">Inventory</a></li>
-                                <li class="list-padding"><a class="dashboard-links" href="#">Manage Accounts</a></li>
-                                <li class="list-padding"><a class="dashboard-links" href="#">Enquiry</a></li>
-                                <li class="list-padding"><a class="dashboard-links" href="#">FAQ</a></li>
-                             </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-12">
-                <table class="table table-light" >
-                    <thead>
-                        <tr>
-                          <th>
-                            Total Enquiries Unanswered:
-                          </th>
-                          {% if count == 0 %}
-                          <th colspan="7">0</th>
-                          {% elif count == 1 %}
-                          <th colspan="7"> 1 </th>
-                          {% else %}
-                          <th colspan="7">{{ count }} </th>
-                          {% endif %}
+{# Render breadcrumbs #}
+{{ render_breadcrumb({
+  "Home": url_for("home"),
+  "My Enquiry": "#"
+}) }}
+<div class="container user-container">
+    <div class="row">
+      {# Render sidebar #}
+      {{ user_sidebar("My Enquiry") }}
+      <div class="col-lg-10 py-3 px-5">
+        <h2>View My Enquiry</h2>
+        <hr>
 
-                        </tr>
-                        <tr>
-                            <th> Enquiry ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Enquiry Code Type</th>
-                            <th>Enquiry Type</th>
-                            <th>Comments</th>
-                            <th colspan = "2" style="text-align:center;"> Actions</th>
+        <div class="row">
+            <div class="col-sm-12">
+            <table class="table table-light" >
+                <thead>
+                    <tr>
+                      <th>
+                        Total Enquiries:
+                      </th>
+                      {% if count == 0 %}
+                      <th colspan="7">0</th>
+                      {% elif count == 1 %}
+                      <th colspan="7"> 1 </th>
+                      {% else %}
+                      <th colspan="7">{{ count }} </th>
+                      {% endif %}
 
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% for enquiry in enquiry_list %}
-                        <tr>
-                            <td>{{enquiry.get_count()}}</td>
-                            <td>{{enquiry.get_name()}}</td>
-                            <td>{{enquiry.get_enquiry_type()}}</td>
-                            <td>{{enquiry.get_email()}}</td>
+                    </tr>
+                    <tr>
+                        <th> Enquiry ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Enquiry Type</th>
+                        <th>Comments</th>
+                        <th>Reply</th>
 
-                            {% if enquiry.get_enquiry_type() == "B" %}
-                            <td>Question about Books</td>
-                            {% elif enquiry.get_enquiry_type() == "F" %}
-                            <td>Feedback</td>
-                            {% elif enquiry.get_enquiry_type() == "R" %}
-                            <td>Report Vulnerability</td>
 
-                            {% endif %}
-                            <td>{{enquiry.get_comments()}}</td>
-                            <td>
-                                <a href ="/update-enq/{{enquiry.get_count()}}" class="btn btn-warning">Update</a>
-                            </td>
-                            <td>
-                                <form action="{{url_for('delete_enq',id=enquiry.get_count())}}" method="POST">
-                                    <input type="submit" value="Delete" class="btn btn-danger">
-                                </form>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for enquiry in enquiry_list %}
+                    <tr>
+                        <td>{{enquiry.get_count()}}</td>
+                        <td>{{enquiry.get_name()}}</td>
+                        <td>{{enquiry.get_email()}}</td>
 
-                    </table>
-                </div>
+                        {% if enquiry.get_enquiry_type() == "B" %}
+                        <td>Question about Books</td>
+                        {% elif enquiry.get_enquiry_type() == "F" %}
+                        <td>Feedback</td>
+                        {% elif enquiry.get_enquiry_type() == "R" %}
+                        <td>Report Vulnerability</td>
+
+                        {% endif %}
+                        <td>{{enquiry.get_comments()}}</td>
+                        <td>{{enquiry.get_reply()}}</td>
+                        
+                    </tr>
+                {% endfor %}
+                </tbody>
+
+                </table>
             </div>
         </div>
+        
+      </div>
     </div>
-</div>
+  </div>
+
+
 
 <div class="container-padding-50"></div>
 {% endblock %}
