@@ -1614,31 +1614,33 @@ def delete_enq(id):
     return redirect(url_for('enquiry_retrieve_adm'))
 
 #
-#view faq , customer to view enquiries
+#view enquiry , customer to view enquiries
 #
 @app.route('/view-enq',methods=['GET', 'POST'])
 def view_enq():#allows the viewing of faq
     db = shelve.open('database','w') #open database
     customer_dict = retrieve_db('Customers',db) #retrieve customer details from database
     db.close() #close database
-
-    customer = customer_dict.get(session["UserID"]) #retrieve customer id from database
-    enquiry_list = customer.get_enquiry() #retrieve enquiry details from database
-    print(enquiry_list) #print enquiry details
-
-    db = shelve.open('database','w') #open database
-    enquiry_dict = retrieve_db('Enquiry',db) #retrieve enquiry details from database
-    db.close() #close database
-
-    #retrieve enquiry details from database, to match with customer enquiry
     enquiry_list_final = []
-    for enquiry in enquiry_list: #for each enquiry in the customer enquiry list
-        print(enquiry) #print enquiry list from customer database  - debugging purposes
-        for key in enquiry_dict: #for each enquiry in the enquiry dictionary
-            print(key) #print enquiry key  - debugging purposes
-            if enquiry == key: #if the enquiry id from the customer list matches the enquiry id from the enquiry dictionary
-                enquiry_list_final.append(enquiry_dict.get(key)) #append the enquiry details to the final list
-                print('enquiry',enquiry_list_final) #print enquiry final list - debugging purposes
+
+    if session["UserType"] == "Customer": # if customer is logged in
+        customer = customer_dict.get(session["UserID"]) #retrieve customer id from database
+        enquiry_list = customer.get_enquiry() #retrieve enquiry details from database
+        print(enquiry_list) #print enquiry details
+
+        db = shelve.open('database','w') #open database
+        enquiry_dict = retrieve_db('Enquiry',db) #retrieve enquiry details from database
+        db.close() #close database
+
+        #retrieve enquiry details from database, to match with customer enquiry
+        
+        for enquiry in enquiry_list: #for each enquiry in the customer enquiry list
+            print(enquiry) #print enquiry list from customer database  - debugging purposes
+            for key in enquiry_dict: #for each enquiry in the enquiry dictionary
+                print(key) #print enquiry key  - debugging purposes
+                if enquiry == key: #if the enquiry id from the customer list matches the enquiry id from the enquiry dictionary
+                    enquiry_list_final.append(enquiry_dict.get(key)) #append the enquiry details to the final list
+                    print('enquiry',enquiry_list_final) #print enquiry final list - debugging purposes
     
     return render_template('enquiry/view_enq.html', count=len(enquiry_list_final), enquiry_list=enquiry_list_final)
 

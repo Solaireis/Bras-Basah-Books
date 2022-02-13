@@ -4,67 +4,88 @@
 {% block stylesheets %}
 
 <link rel="stylesheet" href="/static/css/adm_dashboard.css">
+<link rel="stylesheet" href="/static/css/checkout.css">
 
 {% endblock %}
 
 {% block content %}
+{% from "includes/_render_breadcrumb.html" import render_breadcrumb %}
+<div class="margin-top-50">
+    {# Render breadcrumbs #}
+    {{ render_breadcrumb({
+    "Home": url_for("home"),
+    "FAQ": "#"
+    }) }}
+</div>
+<h2 class="page-name"><span>Help Desk</span></h2>
 <div class="container-fluid container-padding-50">
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-sm-12">
-                    <h1>Here is an overview of our Frequently asked questions!</h1>
-                    <h2>Total FAQ:
-                    {% if count == 0 %}
-                    0
+    <div >
+        <h2>Can't find what you are looking for?</h2>
+        <form action="" class="form-group conatiner-padding-20">
+            <input type="text" class = "form-control" placeholder="Search here">
+        </form>
+        
+    </div>
+    <div class="container-padding-50">
+        <h2 class="page-name"><span>FAQ</span></h2>
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        
+                        <h3>Total FAQ:
+                        {% if count == 0 %}
+                        0
 
-                    {% elif count == 1 %}
-                    1
+                        {% elif count == 1 %}
+                        1
 
-                    {% else %}
-                    {{ count }}
+                        {% else %}
+                        {{ count }}
 
-                    {% endif %}
-                    </h2>
+                        {% endif %}
+                        </h2>
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <!-- accordion to show faq-->
-                <div class="accordion" id="accordionPanelsStayOpenExample">
-                    {% for faq in faq_list %}
-                    <div class="row gy-3">
-                        <div class="col-12 p-2">
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="panelsStayOpen-heading{{loop.index}}">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse{{loop.index}}" aria-expanded="false" aria-controls="panelsStayOpen-{{loop.index}}">
-                                    {{faq.get_title()}}
-                                    </button>
-                                </h2>
-                                <div id="panelsStayOpen-collapse{{loop.index}}" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-heading{{loop.index}}">
-                                    <div class="accordion-body">
-                                        <div class="">
-                                            {{faq.get_desc()}}
-                                        </div>
+                <div class="row">
+                    <!-- accordion to show faq-->
+                    <div class="accordion" id="accordionPanelsStayOpenExample">
+                        {% for faq in faq_list %}
+                        <div class="row gy-3">
+                            <div class="col-12 p-2">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="panelsStayOpen-heading{{loop.index}}">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse{{loop.index}}" aria-expanded="false" aria-controls="panelsStayOpen-{{loop.index}}">
+                                        {{faq.get_title()}}
+                                        </button>
+                                    </h2>
+                                    <div id="panelsStayOpen-collapse{{loop.index}}" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-heading{{loop.index}}">
+                                        <div class="accordion-body">
+                                            <div class="">
+                                                {{faq.get_desc()}}
+                                            </div>
 
-                                        <div>
-                                            <form action="{{url_for('helpful_faq',id= faq.get_count())}}" method="POST">
-                                                <input type="submit" value="Is This Helpful?" class="btn btn-warning">
-                                            </form>
-                                            <p>
-                                               Number of people who found this guide helpful: {{faq.get_helpful()}}
-                                            </p>
+                                            <div>
+                                                <form action="{{url_for('helpful_faq',id= faq.get_count())}}" method="POST">
+                                                    <input type="submit" value="Is This Helpful?" class="btn btn-warning">
+                                                </form>
+                                                <p>
+                                                Number of people who found this guide helpful: {{faq.get_helpful()}}
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        {% endfor %}
                     </div>
-                    {% endfor %}
                 </div>
+                
             </div>
-            
         </div>
     </div>
+    
 </div>
 
 
