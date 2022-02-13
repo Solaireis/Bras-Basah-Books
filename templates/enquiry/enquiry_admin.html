@@ -16,11 +16,14 @@
   {{ url_for("manage_accounts") }}?page={{ page_num }}
 {% endmacro %}
 
-{# Render breadcrumbs #}
-{{ render_breadcrumb({
-  "Home": url_for("home"),
-  "Enquiry Dashboard": "#"
-}) }}
+<div class = "margin-top-100">
+    {# Render breadcrumbs #}
+    {{ render_breadcrumb({
+    "Home": url_for("home"),
+    "Enquiry Dashboard": "#"
+    }) }}
+</div>
+
 
 <div class="container user-container">
     <div class="row">
