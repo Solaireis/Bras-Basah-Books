@@ -2,9 +2,9 @@
 {% macro admin_sidebar(active) %}
   {% set links_dict = {
     "Add Book": url_for("add_book"),
-    "Inventory": url_for("home"),
+    "Inventory": url_for("inventory"),
     "Manage Orders": url_for("manage_orders"),
-    "Manage Accounts": url_for("home"),
+    "Manage Accounts": url_for("manage_accounts"),
     "Enquiry Dashboard": url_for("enquiry_retrieve_adm"),
     "Create FAQ": url_for("create_faq"),
     "FAQ Dashboard": url_for("faq_dashboard"),
