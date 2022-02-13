@@ -1288,11 +1288,12 @@ def orderconfirm():
         print(cart_dict, 'updated database[cart]')
         print(db_order, 'updated databas[order]')
     except KeyError:
-        return redirect(url_for("home"))
+        return redirect(url_for("my_orders"))
 
     db.close()
     return render_template("order_confirmation.html")
 
+      
 #
 # Admin manage orders
 #
