@@ -30,7 +30,7 @@
       {% with messages = get_flashed_messages(with_categories=true, category_filter=("message", "warning", "error")) %}
         {% if messages %}
           {% for category, message in messages %}
-            <div class="flash-{{ category }} alert alert-dismissible fade show" role="alert">
+            <div class="flash-{{ category }} alert alert-dismissible fade show margin-top-100" role="alert">
               {{ message }}
               <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
