@@ -72,7 +72,8 @@ def retrieve_db(key, db, value=None) -> Union[
     """ Retrieves object from database using key """
     try:
         value = db[key]  # Retrieve object
-        if DEBUG: print(f"retrieved db['{key}'] = {value}")
+        if DEBUG:
+            print(f"retrieved db['{key}'] = {value}")
     except KeyError as err:
         if value is None: value = {}
         db[key] = value  # Assign value to key
@@ -2352,6 +2353,30 @@ def my_orders():
                            confirm_order=confirm_order, ship_order=ship_order, deliver_order=deliver_order, \
                            books_dict=books_dict)
 
+
+# Confirm delivery
+@app.route("/my-orders/confirm-delivery/<order_id>", methods=['GET', 'POST'])
+def confirm_delivery(order_id):
+    print("confirm delivery function start")
+    print("order_id: ", order_id)
+    db_order = []
+    # order_status = request.form['order-status']
+    # print(order_status)
+    try:
+        db = shelve.open('database')
+        db_order = db['Order']
+        print(db_order, "orders in database")
+    except:
+        print("Error while loading data from database")
+    for order in db_order:
+        print("order.get_order_id: ", order.get_order_id())
+        if order.get_order_id() == order_id:
+            order.set_order_status("Delivered")
+            print("change alr liao")
+            flash('Order #' + order_id + ' has been received.')
+    db['Order'] = db_order
+    db.close()
+    return redirect(request.referrer)
 #
 # end of luqman's codes
 #
