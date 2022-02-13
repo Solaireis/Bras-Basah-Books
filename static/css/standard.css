@@ -374,6 +374,10 @@ button:focus, .btn:focus {
   border-color: #97bdbd !important;
   box-shadow: 0 0 0 0.25rem rgba(72, 161, 161, 0.25) !important;
 }
+button.nav-link:focus {
+  border-color: #e9ecef #e9ecef #dee2e6 !important;
+  box-shadow: none !important;
+}
 
 .btn.btn-primary {
   background-color: #4b8282;

@@ -46,3 +46,15 @@ a.dashboard-links{
 .margin-top-50{
     margin-top:50px;
 }
+
+
+/* Edit by Jabriel */
+/* Style Enquiry Dashboard */
+#nav-home-tab, #nav-home-tab,
+#nav-profile-tab, #nav-profile-tab {
+    color: #588B8B;
+}
+#nav-home-tab:focus, #nav-home-tab:hover,
+#nav-profile-tab:focus, #nav-profile-tab:hover {
+    color: #4b8282;
+}
