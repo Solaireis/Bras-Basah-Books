@@ -1,3 +1,6 @@
+/* Activate all tooltips */
+[].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]')).map(trigger => new bootstrap.Tooltip(trigger));
+
 /* Validate forms */
 (function () {
   "use strict";

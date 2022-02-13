@@ -1,5 +1,3 @@
-[].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]')).map(trigger => new bootstrap.Tooltip(trigger));
-
 const getElement = id => document.getElementById(id);
 const clickButton = id => getElement(id).click();
 

@@ -34,16 +34,16 @@
         <p>There are {{ count }} books.</p>
         {% endif %}
       </div>
-      <div>
-        <table class="table table-light">
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
           <thead>
             <tr>
-              <th>Book ID</th>
-              <th>Book Cover</th>
+              <th>ID</th>
+              <th>Cover</th>
               <th>Language</th>
               <th>Title</th>
               <th>Author</th>
-              <th>Price ($)</th>
+              <th>Price($)</th>
               <th>Quantity</th>
               <th>Rented</th>
               <th>Action</th>
@@ -60,15 +60,6 @@
               <td>
                 <img src="{{ book.get_img() }}" alt="{{ book.get_title() }}" style="width:40px;height:60px;">
               </td>
-              <!-- {% if book.get_language() == "E" %} -->
-              <!-- <td>English</td> -->
-              <!-- {% elif book.get_language() == "C" %} -->
-              <!-- <td>Chinese</td> -->
-              <!-- {% elif book.get_language() == "M" %} -->
-              <!-- <td>Malay</td> -->
-              <!-- {% elif book.get_language() == "T" %} -->
-              <!-- <td>Tamil</td> -->
-              <!-- {% endif %} -->
               <td>{{ book.get_language() }}</td>
               <td>{{ book.get_title() }}</td>
               <td>{{ book.get_author() }}</td>
@@ -76,17 +67,16 @@
               <td>{{ book.get_qty() }}</td>
               <td>{{ book.get_rented() }}</td>
               <td>{{ book.get_action() }}</td>
-              <td><a href="/update-book/{{book.get_book_id()}}" class="btn btn-warning">Update</a></td>
+              <td><a href="/book/{{book.get_book_id()}}" data-bs-toggle="tooltip" title="View"><i class="actions-button fa fa-eye"></i></a></td>
+              <td><a href="{{ url_for('update_book', id=book.get_book_id())}}" data-bs-toggle="tooltip" title="Update"><i class="actions-button fa fa-pen"></i></a></td>
               <td>
-                <form action="{{url_for('delete_book', id=book.get_book_id())}}" method="POST">
-                  <!-- <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{book.get_title()}} by {{book.get_author()}}?');">-->
-                  <!-- Button to Open the Modal -->
-                  <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#myModal_{{book.get_book_id()}}">
-                    Delete
-                  </button>
-
+                <button class="btn me-auto p-0" data-bs-toggle="tooltip" title="Delete" onclick="document.getElementById('toggleModal_{{book.get_book_id()}}').click()">
+                  <i class="actions-button fa fa-trash"></i>
+                </button>
+                <button type="button" class="d-none" id="toggleModal_{{book.get_book_id()}}" data-bs-toggle="modal" data-bs-target="#myModal_{{book.get_book_id()}}"></button>
+                <form class="" action="{{url_for('delete_book', id=book.get_book_id())}}" method="POST">
                   <!-- The Modal -->
-                  <div class="modal" id="myModal_{{book.get_book_id()}}">
+                  <div class="modal fade" id="myModal_{{book.get_book_id()}}">
                     <div class="modal-dialog">
                       <div class="modal-content">
 
@@ -113,14 +103,13 @@
 
                 </form>
               </td>
-              <td><a href="/book/{{book.get_book_id()}}" class="btn btn-warning">View Book</a></td>
             </tr>
           {% endfor %}
           </tbody>
         </table>
       </div>
       <div class="mt-auto">
-        <a href="/add-book" class="btn defaultbtn">Add Book</a>
+        <a href="{{ url_for('add_book') }}" class="btn defaultbtn">Add Book</a>
       </div>
     </div>
   </div>

@@ -79,11 +79,14 @@
     border-color: transparent !important;
     box-shadow: none !important;
 }
-.account-actions .fa-eye {
+.account-actions .fa-eye, .actions-button.fa-eye {
     color: #588B8B;
 }
-.account-actions .fa-trash {
+.account-actions .fa-trash, .actions-button.fa-trash {
     color: #dc3545;
+}
+.actions-button.fa-pen {
+    color: #ffdc74;
 }
 
 .account-footer .hint-text {
