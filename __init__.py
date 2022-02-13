@@ -73,7 +73,8 @@ def retrieve_db(key, db, value=None) -> Union[
     """ Retrieves object from database using key """
     try:
         value = db[key]  # Retrieve object
-        if DEBUG: print(f"retrieved db['{key}'] = {value}")
+        if DEBUG:
+            print(f"retrieved db['{key}'] = {value}")
     except KeyError as err:
         if value is None: value = {}
         db[key] = value  # Assign value to key
@@ -1614,31 +1615,33 @@ def delete_enq(id):
     return redirect(url_for('enquiry_retrieve_adm'))
 
 #
-# view faq , customer to view enquiries
+# view enquiry , customer to view enquiries
 #
 @app.route('/view-enq',methods=['GET', 'POST'])
 def view_enq():#allows the viewing of faq
     db = shelve.open('database','w') #open database
     customer_dict = retrieve_db('Customers',db) #retrieve customer details from database
     db.close() #close database
-
-    customer = customer_dict.get(session["UserID"]) #retrieve customer id from database
-    enquiry_list = customer.get_enquiry() #retrieve enquiry details from database
-    print(enquiry_list) #print enquiry details
-
-    db = shelve.open('database','w') #open database
-    enquiry_dict = retrieve_db('Enquiry',db) #retrieve enquiry details from database
-    db.close() #close database
-
-    #retrieve enquiry details from database, to match with customer enquiry
     enquiry_list_final = []
-    for enquiry in enquiry_list: #for each enquiry in the customer enquiry list
-        print(enquiry) #print enquiry list from customer database  - debugging purposes
-        for key in enquiry_dict: #for each enquiry in the enquiry dictionary
-            print(key) #print enquiry key  - debugging purposes
-            if enquiry == key: #if the enquiry id from the customer list matches the enquiry id from the enquiry dictionary
-                enquiry_list_final.append(enquiry_dict.get(key)) #append the enquiry details to the final list
-                print('enquiry',enquiry_list_final) #print enquiry final list - debugging purposes
+
+    if session["UserType"] == "Customer": # if customer is logged in
+        customer = customer_dict.get(session["UserID"]) #retrieve customer id from database
+        enquiry_list = customer.get_enquiry() #retrieve enquiry details from database
+        print(enquiry_list) #print enquiry details
+
+        db = shelve.open('database','w') #open database
+        enquiry_dict = retrieve_db('Enquiry',db) #retrieve enquiry details from database
+        db.close() #close database
+
+        #retrieve enquiry details from database, to match with customer enquiry
+        
+        for enquiry in enquiry_list: #for each enquiry in the customer enquiry list
+            print(enquiry) #print enquiry list from customer database  - debugging purposes
+            for key in enquiry_dict: #for each enquiry in the enquiry dictionary
+                print(key) #print enquiry key  - debugging purposes
+                if enquiry == key: #if the enquiry id from the customer list matches the enquiry id from the enquiry dictionary
+                    enquiry_list_final.append(enquiry_dict.get(key)) #append the enquiry details to the final list
+                    print('enquiry',enquiry_list_final) #print enquiry final list - debugging purposes
     
     return render_template('enquiry/view_enq.html', count=len(enquiry_list_final), enquiry_list=enquiry_list_final)
 
@@ -2361,6 +2364,30 @@ def my_orders():
                            confirm_order=confirm_order, ship_order=ship_order, deliver_order=deliver_order, \
                            books_dict=books_dict)
 
+
+# Confirm delivery
+@app.route("/my-orders/confirm-delivery/<order_id>", methods=['GET', 'POST'])
+def confirm_delivery(order_id):
+    print("confirm delivery function start")
+    print("order_id: ", order_id)
+    db_order = []
+    # order_status = request.form['order-status']
+    # print(order_status)
+    try:
+        db = shelve.open('database')
+        db_order = db['Order']
+        print(db_order, "orders in database")
+    except:
+        print("Error while loading data from database")
+    for order in db_order:
+        print("order.get_order_id: ", order.get_order_id())
+        if order.get_order_id() == order_id:
+            order.set_order_status("Delivered")
+            print("change alr liao")
+            flash('Order #' + order_id + ' has been received.')
+    db['Order'] = db_order
+    db.close()
+    return redirect(request.referrer)
 #
 # end of luqman's codes
 #
