@@ -813,7 +813,27 @@ def manage_accounts():
 #
 @app.route("/allbooks")
 def allbooks():
-    return render_template("allbooks.html")
+    books = []
+    try:
+        books_dict = {}
+        db = shelve.open('database', 'r')
+        books_dict = db['Books']
+        db.close()
+
+    except:
+        print("There are no books")
+
+    books_dict = dict(reversed(list(books_dict.items())))
+
+    for book in books_dict:
+        books.append(books_dict[book].get_title())
+
+    print(books)
+    books.sort(reverse=True)
+    print(books)
+    #sorted_dict = sorted(books.get_title(), key=lambda kv:(kv[1], kv[0]))
+    #print(sorted_dict)
+    return render_template("allbooks.html", books_dict=books_dict)
 
 #
 # add to buying cart
