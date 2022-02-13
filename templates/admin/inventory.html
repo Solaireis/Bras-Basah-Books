@@ -3,11 +3,34 @@
 
 {% block stylesheets %}
 
-<link rel="stylesheet" href="/static/css/standard.css">
+<link rel="stylesheet" href="/static/css/user.css">
 
 {% endblock %}
 
 {% block content %}
+{% from "includes/_render_breadcrumb.html" import render_breadcrumb %}
+{% from "includes/_admin_sidebar.html" import admin_sidebar %}
+
+{# Render breadcrumbs #}
+{{ render_breadcrumb({
+  "Home": url_for("home"),
+  "Inventory": "#"
+}) }}
+
+{# Container to contain display for user related things #}
+<div class="container user-container">
+  <div class="row">
+    {# Render sidebar #}
+    {{ admin_sidebar("Inventory") }}
+    <div class="col-lg-10 py-3 px-5">
+      <div class="d-flex">
+        <h2 class="me-auto">Inventory</h2>
+      </div>
+      <hr>
+    </div>
+  </div>
+</div>
+
 <h1 class="display-4">Inventory</h1>
 <div>
   {% if count == 0 %}
