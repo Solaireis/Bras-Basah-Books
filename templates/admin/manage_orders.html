@@ -30,7 +30,7 @@
             <h2>Manage Orders</h2>
             <hr>
             {# Tabs #}
-            <ul class="nav nav-tabs overflow-auto" id="myTab" role="tablist">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="all-order-tab" data-bs-toggle="tab" data-bs-target="#all-order" type="button" role="tab" aria-controls="all-order" aria-selected="true">All ({{ all_order|length }})</button>
                 </li>
@@ -71,8 +71,8 @@
                     {% for order in all_order %}
                     <div class="row">
                         <div class="order-card col-md-9 col-12">
-                            <p class="order-date" title="Order Date">
-                                {{ order.get_order_date() }}
+                            <p class="order-date">
+                                <span title='Order Date'>{{ order.get_order_date() }}</span>
                                 <!-- if order has been cancel no more editing allowed -->
                                 {% if order.get_order_status() == 'Canceled' %}
                                 <span class="float-right" style="text-decoration: none;">Canceled</span>
@@ -103,48 +103,48 @@
                                         <div class="col-md-2 col-12 form-check">
                                             {% if order.get_order_status() == "Ordered" %}
                                             <input type="radio" id="Ordered" name="order-status" value="Ordered" checked="checked">
-                                            <label for="Ordered">&nbsp; New</label>
+                                            <label for="Ordered">New</label>
                                             {% else %}
                                             <input type="radio" id="Ordered2" name="order-status" value="Ordered">
-                                            <label for="Ordered2">&nbsp; New</label>
+                                            <label for="Ordered2">New</label>
                                             {% endif %}
                                         </div>
                                         <div class="col-md-3 col-12 form-check">
                                             {% if order.get_order_status() == "Confirmed" %}
                                             <input type="radio" id="Confirmed" name="order-status" value="Confirmed" checked="checked">
-                                            <label for="Confirmed">&nbsp; Confirmed</label>
+                                            <label for="Confirmed"> Confirmed</label>
                                             {% else %}
                                             <input type="radio" id="Confirmed2" name="order-status" value="Confirmed">
-                                            <label for="Confirmed2">&nbsp; Confirmed</label>
+                                            <label for="Confirmed2"> Confirmed</label>
                                             {% endif %}
                                         </div>
                                         {% if order.get_ship_method() == 'Standard Delivery' %}
                                         <div class="col-md-2 col-12 form-check">
                                             {% if order.get_order_status() == "Shipped" %}
                                             <input type="radio" id="Shipped" name="order-status" value="Shipped" checked="checked">
-                                            <label for="Shipped">&nbsp; Shipped</label>
+                                            <label class="ship" for="Shipped"> Shipped</label>
                                             {% else %}
                                             <input type="radio" id="Shipped2" name="order-status" value="Shipped">
-                                            <label for="Shipped2">&nbsp; Shipped</label>
+                                            <label class="ship" for="Shipped2"> Shipped</label>
                                             {% endif %}
                                         </div>
                                         <div class="col-md-3 col-12 form-check">
                                             {% if order.get_order_status() == "Delivered" %}
                                             <input type="radio" id="Delivered" name="order-status" value="Delivered" checked="checked">
-                                            <label for="Delivered">&nbsp; Delivered</label>
+                                            <label for="Delivered"> Delivered</label>
                                             {% else %}
                                             <input type="radio" id="Delivered2" name="order-status" value="Delivered">
-                                            <label for="Delivered2">&nbsp; Delivered</label>
+                                            <label for="Delivered2"> Delivered</label>
                                         {% endif %}
                                         </div>
                                 {% else %}
                                 <div class="col-md-5 col-12 form-check">
                                     {% if order.get_order_status() == "Collected" %}
                                     <input type="radio" id="Collected" name="order-status" value="Collected" checked="checked">
-                                    <label for="Collected">&nbsp; Collected</label>
+                                    <label for="Collected"> Collected</label>
                                     {% else %}
                                     <input type="radio" id="Collected" name="order-status" value="Collected">
-                                    <label for="Collected">&nbsp; Collected</label>
+                                    <label for="Collected"> Collected</label>
                                     {% endif %}
                                 </div>
                                 {% endif %}
@@ -159,12 +159,12 @@
                             <div class="row user-info">
                                 <p>Name: {{ order.get_name() }} <span title="User ID">({{ order.get_user_id() }})</span></p>
                                 <div class="col-6">
-                                    <h5>Contact</h5>
+                                    <h6>Contact</h6>
                                     <p>Contact Number: {{ order.get_contact_num() }}</p>
                                     <p>Email: {{ order.get_email() }}</p>
                                 </div>
                                 <div class="col-6">
-                                    <h5>Shipping</h5>
+                                    <h6>Shipping</h6>
                                     <p>Shipping Method: {{ order.get_ship_method() }}</p>
 
                                     {% if order.get_ship_method() == 'Standard Delivery' %}
@@ -193,7 +193,7 @@
                                     <td><img src={{ books_dict[book].get_img() }}></td>
                                     <td style="text-align:left;">{{ books_dict[book].get_title() }}</td>
                                     <td>X{{ order.get_buy_item()[book] }}</td>
-                                    <td>${{ books_dict[book].get_price() }}</td>
+                                    <td>${{ "%.2f"|format(books_dict[book].get_price()|float) }}</td>
                                 {% endfor %}
                             {% endif %}
                             {% if order.get_rent_item() != '' %}
@@ -249,8 +249,8 @@
                     {% for order in delivery_method %}
                     <div class="row">
                         <div class="order-card col-md-9 col-12">
-                            <p class="order-date" title="Order Date">
-                                {{ order.get_order_date() }}
+                            <p class="order-date">
+                                <span title='Order Date'>{{ order.get_order_date() }}</span>
                                 <!-- if order has been cancel no more editing allowed -->
                                 {% if order.get_order_status() == 'Canceled' %}
                                 <span class="float-right" style="text-decoration: none;">Canceled</span>
@@ -281,48 +281,48 @@
                                         <div class="col-md-2 col-12 form-check">
                                             {% if order.get_order_status() == "Ordered" %}
                                             <input type="radio" id="Ordered3" name="order-status" value="Ordered" checked="checked">
-                                            <label for="Ordered3">&nbsp; New</label>
+                                            <label for="Ordered3"> New</label>
                                             {% else %}
                                             <input type="radio" id="Ordered4" name="order-status" value="Ordered">
-                                            <label for="Ordered4">&nbsp; New</label>
+                                            <label for="Ordered4"> New</label>
                                             {% endif %}
                                         </div>
                                         <div class="col-md-3 col-12 form-check">
                                             {% if order.get_order_status() == "Confirmed" %}
                                             <input type="radio" id="Confirmed3" name="order-status" value="Confirmed" checked="checked">
-                                            <label for="Confirmed3">&nbsp; Confirmed</label>
+                                            <label for="Confirmed3"> Confirmed</label>
                                             {% else %}
                                             <input type="radio" id="Confirmed4" name="order-status" value="Confirmed">
-                                            <label for="Confirmed4">&nbsp; Confirmed</label>
+                                            <label for="Confirmed4"> Confirmed</label>
                                             {% endif %}
                                         </div>
                                         {% if order.get_ship_method() == 'Standard Delivery' %}
                                         <div class="col-md-2 col-12 form-check">
                                             {% if order.get_order_status() == "Shipped" %}
                                             <input type="radio" id="Shipped3" name="order-status" value="Shipped" checked="checked">
-                                            <label for="Shipped3">&nbsp; Shipped</label>
+                                            <label class="ship" for="Shipped3"> Shipped</label>
                                             {% else %}
                                             <input type="radio" id="Shipped4" name="order-status" value="Shipped">
-                                            <label for="Shipped4">&nbsp; Shipped</label>
+                                            <label class="ship" for="Shipped4"> Shipped</label>
                                             {% endif %}
                                         </div>
                                         <div class="col-md-3 col-12 form-check">
                                             {% if order.get_order_status() == "Delivered" %}
                                             <input type="radio" id="Delivered3" name="order-status" value="Delivered" checked="checked">
-                                            <label for="Delivered3">&nbsp; Delivered</label>
+                                            <label for="Delivered3"> Delivered</label>
                                             {% else %}
                                             <input type="radio" id="Delivered4" name="order-status" value="Delivered">
-                                            <label for="Delivered4">&nbsp; Delivered</label>
+                                            <label for="Delivered4"> Delivered</label>
                                         {% endif %}
                                         </div>
                                 {% else %}
                                 <div class="col-md-5 col-12 form-check">
                                     {% if order.get_order_status() == "Collected" %}
                                     <input type="radio" id="Collected3" name="order-status" value="Collected" checked="checked">
-                                    <label for="Collected3">&nbsp; Collected</label>
+                                    <label for="Collected3"> Collected</label>
                                     {% else %}
                                     <input type="radio" id="Collected4" name="order-status" value="Collected">
-                                    <label for="Collected4">&nbsp; Collected</label>
+                                    <label for="Collected4"> Collected</label>
                                     {% endif %}
                                 </div>
                                 {% endif %}
@@ -337,12 +337,12 @@
                             <div class="row user-info">
                                 <p>Name: {{ order.get_name() }} <span title="User ID">({{ order.get_user_id() }})</span></p>
                                 <div class="col-6">
-                                    <h5>Contact</h5>
+                                    <h6>Contact</h6>
                                     <p>Contact Number: {{ order.get_contact_num() }}</p>
                                     <p>Email: {{ order.get_email() }}</p>
                                 </div>
                                 <div class="col-6">
-                                    <h5>Shipping</h5>
+                                    <h6>Shipping</h6>
                                     <p>Shipping Method: {{ order.get_ship_method() }}</p>
 
                                     {% if order.get_ship_method() == 'Standard Delivery' %}
@@ -371,7 +371,7 @@
                                     <td><img src={{ books_dict[book].get_img() }}></td>
                                     <td style="text-align:left;">{{ books_dict[book].get_title() }}</td>
                                     <td>X{{ order.get_buy_item()[book] }}</td>
-                                    <td>${{ books_dict[book].get_price() }}</td>
+                                    <td>${{ "%.2f"|format(books_dict[book].get_price()|float) }}</td>
                                 {% endfor %}
                             {% endif %}
                             {% if order.get_rent_item() != '' %}
@@ -427,8 +427,8 @@
                     {% for order in collection_method %}
                     <div class="row">
                         <div class="order-card col-md-9 col-12">
-                            <p class="order-date" title="Order Date">
-                                {{ order.get_order_date() }}
+                            <p class="order-date">
+                                <span title='Order Date'>{{ order.get_order_date() }}</span>
                                 <!-- if order has been cancel no more editing allowed -->
                                 {% if order.get_order_status() == 'Canceled' %}
                                 <span class="float-right" style="text-decoration: none;">Canceled</span>
@@ -459,48 +459,48 @@
                                         <div class="col-md-2 col-12 form-check">
                                             {% if order.get_order_status() == "Ordered" %}
                                             <input type="radio" id="Ordered5" name="order-status" value="Ordered" checked="checked">
-                                            <label for="Ordered5">&nbsp; New</label>
+                                            <label for="Ordered5"> New</label>
                                             {% else %}
                                             <input type="radio" id="Ordered6" name="order-status" value="Ordered">
-                                            <label for="Ordered6">&nbsp; New</label>
+                                            <label for="Ordered6"> New</label>
                                             {% endif %}
                                         </div>
                                         <div class="col-md-3 col-12 form-check">
                                             {% if order.get_order_status() == "Confirmed" %}
                                             <input type="radio" id="Confirmed5" name="order-status" value="Confirmed" checked="checked">
-                                            <label for="Confirmed5">&nbsp; Confirmed</label>
+                                            <label for="Confirmed5"> Confirmed</label>
                                             {% else %}
                                             <input type="radio" id="Confirmed6" name="order-status" value="Confirmed">
-                                            <label for="Confirmed6">&nbsp; Confirmed</label>
+                                            <label for="Confirmed6"> Confirmed</label>
                                             {% endif %}
                                         </div>
                                         {% if order.get_ship_method() == 'Standard Delivery' %}
                                         <div class="col-md-2 col-12 form-check">
                                             {% if order.get_order_status() == "Shipped" %}
                                             <input type="radio" id="Shipped5" name="order-status" value="Shipped" checked="checked">
-                                            <label for="Shipped5">&nbsp; Shipped</label>
+                                            <label class="ship" for="Shipped5"> Shipped</label>
                                             {% else %}
                                             <input type="radio" id="Shipped6" name="order-status" value="Shipped">
-                                            <label for="Shipped6">&nbsp; Shipped</label>
+                                            <label class="ship" for="Shipped6"> Shipped</label>
                                             {% endif %}
                                         </div>
                                         <div class="col-md-3 col-12 form-check">
                                             {% if order.get_order_status() == "Delivered" %}
                                             <input type="radio" id="Delivered5" name="order-status" value="Delivered" checked="checked">
-                                            <label for="Delivered5">&nbsp; Delivered</label>
+                                            <label for="Delivered5"> Delivered</label>
                                             {% else %}
                                             <input type="radio" id="Delivered6" name="order-status" value="Delivered">
-                                            <label for="Delivered6">&nbsp; Delivered</label>
+                                            <label for="Delivered6"> Delivered</label>
                                         {% endif %}
                                         </div>
                                 {% else %}
                                 <div class="col-md-5 col-12 form-check">
                                     {% if order.get_order_status() == "Collected" %}
                                     <input type="radio" id="Collected5" name="order-status" value="Collected" checked="checked">
-                                    <label for="Collected5">&nbsp; Collected</label>
+                                    <label for="Collected5"> Collected</label>
                                     {% else %}
                                     <input type="radio" id="Collected6" name="order-status" value="Collected">
-                                    <label for="Collected6">&nbsp; Collected</label>
+                                    <label for="Collected6"> Collected</label>
                                     {% endif %}
                                 </div>
                                 {% endif %}
@@ -515,12 +515,12 @@
                             <div class="row user-info">
                                 <p>Name: {{ order.get_name() }} <span title="User ID">({{ order.get_user_id() }})</span></p>
                                 <div class="col-6">
-                                    <h5>Contact</h5>
+                                    <h6>Contact</h6>
                                     <p>Contact Number: {{ order.get_contact_num() }}</p>
                                     <p>Email: {{ order.get_email() }}</p>
                                 </div>
                                 <div class="col-6">
-                                    <h5>Shipping</h5>
+                                    <h6>Shipping</h6>
                                     <p>Shipping Method: {{ order.get_ship_method() }}</p>
                                     <p>Shipping Address: --</p>
                                 </div>
@@ -544,7 +544,7 @@
                                     <td><img src={{ books_dict[book].get_img() }}></td>
                                     <td style="text-align:left;">{{ books_dict[book].get_title() }}</td>
                                     <td>X{{ order.get_buy_item()[book] }}</td>
-                                    <td>${{ books_dict[book].get_price() }}</td>
+                                    <td>${{ "%.2f"|format(books_dict[book].get_price()|float) }}</td>
                                 {% endfor %}
                             {% endif %}
                             {% if order.get_rent_item() != '' %}
@@ -600,8 +600,8 @@
                     {% for order in new_order %}
                     <div class="row">
                         <div class="order-card col-md-9 col-12">
-                            <p class="order-date" title="Order Date">
-                                {{ order.get_order_date() }}
+                            <p class="order-date">
+                                <span title='Order Date'>{{ order.get_order_date() }}</span>
                                 <a href="#" id="{{ order.get_order_id() }}" onclick="cancel_this(this)"><span class="float-right">Cancel</span></a>
                             </p>
                             <h2 class="order-id" title="Order ID">#{{ order.get_order_id() }}</h2>
@@ -614,48 +614,48 @@
                                         <div class="col-md-2 col-12 form-check">
                                             {% if order.get_order_status() == "Ordered" %}
                                             <input type="radio" id="Ordered7" name="order-status" value="Ordered" checked="checked">
-                                            <label for="Ordered7">&nbsp; New</label>
+                                            <label for="Ordered7"> New</label>
                                             {% else %}
                                             <input type="radio" id="Ordered8" name="order-status" value="Ordered">
-                                            <label for="Ordered8">&nbsp; New</label>
+                                            <label for="Ordered8"> New</label>
                                             {% endif %}
                                         </div>
                                         <div class="col-md-3 col-12 form-check">
                                             {% if order.get_order_status() == "Confirmed" %}
                                             <input type="radio" id="Confirmed7" name="order-status" value="Confirmed" checked="checked">
-                                            <label for="Confirmed7">&nbsp; Confirmed</label>
+                                            <label for="Confirmed7"> Confirmed</label>
                                             {% else %}
                                             <input type="radio" id="Confirmed8" name="order-status" value="Confirmed">
-                                            <label for="Confirmed8">&nbsp; Confirmed</label>
+                                            <label for="Confirmed8"> Confirmed</label>
                                             {% endif %}
                                         </div>
                                         {% if order.get_ship_method() == 'Standard Delivery' %}
                                         <div class="col-md-2 col-12 form-check">
                                             {% if order.get_order_status() == "Shipped" %}
                                             <input type="radio" id="Shipped7" name="order-status" value="Shipped" checked="checked">
-                                            <label for="Shipped7">&nbsp; Shipped</label>
+                                            <label class="ship" for="Shipped7"> Shipped</label>
                                             {% else %}
                                             <input type="radio" id="Shipped8" name="order-status" value="Shipped">
-                                            <label for="Shipped8">&nbsp; Shipped</label>
+                                            <label class="ship" for="Shipped8"> Shipped</label>
                                             {% endif %}
                                         </div>
                                         <div class="col-md-3 col-12 form-check">
                                             {% if order.get_order_status() == "Delivered" %}
                                             <input type="radio" id="Delivered7" name="order-status" value="Delivered" checked="checked">
-                                            <label for="Delivered7">&nbsp; Delivered</label>
+                                            <label for="Delivered7"> Delivered</label>
                                             {% else %}
                                             <input type="radio" id="Delivered8" name="order-status" value="Delivered">
-                                            <label for="Delivered8">&nbsp; Delivered</label>
+                                            <label for="Delivered8"> Delivered</label>
                                         {% endif %}
                                         </div>
                                 {% else %}
                                 <div class="col-md-5 col-12 form-check">
                                     {% if order.get_order_status() == "Collected" %}
                                     <input type="radio" id="Collected7" name="order-status" value="Collected" checked="checked">
-                                    <label for="Collected7">&nbsp; Collected</label>
+                                    <label for="Collected7"> Collected</label>
                                     {% else %}
                                     <input type="radio" id="Collected8" name="order-status" value="Collected">
-                                    <label for="Collected8">&nbsp; Collected</label>
+                                    <label for="Collected8"> Collected</label>
                                     {% endif %}
                                 </div>
                                 {% endif %}
@@ -670,12 +670,12 @@
                             <div class="row user-info">
                                 <p>Name: {{ order.get_name() }} <span title="User ID">({{ order.get_user_id() }})</span></p>
                                 <div class="col-6">
-                                    <h5>Contact</h5>
+                                    <h6>Contact</h6>
                                     <p>Contact Number: {{ order.get_contact_num() }}</p>
                                     <p>Email: {{ order.get_email() }}</p>
                                 </div>
                                 <div class="col-6">
-                                    <h5>Shipping</h5>
+                                    <h6>Shipping</h6>
                                     <p>Shipping Method: {{ order.get_ship_method() }}</p>
 
                                     {% if order.get_ship_method() == 'Standard Delivery' %}
@@ -704,7 +704,7 @@
                                     <td><img src={{ books_dict[book].get_img() }}></td>
                                     <td style="text-align:left;">{{ books_dict[book].get_title() }}</td>
                                     <td>X{{ order.get_buy_item()[book] }}</td>
-                                    <td>${{ books_dict[book].get_price() }}</td>
+                                    <td>${{ "%.2f"|format(books_dict[book].get_price()|float) }}</td>
                                 {% endfor %}
                             {% endif %}
                             {% if order.get_rent_item() != '' %}
@@ -747,8 +747,8 @@
                     {% for order in confirm_order %}
                     <div class="row">
                         <div class="order-card col-md-9 col-12">
-                            <p class="order-date" title="Order Date">
-                                {{ order.get_order_date() }}
+                            <p class="order-date">
+                                <span title='Order Date'>{{ order.get_order_date() }}</span>
                                 <a href="#" id="{{ order.get_order_id() }}" onclick="cancel_this(this)"><span class="float-right">Cancel</span></a>
                             </p>
                             <h2 class="order-id" title="Order ID">#{{ order.get_order_id() }}</h2>
@@ -761,48 +761,48 @@
                                         <div class="col-md-2 col-12 form-check">
                                             {% if order.get_order_status() == "Ordered" %}
                                             <input type="radio" id="Ordered9" name="order-status" value="Ordered" checked="checked">
-                                            <label for="Ordered9">&nbsp; New</label>
+                                            <label for="Ordered9"> New</label>
                                             {% else %}
                                             <input type="radio" id="Ordered9" name="order-status" value="Ordered">
-                                            <label for="Ordered9">&nbsp; New</label>
+                                            <label for="Ordered9"> New</label>
                                             {% endif %}
                                         </div>
                                         <div class="col-md-3 col-12 form-check">
                                             {% if order.get_order_status() == "Confirmed" %}
                                             <input type="radio" id="Confirmed9" name="order-status" value="Confirmed" checked="checked">
-                                            <label for="Confirmed9">&nbsp; Confirmed</label>
+                                            <label for="Confirmed9"> Confirmed</label>
                                             {% else %}
                                             <input type="radio" id="Confirmed9" name="order-status" value="Confirmed">
-                                            <label for="Confirmed9">&nbsp; Confirmed</label>
+                                            <label for="Confirmed9"> Confirmed</label>
                                             {% endif %}
                                         </div>
                                         {% if order.get_ship_method() == 'Standard Delivery' %}
                                         <div class="col-md-2 col-12 form-check">
                                             {% if order.get_order_status() == "Shipped" %}
                                             <input type="radio" id="Shipped9" name="order-status" value="Shipped" checked="checked">
-                                            <label for="Shipped9">&nbsp; Shipped</label>
+                                            <label class="ship" for="Shipped9"> Shipped</label>
                                             {% else %}
                                             <input type="radio" id="Shipped9" name="order-status" value="Shipped">
-                                            <label for="Shipped9">&nbsp; Shipped</label>
+                                            <label class="ship" for="Shipped9"> Shipped</label>
                                             {% endif %}
                                         </div>
                                         <div class="col-md-3 col-12 form-check">
                                             {% if order.get_order_status() == "Delivered" %}
                                             <input type="radio" id="Delivered9" name="order-status" value="Delivered" checked="checked">
-                                            <label for="Delivered9">&nbsp; Delivered</label>
+                                            <label for="Delivered9"> Delivered</label>
                                             {% else %}
                                             <input type="radio" id="Delivered9" name="order-status" value="Delivered">
-                                            <label for="Delivered9">&nbsp; Delivered</label>
+                                            <label for="Delivered9"> Delivered</label>
                                         {% endif %}
                                         </div>
                                 {% else %}
                                 <div class="col-md-5 col-12 form-check">
                                     {% if order.get_order_status() == "Collected" %}
                                     <input type="radio" id="Collected9" name="order-status" value="Collected" checked="checked">
-                                    <label for="Collected9">&nbsp; Collected</label>
+                                    <label for="Collected9"> Collected</label>
                                     {% else %}
                                     <input type="radio" id="Collected9" name="order-status" value="Collected">
-                                    <label for="Collected9">&nbsp; Collected</label>
+                                    <label for="Collected9"> Collected</label>
                                     {% endif %}
                                 </div>
                                 {% endif %}
@@ -817,12 +817,12 @@
                             <div class="row user-info">
                                 <p>Name: {{ order.get_name() }} <span title="User ID">({{ order.get_user_id() }})</span></p>
                                 <div class="col-6">
-                                    <h5>Contact</h5>
+                                    <h6>Contact</h6>
                                     <p>Contact Number: {{ order.get_contact_num() }}</p>
                                     <p>Email: {{ order.get_email() }}</p>
                                 </div>
                                 <div class="col-6">
-                                    <h5>Shipping</h5>
+                                    <h6>Shipping</h6>
                                     <p>Shipping Method: {{ order.get_ship_method() }}</p>
 
                                     {% if order.get_ship_method() == 'Standard Delivery' %}
@@ -851,7 +851,7 @@
                                     <td><img src={{ books_dict[book].get_img() }}></td>
                                     <td style="text-align:left;">{{ books_dict[book].get_title() }}</td>
                                     <td>X{{ order.get_buy_item()[book] }}</td>
-                                    <td>${{ books_dict[book].get_price() }}</td>
+                                    <td>${{ "%.2f"|format(books_dict[book].get_price()|float) }}</td>
                                 {% endfor %}
                             {% endif %}
                             {% if order.get_rent_item() != '' %}
@@ -894,8 +894,8 @@
                     {% for order in ship_order %}
                     <div class="row">
                         <div class="order-card col-md-9 col-12">
-                            <p class="order-date" title="Order Date">
-                                {{ order.get_order_date() }}
+                            <p class="order-date">
+                                <span title='Order Date'>{{ order.get_order_date() }}</span>
                             </p>
                             <h2 class="order-id" title="Order ID">#{{ order.get_order_id() }}</h2>
 
@@ -907,48 +907,48 @@
                                         <div class="col-md-2 col-12 form-check">
                                             {% if order.get_order_status() == "Ordered" %}
                                             <input type="radio" id="Ordered99" name="order-status" value="Ordered" checked="checked">
-                                            <label for="Ordered99">&nbsp; New</label>
+                                            <label for="Ordered99"> New</label>
                                             {% else %}
                                             <input type="radio" id="Ordered99" name="order-status" value="Ordered">
-                                            <label for="Ordered99">&nbsp; New</label>
+                                            <label for="Ordered99"> New</label>
                                             {% endif %}
                                         </div>
                                         <div class="col-md-3 col-12 form-check">
                                             {% if order.get_order_status() == "Confirmed" %}
                                             <input type="radio" id="Confirmed99" name="order-status" value="Confirmed" checked="checked">
-                                            <label for="Confirmed99">&nbsp; Confirmed</label>
+                                            <label for="Confirmed99"> Confirmed</label>
                                             {% else %}
                                             <input type="radio" id="Confirmed99" name="order-status" value="Confirmed">
-                                            <label for="Confirmed99">&nbsp; Confirmed</label>
+                                            <label for="Confirmed99"> Confirmed</label>
                                             {% endif %}
                                         </div>
                                         {% if order.get_ship_method() == 'Standard Delivery' %}
                                         <div class="col-md-2 col-12 form-check">
                                             {% if order.get_order_status() == "Shipped" %}
                                             <input type="radio" id="Shipped99" name="order-status" value="Shipped" checked="checked">
-                                            <label for="Shipped99">&nbsp; Shipped</label>
+                                            <label class="ship" for="Shipped99"> Shipped</label>
                                             {% else %}
                                             <input type="radio" id="Shipped99" name="order-status" value="Shipped">
-                                            <label for="Shipped99">&nbsp; Shipped</label>
+                                            <label class="ship" for="Shipped99"> Shipped</label>
                                             {% endif %}
                                         </div>
                                         <div class="col-md-3 col-12 form-check">
                                             {% if order.get_order_status() == "Delivered" %}
                                             <input type="radio" id="Delivered99" name="order-status" value="Delivered" checked="checked">
-                                            <label for="Delivered99">&nbsp; Delivered</label>
+                                            <label for="Delivered99"> Delivered</label>
                                             {% else %}
                                             <input type="radio" id="Delivered99" name="order-status" value="Delivered">
-                                            <label for="Delivered99">&nbsp; Delivered</label>
+                                            <label for="Delivered99"> Delivered</label>
                                         {% endif %}
                                         </div>
                                 {% else %}
                                 <div class="col-md-5 col-12 form-check">
                                     {% if order.get_order_status() == "Collected" %}
                                     <input type="radio" id="Collected99" name="order-status" value="Collected" checked="checked">
-                                    <label for="Collected9">&nbsp; Collected</label>
+                                    <label for="Collected9"> Collected</label>
                                     {% else %}
                                     <input type="radio" id="Collected99" name="order-status" value="Collected">
-                                    <label for="Collected99">&nbsp; Collected</label>
+                                    <label for="Collected99"> Collected</label>
                                     {% endif %}
                                 </div>
                                 {% endif %}
@@ -963,12 +963,12 @@
                             <div class="row user-info">
                                 <p>Name: {{ order.get_name() }} <span title="User ID">({{ order.get_user_id() }})</span></p>
                                 <div class="col-6">
-                                    <h5>Contact</h5>
+                                    <h6>Contact</h6>
                                     <p>Contact Number: {{ order.get_contact_num() }}</p>
                                     <p>Email: {{ order.get_email() }}</p>
                                 </div>
                                 <div class="col-6">
-                                    <h5>Shipping</h5>
+                                    <h6>Shipping</h6>
                                     <p>Shipping Method: {{ order.get_ship_method() }}</p>
                                     <p>Shipping Address: {{ order.get_ship_address() }}</p>
                                 </div>
@@ -992,7 +992,7 @@
                                     <td><img src={{ books_dict[book].get_img() }}></td>
                                     <td style="text-align:left;">{{ books_dict[book].get_title() }}</td>
                                     <td>X{{ order.get_buy_item()[book] }}</td>
-                                    <td>${{ books_dict[book].get_price() }}</td>
+                                    <td>${{ "%.2f"|format(books_dict[book].get_price()|float) }}</td>
                                 {% endfor %}
                             {% endif %}
                             {% if order.get_rent_item() != '' %}
@@ -1036,8 +1036,8 @@
                     {% for order in deliver_order %}
                     <div class="row">
                         <div class="order-card col-md-9 col-12">
-                            <p class="order-date" title="Order Date">
-                                {{ order.get_order_date() }}
+                            <p class="order-date">
+                                <span title='Order Date'>{{ order.get_order_date() }}</span>
                             </p>
                             <h2 class="order-id" title="Order ID">#{{ order.get_order_id() }}</h2>
 
@@ -1049,48 +1049,48 @@
                                         <div class="col-md-2 col-12 form-check">
                                             {% if order.get_order_status() == "Ordered" %}
                                             <input type="radio" id="Ordered0" name="order-status" value="Ordered" checked="checked">
-                                            <label for="Ordered0">&nbsp; New</label>
+                                            <label for="Ordered0"> New</label>
                                             {% else %}
                                             <input type="radio" id="Ordered0" name="order-status" value="Ordered">
-                                            <label for="Ordered0">&nbsp; New</label>
+                                            <label for="Ordered0"> New</label>
                                             {% endif %}
                                         </div>
                                         <div class="col-md-3 col-12 form-check">
                                             {% if order.get_order_status() == "Confirmed" %}
                                             <input type="radio" id="Confirmed0" name="order-status" value="Confirmed" checked="checked">
-                                            <label for="Confirmed0">&nbsp; Confirmed</label>
+                                            <label for="Confirmed0"> Confirmed</label>
                                             {% else %}
                                             <input type="radio" id="Confirmed0" name="order-status" value="Confirmed">
-                                            <label for="Confirmed0">&nbsp; Confirmed</label>
+                                            <label for="Confirmed0"> Confirmed</label>
                                             {% endif %}
                                         </div>
                                         {% if order.get_ship_method() == 'Standard Delivery' %}
                                         <div class="col-md-2 col-12 form-check">
                                             {% if order.get_order_status() == "Shipped" %}
                                             <input type="radio" id="Shipped0" name="order-status" value="Shipped" checked="checked">
-                                            <label for="Shipped0">&nbsp; Shipped</label>
+                                            <label class="ship" for="Shipped0"> Shipped</label>
                                             {% else %}
                                             <input type="radio" id="Shipped0" name="order-status" value="Shipped">
-                                            <label for="Shipped0">&nbsp; Shipped</label>
+                                            <label class="ship" for="Shipped0"> Shipped</label>
                                             {% endif %}
                                         </div>
                                         <div class="col-md-3 col-12 form-check">
                                             {% if order.get_order_status() == "Delivered" %}
                                             <input type="radio" id="Delivered0" name="order-status" value="Delivered" checked="checked">
-                                            <label for="Delivered0">&nbsp; Delivered</label>
+                                            <label for="Delivered0"> Delivered</label>
                                             {% else %}
                                             <input type="radio" id="Delivered0" name="order-status" value="Delivered">
-                                            <label for="Delivered0">&nbsp; Delivered</label>
+                                            <label for="Delivered0"> Delivered</label>
                                         {% endif %}
                                         </div>
                                 {% else %}
                                 <div class="col-md-5 col-12 form-check">
                                     {% if order.get_order_status() == "Collected" %}
                                     <input type="radio" id="Collected0" name="order-status" value="Collected" checked="checked">
-                                    <label for="Collected9">&nbsp; Collected</label>
+                                    <label for="Collected9"> Collected</label>
                                     {% else %}
                                     <input type="radio" id="Collected0" name="order-status" value="Collected">
-                                    <label for="Collected0">&nbsp; Collected</label>
+                                    <label for="Collected0"> Collected</label>
                                     {% endif %}
                                 </div>
                                 {% endif %}
@@ -1105,12 +1105,12 @@
                             <div class="row user-info">
                                 <p>Name: {{ order.get_name() }} <span title="User ID">({{ order.get_user_id() }})</span></p>
                                 <div class="col-6">
-                                    <h5>Contact</h5>
+                                    <h6>Contact</h6>
                                     <p>Contact Number: {{ order.get_contact_num() }}</p>
                                     <p>Email: {{ order.get_email() }}</p>
                                 </div>
                                 <div class="col-6">
-                                    <h5>Shipping</h5>
+                                    <h6>Shipping</h6>
                                     <p>Shipping Method: {{ order.get_ship_method() }}</p>
 
                                     {% if order.get_ship_method() == 'Standard Delivery' %}
@@ -1139,7 +1139,7 @@
                                     <td><img src={{ books_dict[book].get_img() }}></td>
                                     <td style="text-align:left;">{{ books_dict[book].get_title() }}</td>
                                     <td>X{{ order.get_buy_item()[book] }}</td>
-                                    <td>${{ books_dict[book].get_price() }}</td>
+                                    <td>${{ "%.2f"|format(books_dict[book].get_price()|float) }}</td>
                                 {% endfor %}
                             {% endif %}
                             {% if order.get_rent_item() != '' %}
@@ -1195,8 +1195,8 @@
                     {% for order in canceled_order %}
                     <div class="row">
                         <div class="order-card col-md-9 col-12">
-                            <p class="order-date" title="Order Date">
-                                {{ order.get_order_date() }}
+                            <p class="order-date">
+                                <span title='Order Date'>{{ order.get_order_date() }}</span>
                                 <span class="float-right" style="text-decoration: none;">Canceled</span>
                             </p>
                             <h2 class="order-id" title="Order ID">#{{ order.get_order_id() }}</h2>
@@ -1208,12 +1208,12 @@
                             <div class="row user-info">
                                 <p>Name: {{ order.get_name() }} <span title="User ID">({{ order.get_user_id() }})</span></p>
                                 <div class="col-6">
-                                    <h5>Contact</h5>
+                                    <h6>Contact</h6>
                                     <p>Contact Number: {{ order.get_contact_num() }}</p>
                                     <p>Email: {{ order.get_email() }}</p>
                                 </div>
                                 <div class="col-6">
-                                    <h5>Shipping</h5>
+                                    <h6>Shipping</h6>
                                     <p>Shipping Method: {{ order.get_ship_method() }}</p>
 
                                     {% if order.get_ship_method() == 'Standard Delivery' %}
@@ -1242,7 +1242,7 @@
                                     <td><img src={{ books_dict[book].get_img() }}></td>
                                     <td style="text-align:left;">{{ books_dict[book].get_title() }}</td>
                                     <td>X{{ order.get_buy_item()[book] }}</td>
-                                    <td>${{ books_dict[book].get_price() }}</td>
+                                    <td>${{ "%.2f"|format(books_dict[book].get_price()|float) }}</td>
                                 {% endfor %}
                             {% endif %}
                             {% if order.get_rent_item() != '' %}
@@ -1285,8 +1285,8 @@
                     {% for order in not_returned_order %}
                     <div class="row">
                         <div class="order-card col-md-9 col-12">
-                            <p class="order-date" title="Order Date">
-                                {{ order.get_order_date() }}
+                            <p class="order-date">
+                                <span title='Order Date'>{{ order.get_order_date() }}</span>
                             </p>
                             <h2 class="order-id" title="Order ID">#{{ order.get_order_id() }}</h2>
 
@@ -1298,48 +1298,48 @@
                                         <div class="col-md-2 col-12 form-check">
                                             {% if order.get_order_status() == "Ordered" %}
                                             <input type="radio" id="Ordered11" name="order-status" value="Ordered" checked="checked">
-                                            <label for="Ordered11">&nbsp; New</label>
+                                            <label for="Ordered11"> New</label>
                                             {% else %}
                                             <input type="radio" id="Ordered11" name="order-status" value="Ordered">
-                                            <label for="Ordered11">&nbsp; New</label>
+                                            <label for="Ordered11"> New</label>
                                             {% endif %}
                                         </div>
                                         <div class="col-md-3 col-12 form-check">
                                             {% if order.get_order_status() == "Confirmed" %}
                                             <input type="radio" id="Confirmed11" name="order-status" value="Confirmed" checked="checked">
-                                            <label for="Confirmed11">&nbsp; Confirmed</label>
+                                            <label for="Confirmed11"> Confirmed</label>
                                             {% else %}
                                             <input type="radio" id="Confirmed11" name="order-status" value="Confirmed">
-                                            <label for="Confirmed11">&nbsp; Confirmed</label>
+                                            <label for="Confirmed11"> Confirmed</label>
                                             {% endif %}
                                         </div>
                                         {% if order.get_ship_method() == 'Standard Delivery' %}
                                         <div class="col-md-2 col-12 form-check">
                                             {% if order.get_order_status() == "Shipped" %}
                                             <input type="radio" id="Shipped11" name="order-status" value="Shipped" checked="checked">
-                                            <label for="Shipped3">&nbsp; Shipped</label>
+                                            <label class="ship" for="Shipped3"> Shipped</label>
                                             {% else %}
                                             <input type="radio" id="Shipped11" name="order-status" value="Shipped">
-                                            <label for="Shipped11">&nbsp; Shipped</label>
+                                            <label class="ship" for="Shipped11"> Shipped</label>
                                             {% endif %}
                                         </div>
                                         <div class="col-md-3 col-12 form-check">
                                             {% if order.get_order_status() == "Delivered" %}
                                             <input type="radio" id="Delivered11" name="order-status" value="Delivered" checked="checked">
-                                            <label for="Delivered11">&nbsp; Delivered</label>
+                                            <label for="Delivered11"> Delivered</label>
                                             {% else %}
                                             <input type="radio" id="Delivered11" name="order-status" value="Delivered">
-                                            <label for="Delivered11">&nbsp; Delivered</label>
+                                            <label for="Delivered11"> Delivered</label>
                                         {% endif %}
                                         </div>
                                 {% else %}
                                 <div class="col-md-5 col-12 form-check">
                                     {% if order.get_order_status() == "Collected" %}
                                     <input type="radio" id="Collected11" name="order-status" value="Collected" checked="checked">
-                                    <label for="Collected11">&nbsp; Collected</label>
+                                    <label for="Collected11"> Collected</label>
                                     {% else %}
                                     <input type="radio" id="Collected11" name="order-status" value="Collected">
-                                    <label for="Collected11">&nbsp; Collected</label>
+                                    <label for="Collected11"> Collected</label>
                                     {% endif %}
                                 </div>
                                 {% endif %}
@@ -1354,12 +1354,12 @@
                             <div class="row user-info">
                                 <p>Name: {{ order.get_name() }} <span title="User ID">({{ order.get_user_id() }})</span></p>
                                 <div class="col-6">
-                                    <h5>Contact</h5>
+                                    <h6>Contact</h6>
                                     <p>Contact Number: {{ order.get_contact_num() }}</p>
                                     <p>Email: {{ order.get_email() }}</p>
                                 </div>
                                 <div class="col-6">
-                                    <h5>Shipping</h5>
+                                    <h6>Shipping</h6>
                                     <p>Shipping Method: {{ order.get_ship_method() }}</p>
 
                                     {% if order.get_ship_method() == 'Standard Delivery' %}
@@ -1388,7 +1388,7 @@
                                     <td><img src={{ books_dict[book].get_img() }}></td>
                                     <td style="text-align:left;">{{ books_dict[book].get_title() }}</td>
                                     <td>X{{ order.get_buy_item()[book] }}</td>
-                                    <td>${{ books_dict[book].get_price() }}</td>
+                                    <td>${{ "%.2f"|format(books_dict[book].get_price()|float) }}</td>
                                 {% endfor %}
                             {% endif %}
                             {% if order.get_rent_item() != '' %}
@@ -1446,7 +1446,7 @@
 
 <script type="text/javascript">
   function cancel_this(element){
-    text = 'Are you sure you want to cancel this order? (Click Yes to cancel)'
+    text = 'Are you sure you want to cancel this order? (Click Yes to cancel the order)'
     if (confirm(text) == true) {
         order_id = element.id;
         element.href = '/admin/manage_orders/cancel_order/' + order_id;
