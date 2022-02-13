@@ -17,10 +17,13 @@
           <a class="nav-link" href="{{ url_for('add_book') }}" id="first-nav-item">Add Book</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('inventory') }}">View Inventory</a>
+          <a class="nav-link" href="{{ url_for('inventory') }}">Inventory</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('manage_orders') }}">Manage Orders</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('manage_accounts') }}">Manage Accounts</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('enquiry_retrieve_adm') }}">Contact Us Admin</a>
@@ -63,27 +66,11 @@
           <a class="nav-link" href="{{ url_for('enquiry_cust') }}">Contact Us</a>
         </li>
       {% endif %}
-
-          {# <li class="">
-            <div class="dropdown">
-              <button class="dropbtn dropdown-toggle">Admin</button>
-              <div class="dropdown-content">
-                <a href="/add-book">Add Book</a>
-                <a href="/inventory">View Inventory</a>
-                <a href="/admin/manage_orders">Manage Orders</a>
-                <a href="/enquiry-adm">Contact Us Admin</a>
-                <a href="/faq-adm">FAQ Admin</a>
-                <a href ="/faq-adm-retrieve">Retrieve FAQ</a>
-                <a href="/coupon">Coupon</a>
-                <a href="/retrieve-coupons">Coupon Dashboard</a>
-              </div>
-            </div>
-          </li> #}
       </ul>
 
       <ul class="nav justify-content-end">
+        {% if session["UserType"] != "Admin" %}
         <form class="d-flex">
-          <!-- <input class="form-control" type="search" placeholder="Search" aria-label="Search" id="search-field">-->
           <li class="">
             <input class="form-control" type="search" placeholder="Search..." aria-label="Search" id="search-field">
           </li>
@@ -91,12 +78,15 @@
             <button class="btn nav-link" type="submit"><i class="fa fa-search"></i></button>
           </li>
         </form>
-        <li class="nav-item">
+        {% endif %}
+        <li class="nav-item {{ 'me-2' if session['UserType'] == 'Admin' }}">
           <a class="nav-link" href="{{ url_for('account') }}"><i class="fa fa-user nav-icon"></i></a>
         </li>
+        {% if session["UserType"] != "Admin" %}
         <li class="nav-item">
           <a class="nav-link" href="/shopping_cart"><i class="fa fa-shopping-cart nav-icon"></i></a>
         </li>
+        {% endif %}
       </ul>
   </div>
 </nav>
@@ -120,9 +110,11 @@
               </li>
             </td>
             <td>
+            {% if session["UserType"] != "Admin" %}
               <li class="nav-item">
                 <a class="nav-link" href="/shopping_cart"><i class="fa fa-shopping-cart"></i><h5>Cart</h5></a>
               </li>
+            {% endif %}
             </td>
           </tr>
         </table>
@@ -132,10 +124,13 @@
           <a class="nav-link" href="{{ url_for('add_book') }}">Add Book</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('inventory') }}">View Inventory</a>
+          <a class="nav-link" href="{{ url_for('inventory') }}">Inventory</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('manage_orders') }}">Manage Orders</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('manage_accounts') }}">Manage Accounts</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('enquiry_retrieve_adm') }}">Contact Us Admin</a>
