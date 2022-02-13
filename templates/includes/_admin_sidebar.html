@@ -1,8 +1,8 @@
 {% from "includes/_render_sidebar.html" import render_sidebar %}
 {% macro admin_sidebar(active) %}
   {% set links_dict = {
-    "Add Book": url_for("add_book"),
     "Inventory": url_for("inventory"),
+    "Add Book": url_for("add_book"),
     "Manage Orders": url_for("manage_orders"),
     "Manage Accounts": url_for("manage_accounts"),
     "Enquiry Dashboard": url_for("enquiry_retrieve_adm"),
