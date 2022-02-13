@@ -67,7 +67,7 @@
                 <td><img src={{ books_dict[key].get_img() }}></td>
                 <td style="text-align:left;">{{ books_dict[key].get_title() }}</td>
                 <td>X{{ buy_cart[key] }}</td>
-                <td>${{ books_dict[key].get_price() }}</td>
+                <td>${{ "%.2f"|format(books_dict[key].get_price()|float) }}</td>
             {% endfor %}
         {% endif %}
         {% if rent_count != 0 %}
@@ -84,7 +84,7 @@
         {% endif %}
           <tr class="bottom-sticky">
               <td colspan="4">
-                  <h6>Subtotal <span class="float_right">${{ total_price }}</span></h6>
+                  <h6>Subtotal <span class="float_right">${{ "%.2f"|format(total_price|float) }}</span></h6>
                   <h6>Shipping <span class="float_right" id="shipping_fee">$5.00</span></h6>
                   <h6>Coupon Applied <span class="float_right">$-</span></h6>
                   <h4>Total To Pay <span class="float_right" id="total_pay">${{ "%.2f"|format((total_price|float)+5) }}</span></h4>
@@ -115,13 +115,22 @@
                     <tr>
                         <form method="POST" action="/update_cart/{{ key }}">
                             <td class="col-3"><img src="{{ books_dict[key].get_img() }}" alt="book cover"></td>
-                            <td class="col-7"><h4>{{ books_dict[key].get_title() }}</h4>#{{ key }}</td>
-                            <td class="col-1"><h5>${{ books_dict[key].get_price() }}</h5></td>
-                            <td class="col-1"><input type="number" class="quantity-selector" name="quantity" min="0" value={{ buy_cart[key] }}>
-                            <button type="submit" class="btn update-btn" onclick="update_cart()">Update</button></td>
+                            <td class="col-7">
+                                <h4 class="d-none d-lg-block">{{ books_dict[key].get_title() }}</h4>
+                                <p class="d-block d-lg-none">{{ books_dict[key].get_title() }}</p>#{{ key }}
+                                #{{ key }}
+                            </td>
+                            <td class="col-1">
+                                <h5 class="d-none d-lg-block">${{ "%.2f"|format(books_dict[key].get_price()|float) }}</h5>
+                                <p class="d-block d-lg-none">${{ "%.2f"|format(books_dict[key].get_price()|float) }}</p>
+                            </td>
+                            <td class="col-1">
+                                <input type="number" class="quantity-selector" name="quantity" min="0" value={{ buy_cart[key] }}>
+                                <button type="submit" class="btn update-btn" onclick="update_cart()">Update</button>
+                            </td>
                         </form>
                         <form method="POST" action="/delete_buying_cart/{{ key }}">
-                            <td class="col-1"><button type="submit" onclick="delete_buying_cart()" name="button" style="float:right;" class="btn"><i class="fa fa-close"></i></button></td>
+                            <td class="col-1"><button type="submit" onclick="delete_buying_cart()" name="button" style="float:right;" class="btn"><i class="fas fa-times"></i></button></td>
                         </form>
                     </tr>
                 {% endfor %}
@@ -136,10 +145,16 @@
                 {% for book in rent_cart %}
                     <tr>
                         <td rowspan="col-3"><img src={{ books_dict[book].get_img() }} alt="book cover"></td>
-                        <td class="col-5"><h4>{{ books_dict[book].get_title() }}</h4>#{{ book }}</td>
-                        <td class="col-4"><h5>{{ "$%.2f"|format((books_dict[book].get_price()|float)*0.1) }}</h5></td>
+                        <td class="col-5">
+                            <h4 class="d-none d-lg-block">{{ books_dict[book].get_title() }}</h4>
+                            <p class="d-block d-lg-none">{{ books_dict[book].get_title() }}</p>#{{ book }}
+                        </td>
+                        <td class="col-4">
+                            <h5 class="d-none d-lg-block">{{ "$%.2f"|format((books_dict[book].get_price()|float)*0.1) }}</h5>
+                            <p class="d-block d-lg-none">{{ "$%.2f"|format((books_dict[book].get_price()|float)*0.1) }}</p>
+                        </td>
                         <form method="POST" action="/delete_renting_cart/{{ book }}">
-                            <td class="col-1"><button type="submit" onclick="delete_renting_cart()" name="button" style="float:right;" class="btn"><i class="fa fa-close"></i></button></td>
+                            <td class="col-1"><button type="submit" onclick="delete_renting_cart()" name="button" style="float:right;" class="btn"><i class="fas fa-times"></i></button></td>
                         </form>
                     </tr>
                 {% endfor %}
@@ -149,10 +164,6 @@
           </div>
           {% endif %}
           </div>
-<!--      <div class="modal-footer">-->
-<!--        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
-<!--        <button type="button" class="btn btn-primary">Save changes</button>-->
-<!--      </div>-->
         </div>
       </div>
     </div>
