@@ -2216,7 +2216,7 @@ def add_book():
 
         else:
             print('Allowed image types are -> png, jpg, jpeg')
-            return render_template('add_book.html', form=add_book_form)
+            return render_template('admin/add_book.html', form=add_book_form)
 
         print("Book image uploaded under " + str(path))
 
