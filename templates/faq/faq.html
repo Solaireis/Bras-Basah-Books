@@ -18,11 +18,12 @@
     }) }}
 </div>
 <h2 class="page-name"><span>Help Desk</span></h2>
+<!--
 <div class="container-fluid container-padding-50">
     <div >
         <h2>Can't find what you are looking for?</h2>
         <form action="" class="form-group conatiner-padding-20">
-            <input type="text" class = "form-control" placeholder="Search here">
+            <input type="text" class = "form-control" placeholder="Search here" id="search">
         </form>
         
     </div>
@@ -33,7 +34,7 @@
                 <div class="row">
                     <div class="col-sm-12">
                         
-                        <h3>Total FAQ:
+                        <h4>Number of FAQ:
                         {% if count == 0 %}
                         0
 
@@ -44,11 +45,13 @@
                         {{ count }}
 
                         {% endif %}
-                        </h2>
+                        </h4>
                     </div>
                 </div>
-                <div class="row">
-                    <!-- accordion to show faq-->
+                    
+
+                <div class="row" id="faq">
+                
                     <div class="accordion" id="accordionPanelsStayOpenExample">
                         {% for faq in faq_list %}
                         <div class="row gy-3">
@@ -56,22 +59,26 @@
                                 <div class="accordion-item">
                                     <h2 class="accordion-header" id="panelsStayOpen-heading{{loop.index}}">
                                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse{{loop.index}}" aria-expanded="false" aria-controls="panelsStayOpen-{{loop.index}}">
-                                        {{faq.get_title()}}
+                                            <h4>{{faq.get_title()}}</h4>
                                         </button>
                                     </h2>
                                     <div id="panelsStayOpen-collapse{{loop.index}}" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-heading{{loop.index}}">
                                         <div class="accordion-body">
-                                            <div class="">
-                                                {{faq.get_desc()}}
+                                            <div class="container-padding-50">
+                                                <h4>{{faq.get_title()}}</h4>
+                                                <h5>{{faq.get_desc()}}</h5>
                                             </div>
-
+                                            <div class="container-padding-50">
+                                                
+                                            </div>
                                             <div>
+                                                <h5>
+                                                    Number of people who found this guide helpful: {{faq.get_helpful()}}
+                                                </h5>
                                                 <form action="{{url_for('helpful_faq',id= faq.get_count())}}" method="POST">
                                                     <input type="submit" value="Is This Helpful?" class="btn btn-warning">
                                                 </form>
-                                                <p>
-                                                Number of people who found this guide helpful: {{faq.get_helpful()}}
-                                                </p>
+                                               
                                             </div>
                                         </div>
                                     </div>
@@ -79,6 +86,71 @@
                             </div>
                         </div>
                         {% endfor %}
+                    </div>
+                </div>  
+                
+            </div>
+        </div>
+    </div>
+</div>
+-->
+<div class="container-fluid container-padding-50">
+    <div >
+        <h2>Can't find what you are looking for?</h2>
+        <form action="" class="form-group conatiner-padding-20">
+            <input type="text" class = "form-control" placeholder="Search here" id="search">
+        </form>
+        
+    </div>
+    <div class="container-padding-50">
+        <h2 class="page-name"><span>FAQ</span></h2>
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        
+                        <h4>Number of FAQ:
+                        {% if count == 0 %}
+                        0
+
+                        {% elif count == 1 %}
+                        1
+
+                        {% else %}
+                        {{ count }}
+
+                        {% endif %}
+                        </h4>
+                    </div>
+                </div>
+                    
+                <!-- out going accordion -->
+                <div class="row" id="faq">
+                    <!-- accordion to show faq-->
+                    <div class="accordion" id="accordionPanelsStayOpenExample">
+                        
+                        <div class="row gy-3">
+                            <div class="col-12 p-2">
+                                <div id="accordion">
+                                    {% for faq in faq_list %}
+                                    <h3>{{faq.get_title()}}</h3>
+                                
+                                    <div>
+                                        <p>
+                                            {{faq.get_desc()}}
+                                            
+                                        </p>
+                                        <p>
+                                            Number of people who found this guide helpful: {{faq.get_helpful()}}
+                                        </p>
+                                        <form action="{{url_for('helpful_faq',id= faq.get_count())}}" method="POST">
+                                            <input type="submit" value="Is This Helpful?" class="btn btn-warning">
+                                        </form>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
@@ -88,8 +160,50 @@
     
 </div>
 
-
-
-
 {% endblock %}
 
+{% block scripts %}
+<!--
+<script>
+    $(document).ready(function(){
+      $("#search").on("keyup", function() {
+
+        var value = $(this).val().toLowerCase();
+        $("#faq h4").filter(function() {
+          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+        
+      });
+    });
+    </script> -->
+
+<!-- J query Accordion-->
+<script>
+    $(function() {
+        $( "#accordion" ).accordion({
+            active: false,
+            collapsible: true
+         });
+    });
+</script>
+
+<!-- jquery filter-->
+<script>
+    $(document).ready(function(){
+        $("input").keyup(function(){
+            var search = $('#search').val().toLowerCase();
+            $( "h3" ).each(function(){
+                var value=$(this).text().toLowerCase();
+
+                if (value.indexOf(search) > -1) {
+                $(this).show();
+                } else {
+                $(this).hide();
+                }
+            });
+        });
+    });
+
+</script>
+
+{% endblock %}
