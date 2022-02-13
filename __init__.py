@@ -833,7 +833,7 @@ def allbooks():
     print(books)
     #sorted_dict = sorted(books.get_title(), key=lambda kv:(kv[1], kv[0]))
     #print(sorted_dict)
-    return render_template("allbooks.html", books_dict=books_dict)
+    return render_template("all_books.html", books_dict=books_dict)
 
 #
 # add to buying cart
