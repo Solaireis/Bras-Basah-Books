@@ -23,9 +23,14 @@
     {# Render sidebar #}
     {{ admin_sidebar("Inventory") }}
     <div class="col-lg-10 py-3 px-5">
-      <div class="d-flex">
-        <h2 class="me-auto">Inventory</h2>
-      </div>
+      <h2>Inventory</h2>
+      {% if count == 0 %}
+      <p>There are no books.</p>
+      {% elif count == 1 %}
+      <p>There is 1 book.</p>
+      {% else %}
+      <p>There are {{ count }} books.</p>
+      {% endif %}
       <hr>
     </div>
   </div>
