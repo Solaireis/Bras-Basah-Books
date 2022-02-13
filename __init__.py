@@ -1436,13 +1436,18 @@ def enquiry_retrieve_adm():
     enquiry_dict = retrieve_db('Enquiry', db )  # refer to the retrieve_db function
     db.close()
 
-    enquiry_list = [] #empty list to store enquiry details
+    unanswered_enquiry_list = [] #empty list to store enquiry details
+    answered_enquiry_list = [] #empty list to store enquiry details
     for key in enquiry_dict: #loop through the dictionary
         enquiry = enquiry_dict.get(key) #get the enquiry details
-        enquiry_list.append(enquiry) #add to list
-        print(enquiry_list) #print for debugging
-
-    return render_template("enquiry/enquiry_admin.html", count=len(enquiry_list), enquiry_list=enquiry_list) #render template
+        if enquiry.get_reply() == None: #if there is no reply
+            unanswered_enquiry_list.append(enquiry) #add to list
+            print(unanswered_enquiry_list) #print for debugging
+        else:
+            answered_enquiry_list.append(enquiry) #add to list
+            print(answered_enquiry_list) #print for debugging
+    return render_template("enquiry/enquiry_admin.html", answered_count=len(answered_enquiry_list), unanswered_count=len(unanswered_enquiry_list),\
+        unanswered_enquiry_list=unanswered_enquiry_list, answered_enquiry_list=answered_enquiry_list) #render template
 
 #
 # faq Admin create
@@ -1560,8 +1565,8 @@ def mail_enq(id):
 
         # crafting of mail
         # message subj, sender, recipient
-        msg = Message(subject="Enquiry Ticket No:" + enquiry_id.get_count(),
-                    sender=("BrasBasahBooks", "noreplybbb02@gmail.com"), 
+        msg = Message(subject="Enquiry Ticket No: " + str(enquiry_id.get_count()),
+                    sender=("BrasBasahBooks HelpDesk", "noreplybbb02@gmail.com"), 
                     recipients=[enquiry_id.get_email()])
 
         #message contents
@@ -1569,13 +1574,13 @@ def mail_enq(id):
                     + "here are your enquiry details: " + "\n\n" \
                     + "Enquiry Type: " + enquiry_id.get_enquiry_type() + "\n\n" \
                     + "Comments: " + "\n\n" + enquiry_id.get_comments() + "\n\n" \
-                    + "Reply: " + "\n\n" + enquiry_id.get_reply() \
+                    + "Reply: " + "\n\n" + enquiry_id.get_reply() + "\n\n" \
                     + "Regards,\n" + "BrasBasahBooks"
 
         # send the mail
         mail.send(msg)
 
-        flash(f"Verification email sent to {enquiry_id.get_email()}") #flash message
+        flash(f"Reply Email sent to User: {enquiry_id.get_name()} Email: {enquiry_id.get_email()}") #flash message
         return redirect(url_for('enquiry_retrieve_adm'))
 
     else:
