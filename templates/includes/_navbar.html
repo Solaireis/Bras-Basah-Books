@@ -84,7 +84,7 @@
         </li>
         {% if session["UserType"] != "Admin" %}
         <li class="nav-item">
-          <a class="nav-link" href="/shopping_cart"><i class="fa fa-shopping-cart nav-icon"></i></a>
+          <a class="nav-link" href="{{ url_for('cart') }}"><i class="fa fa-shopping-cart nav-icon"></i></a>
         </li>
         {% endif %}
       </ul>
@@ -112,7 +112,7 @@
             <td>
             {% if session["UserType"] != "Admin" %}
               <li class="nav-item">
-                <a class="nav-link" href="/shopping_cart"><i class="fa fa-shopping-cart"></i><h5>Cart</h5></a>
+                <a class="nav-link" href="{{ url_for('cart') }}"><i class="fa fa-shopping-cart"></i><h5>Cart</h5></a>
               </li>
             {% endif %}
             </td>
