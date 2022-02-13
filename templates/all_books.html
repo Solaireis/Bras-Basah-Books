@@ -16,6 +16,9 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="#">Home</a></li>
         <li class="breadcrumb-item active" aria-current="page">All Books</li>
+          {% if sort_this in language_list %}
+        <li class="breadcrumb-item active" aria-current="page">{{ sort_this }}</li>
+          {% endif %}
       </ol>
     </div>
 
@@ -38,9 +41,13 @@
           <div class="dropdown" style="float:right;">
             <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">Filter Language</button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton3">
+                {% if language_list|length == 0 %}
+                <li><a class="dropdown-item">No books at the moment</a></li>
+                {% else %}
                 {% for language in language_list %}
               <li><a class="dropdown-item" href="/all_books/{{ language }}">{{ language }}</a></li>
                 {% endfor %}
+                {% endif %}
             </ul>
           </div>
         </div>
