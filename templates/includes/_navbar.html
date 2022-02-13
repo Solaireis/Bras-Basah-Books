@@ -34,8 +34,8 @@
           <div class="dropdown">
             <button class="dropbtn dropdown-toggle">FAQ</button>
             <div class="dropdown-content">
-              <a href="{{ url_for('create_faq') }}">Create Faq</a>
-              <a href="{{url_for('faq_dashboard') }}">FAQ dashboard</a>
+              <a href="{{ url_for('create_faq') }}">Create FAQ</a>
+              <a href="{{url_for('faq_dashboard') }}">FAQ Dashboard</a>
             </div>
           </div>
         </li>
@@ -93,7 +93,8 @@
               {% if not is_admin %}
               <a href="{{ url_for('my_orders') }}">Orders</a>
               <a href="#">Wishlist</a>
-              <a href="#">Coupons</a>
+              <a href="{{url_for('request_coupons')}}">Apply Coupons</a>
+              <a href="{{url_for('retrieve_cu_coupons')}}">Retrieve Coupons</a>
               {% endif %}
               <a href="{{ url_for('logout') }}">Logout</a>
             {% endif %}
@@ -154,10 +155,10 @@
           <a class="nav-link" href="{{ url_for('enquiry_retrieve_adm') }}">Contact Us Admin</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">FAQ Admin</a>
+          <a class="nav-link" href="{{url_for('create_faq')}}">Create FAQ</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Retrieve FAQ</a>
+          <a class="nav-link" href="{{url_for('faq_dashboard')}}">FAQ Dashboard</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('coupon_adm') }}">Coupon</a>
