@@ -4,40 +4,58 @@
 {% block stylesheets %}
 
 <link rel="stylesheet" href="/static/css/adm_dashboard.css">
+<link rel="stylesheet" href="/static/css/user.css"> 
 
 {% endblock %}
 
 {% block content %}
+
 {% from "includes/_form.html" import render_field %}
-<div class="container-padding-50"></div>
-<div class="card">
-  <div class="card-body">
-    <h1 class="display-4">Admin Create Coupon</h1>
-    <h3>Create your coupons here</h3>
-    <div class="container-padding-20"></div>
-    <form method="POST" action="">
-      <div class="form-group container-padding-20">
-        {{ render_field(form.name, class="form-control") }}
+{% from "includes/_render_breadcrumb.html" import render_breadcrumb %}
+{% from "includes/_admin_sidebar.html" import admin_sidebar %}
+
+{# Render breadcrumbs #}
+{{ render_breadcrumb({
+  "Home": url_for("home"),
+  "Create Coupons": "#"
+}) }}
+
+{# Container to contain display for user related things #}
+<div class="container user-container">
+  <div class="row">
+    {# Render sidebar #}
+    {{ admin_sidebar("Create Coupons") }}
+    <div class="col-lg-10 py-3 px-5">
+      <div class="d-flex flex-column">
+        <h2 class="m-0">Coupon Create</h2>
+        <p class="m-0">Here you create coupons</p>
       </div>
-      <div class="form-group container-padding-20">
-        {{ render_field(form.discount, class="form-control") }}
-      </div>
-      <div class="form-group container-padding-20">
-        {{ render_field(form.coupon_code, class="form-control") }} 
-      </div>
-      <div class="form-group container-padding-20">
-        {{ render_field(form.startdate, class="form-control datepicker") }}
-      </div>
-      <div class="form-group container-padding-20">
-        {{ render_field(form.enddate, class="form-control datepicker") }}
-      </div>
-      <div class="container-padding-20"></div>
-      <input type="submit" value="Create Coupon" class="btn btn-warning"/>
-      <input type="reset" value="Clear Fields" class="btn btn-danger"/>
-    </form>
+      <hr>
+      <form method="POST" action="">
+        <div class="form-group container-padding-20">
+          {{ render_field(form.name, class="form-control") }}
+        </div>
+        <div class="form-group container-padding-20">
+          {{ render_field(form.discount, class="form-control") }}
+        </div>
+        <div class="form-group container-padding-20">
+          {{ render_field(form.coupon_code, class="form-control") }} 
+        </div>
+        <div class="form-group container-padding-20">
+          {{ render_field(form.startdate, class="form-control datepicker") }}
+        </div>
+        <div class="form-group container-padding-20">
+          {{ render_field(form.enddate, class="form-control datepicker") }}
+        </div>
+        <div class="container-padding-20"></div>
+        <input type="submit" value="Create Coupon" class="btn btn-warning"/>
+        <input type="reset" value="Clear Fields" class="btn btn-danger"/>
+      </form>
+    </div>
   </div>
 </div>
-<div class="container-padding-20"></div>
+
+
 
 {% endblock %}
 
