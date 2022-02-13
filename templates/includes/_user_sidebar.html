@@ -2,10 +2,11 @@
 {% macro user_sidebar(active) %}
   {% set links_dict = {
     "My Account": url_for("account"),
-    "My Orders": url_for("home"),
+    "My Orders": url_for("my_orders"),
     "My Wishlist": url_for("home"),
-    "My Coupons": url_for("home")
+    "My Coupons": url_for("retrieve_cu_coupons")
   } %}
   {% do links_dict.update({active: "#"}) %}
   {{ render_sidebar(links_dict) }}
 {% endmacro %}
+{# I NEED THE LINK FOR COUPONS AND WISHLIST!!!!! #}
