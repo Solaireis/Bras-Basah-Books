@@ -92,7 +92,6 @@
               <a href="{{ url_for('account') }}">Account</a>
               {% if not is_admin %}
               <a href="{{ url_for('my_orders') }}">Orders</a>
-              <a href="#">Wishlist</a>
               <a href="{{url_for('request_coupons')}}">Apply Coupons</a>
               <a href="{{url_for('retrieve_cu_coupons')}}">Retrieve Coupons</a>
               {% endif %}
