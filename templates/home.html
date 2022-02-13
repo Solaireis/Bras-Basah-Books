@@ -89,7 +89,7 @@
                 <img src="{{ book.get_img() }}" class="card-img-top" alt="{{ book.get_title() }}" width="259" height="371.56">
                 <div class="card-body">
                 <h5 class="card-title">{{ book.get_title() }}</h5>
-                <p class="card-text">${{ book.get_price() }}</p>
+                <p class="card-text">${{ "%.2f"|format(book.get_price()|float) }}</p>
                 </div>
                 </div>
             </a>
@@ -112,7 +112,7 @@
                 <img src="{{ book.get_img() }}" class="card-img-top" alt="{{ book.get_title() }}" width="259" height="371.56">
                 <div class="card-body">
                 <h5 class="card-title">{{ book.get_title() }}</h5>
-                <p class="card-text">${{ book.get_price() }}</p>
+                <p class="card-text">${{ "%.2f"|format(book.get_price()|float) }}</p>
                 </div>
                 </div>
             </a>
