@@ -1452,7 +1452,7 @@ def enquiry_retrieve_adm():
 #
 # faq Admin create
 #
-@app.route("/create-faq", methods=['GET', 'POST']) 
+@app.route("/admin/faq/create", methods=['GET', 'POST']) 
 def create_faq():
     create_faq_form = Faq(request.form) #create faq form
     if request.method == 'POST' and create_faq_form.validate(): #if form is submitted and validated
@@ -1500,7 +1500,7 @@ def count_id(Table):
 #
 # Update the enquiry, Reply to Customer enquiry
 #
-@app.route('/update-enq/<int:id>/', methods=['GET', 'POST'])
+@app.route('/admin/enquiry/update/<int:id>/', methods=['GET', 'POST'])
 def update_enq(id):
     update_enquiry = ReplyEnquiry(request.form) #create update enquiry form
 
@@ -1540,7 +1540,7 @@ def update_enq(id):
 #
 # to mail to guest enquiry, alternative reply to enquiry based on UserType
 #
-@app.route('/mail-enq/<int:id>/', methods=['GET', 'POST'])
+@app.route('/admin/enquiry/mail/<int:id>/', methods=['GET', 'POST'])
 def mail_enq(id):
     mail_enquiry = ReplyEnquiry(request.form) #create mail enquiry form
 
@@ -1602,7 +1602,7 @@ def mail_enq(id):
 #
 # delete Enquiry
 #
-@app.route('/delete-enq/<int:id>',methods=['POST']) 
+@app.route('/admin/enquiry/delete/<int:id>',methods=['POST']) 
 def delete_enq(id):
     enquiry_dict = {} #empty dictionary to store enquiry details
     db = shelve.open('database','w') #open database
@@ -1614,7 +1614,7 @@ def delete_enq(id):
     return redirect(url_for('enquiry_retrieve_adm'))
 
 #
-#view faq , customer to view enquiries
+# view faq , customer to view enquiries
 #
 @app.route('/view-enq',methods=['GET', 'POST'])
 def view_enq():#allows the viewing of faq

@@ -5,6 +5,9 @@
 .user-container h2 {
     color: #999;
 }
+.user-container h2 + p {
+    color: #999;
+}
 .user-container hr {
     opacity: 1;
 }

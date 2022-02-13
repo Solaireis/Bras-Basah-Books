@@ -1,21 +1,35 @@
 {% extends "base.html" %}
-{% block title %}FAQ Admin Side{% endblock %}
+{% block title %}Create FAQ{% endblock %}
 
 {% block stylesheets %}
 
+<link rel="stylesheet" href="/static/css/user.css">
 <link rel="stylesheet" href="/static/css/adm_dashboard.css">
 
 {% endblock %}
 
 {% block content %}
 {% from "includes/_form.html" import render_field %}
+{% from "includes/_render_breadcrumb.html" import render_breadcrumb %}
+{% from "includes/_admin_sidebar.html" import admin_sidebar %}
 
-<div class="container-padding-50"></div>
-<div class="card">
-  <div class="card-body">
-      <h1 class="display-4">FAQ Creation of FAQ form</h1>
-      <h3>Here you create the FAQ forms needed for the website</h3>
-      <div class="container-padding-20"></div>
+{# Render breadcrumbs #}
+{{ render_breadcrumb({
+  "Home": url_for("home"),
+  "Create FAQ": "#"
+}) }}
+
+{# Container to contain display for user related things #}
+<div class="container user-container">
+  <div class="row">
+    {# Render sidebar using dictionary #}
+    {{ admin_sidebar("Create FAQ") }}
+    <div class="col-lg-10 py-3 px-5">
+      <div class="d-flex flex-column">
+        <h2 class="m-0">FAQ Creation of FAQ form</h2>
+        <p class="m-0">Here you create the FAQ forms needed for the website</p>
+      </div>
+      <hr>
       <form method="POST" action="">
         <div class="form-group container-padding-20">
           {{ render_field(form.title, class="form-control") }}
@@ -26,11 +40,11 @@
           </div>
         </div>
         <div class="container-padding-20"></div>
-        <input type="submit" value="Submit" class="btn btn-warning"/>
+        <input type="submit" value="Submit" class="btn btn-primary"/>
         <input type="reset" value="Delete" class="btn btn-danger"/>
       </form>
+    </div>
   </div>
 </div>
-<div class="container-padding-50"></div>
 
 {% endblock %}

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}ADMIN Query Dashboard{% endblock %}
+{% block title %}Enquiry Dashboard{% endblock %}
 
 {% block stylesheets %}
 
@@ -11,190 +11,177 @@
 {% block content %}
 {% from "includes/_render_breadcrumb.html" import render_breadcrumb %}
 {% from "includes/_admin_sidebar.html" import admin_sidebar %}
-{% set display_word = "User" if is_master else "Customer" %}
-{% macro generate_link(page_num) %}
-  {{ url_for("manage_accounts") }}?page={{ page_num }}
-{% endmacro %}
 
-<div class = "margin-top-100">
-    {# Render breadcrumbs #}
-    {{ render_breadcrumb({
-    "Home": url_for("home"),
-    "Enquiry Dashboard": "#"
-    }) }}
-</div>
+{# Render breadcrumbs #}
+{{ render_breadcrumb({
+"Home": url_for("home"),
+"Enquiry Dashboard": "#"
+}) }}
 
-
+{# Container to contain display for user related things #}
 <div class="container user-container">
     <div class="row">
-      {# Render sidebar using dictionary #}
-      {{ admin_sidebar("Enquiry Dashboard") }} <!-- changes which side is active-->
-      <div class="col-lg-10 py-3 px-5"> <!-- sets navbar to the side-->
-        <div class="d-flex">
-          <h2 class="me-auto">Enquiry Dashboard</h2>
-        </div>
-        <hr>
-        <div>
-            <nav>
-                <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                  <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Answered</button>
-                  <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Unanswered</button>
-                </div>
-              </nav>
-              <div class="tab-content" id="nav-tabContent">
-                <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-                    <div class="table-responsive">
-                        <table class="table table-light" >
-                            <thead>
-                                <tr>
-                                  <th>
-                                    Total Enquiries Answered:
-                                  </th>
-                                  {% if answered_count == 0 %}
-                                  <th colspan="8">0</th>
-                                  {% elif answered_count == 1 %}
-                                  <th colspan="8"> 1 </th>
-                                  {% else %}
-                                  <th colspan="8">{{ answered_count }} </th>
-                                  {% endif %}
-                
-                                </tr>
-                                <tr>
-                                    <th> Enquiry ID</th>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>User Type</th>
-                                    <th>Enquiry Type</th>
-                                    <th>Comments</th>
-                                    <th>Reply</th>
-                                    <th colspan = "2" style="text-align:center;"> Actions</th>
-                
-                                </tr>
-                            </thead>
-                            <tbody>
-                            {% for enquiry in answered_enquiry_list %}
-                                <tr>
-                                    <td>{{enquiry.get_count()}}</td>
-                                    <td>{{enquiry.get_name()}}</td>
-                                    <td>{{enquiry.get_email()}}</td>
-                                    <td>{{enquiry.get_UserType()}}</td>
-                
-                                    {% if enquiry.get_enquiry_type() == "B" %}
-                                    <td>Question about Books</td>
-                                    {% elif enquiry.get_enquiry_type() == "F" %}
-                                    <td>Feedback</td>
-                                    {% elif enquiry.get_enquiry_type() == "R" %}
-                                    <td>Report Vulnerability</td>
-                
-                                    {% endif %}
-                                    <td>{{enquiry.get_comments()}}</td>
-                                    <td>{{enquiry.get_reply()}}</td>
-                
-                                    {% if enquiry.get_UserType() == "Customer" %}
-                                    <td>
-                                        <a href ="/update-enq/{{enquiry.get_count()}}" class="btn btn-warning">Reply</a>
-                                    </td>
-                                    {% elif enquiry.get_UserType() == "Guest" %}
-                                    <td>
-                                        <a href ="/mail-enq/{{enquiry.get_count()}}" class="btn btn-warning">Reply</a>
-                                    </td>
-                
-                                    {% endif %}
-                                    <td>
-                                        <form action="{{url_for('delete_enq',id=enquiry.get_count())}}" method="POST">
-                                            <input type="submit" value="Delete" class="btn btn-danger">
-                                        </form>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                
-                            </table>
+        {# Render sidebar using dictionary #}
+        {{ admin_sidebar("Enquiry Dashboard") }} {# changes which side is active #}
+        <div class="col-lg-10 py-3 px-5"> {# sets navbar to the side #}
+            <div class="d-flex">
+                <h2 class="me-auto">Enquiry Dashboard</h2>
+            </div>
+            <hr>
+            <div>
+                <nav>
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Answered</button>
+                        <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Unanswered</button>
                     </div>
+                </nav>
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                        <div class="table-responsive">
+                            <table class="table table-light" >
+                                <thead>
+                                    <tr>
+                                        <th>
+                                        Total Enquiries Answered:
+                                        </th>
+                                        {% if answered_count == 0 %}
+                                        <th colspan="8">0</th>
+                                        {% elif answered_count == 1 %}
+                                        <th colspan="8"> 1 </th>
+                                        {% else %}
+                                        <th colspan="8">{{ answered_count }} </th>
+                                        {% endif %}
                     
-                </div>
-                <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-                    <div class="table-responsive">
-                        <table class="table table-light" >
-                            <thead>
-                                <tr>
-                                  <th>
-                                    Total Enquiries Unanswered:
-                                  </th>
-                                  {% if unanswered_count == 0 %}
-                                  <th colspan="8">0</th>
-                                  {% elif unanswered_count == 1 %}
-                                  <th colspan="8"> 1 </th>
-                                  {% else %}
-                                  <th colspan="8">{{ unanswered_count }} </th>
-                                  {% endif %}
-                
-                                </tr>
-                                <tr>
-                                    <th> Enquiry ID</th>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>User Type</th>
-                                    <th>Enquiry Type</th>
-                                    <th>Comments</th>
-                                    <th>Reply</th>
-                                    <th colspan = "2" style="text-align:center;"> Actions</th>
-                
-                                </tr>
-                            </thead>
-                            <tbody>
-                            {% for enquiry in unanswered_enquiry_list %}
-                                <tr>
-                                    <td>{{enquiry.get_count()}}</td>
-                                    <td>{{enquiry.get_name()}}</td>
-                                    <td>{{enquiry.get_email()}}</td>
-                                    <td>{{enquiry.get_UserType()}}</td>
-                
-                                    {% if enquiry.get_enquiry_type() == "B" %}
-                                    <td>Question about Books</td>
-                                    {% elif enquiry.get_enquiry_type() == "F" %}
-                                    <td>Feedback</td>
-                                    {% elif enquiry.get_enquiry_type() == "R" %}
-                                    <td>Report Vulnerability</td>
-                
-                                    {% endif %}
-                                    <td>{{enquiry.get_comments()}}</td>
-                                    <td>{{enquiry.get_reply()}}</td>
-                
-                                    {% if enquiry.get_UserType() == "Customer" %}
-                                    <td>
-                                        <a href ="/update-enq/{{enquiry.get_count()}}" class="btn btn-warning">Reply</a>
-                                    </td>
-                                    {% elif enquiry.get_UserType() == "Guest" %}
-                                    <td>
-                                        <a href ="/mail-enq/{{enquiry.get_count()}}" class="btn btn-warning">Reply</a>
-                                    </td>
-                
-                                    {% endif %}
-                                    <td>
-                                        <form action="{{url_for('delete_enq',id=enquiry.get_count())}}" method="POST">
-                                            <input type="submit" value="Delete" class="btn btn-danger">
-                                        </form>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                
+                                    </tr>
+                                    <tr>
+                                        <th> Enquiry ID</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>User Type</th>
+                                        <th>Enquiry Type</th>
+                                        <th>Comments</th>
+                                        <th>Reply</th>
+                                        <th colspan = "2" style="text-align:center;"> Actions</th>
+                    
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for enquiry in answered_enquiry_list %}
+                                    <tr>
+                                        <td>{{enquiry.get_count()}}</td>
+                                        <td>{{enquiry.get_name()}}</td>
+                                        <td>{{enquiry.get_email()}}</td>
+                                        <td>{{enquiry.get_UserType()}}</td>
+                    
+                                        {% if enquiry.get_enquiry_type() == "B" %}
+                                        <td>Question about Books</td>
+                                        {% elif enquiry.get_enquiry_type() == "F" %}
+                                        <td>Feedback</td>
+                                        {% elif enquiry.get_enquiry_type() == "R" %}
+                                        <td>Report Vulnerability</td>
+                    
+                                        {% endif %}
+                                        <td>{{enquiry.get_comments()}}</td>
+                                        <td>{{enquiry.get_reply()}}</td>
+                    
+                                        {% if enquiry.get_UserType() == "Customer" %}
+                                        <td>
+                                            <a href ="/update-enq/{{enquiry.get_count()}}" class="btn btn-warning">Reply</a>
+                                        </td>
+                                        {% elif enquiry.get_UserType() == "Guest" %}
+                                        <td>
+                                            <a href ="/mail-enq/{{enquiry.get_count()}}" class="btn btn-warning">Reply</a>
+                                        </td>
+                    
+                                        {% endif %}
+                                        <td>
+                                            <form action="{{url_for('delete_enq',id=enquiry.get_count())}}" method="POST">
+                                                <input type="submit" value="Delete" class="btn btn-danger">
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                    
+                                </table>
+                        </div>
+                        
+                    </div>
+                    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                        <div class="table-responsive">
+                            <table class="table table-light" >
+                                <thead>
+                                    <tr>
+                                        <th>
+                                        Total Enquiries Unanswered:
+                                        </th>
+                                        {% if unanswered_count == 0 %}
+                                        <th colspan="8">0</th>
+                                        {% elif unanswered_count == 1 %}
+                                        <th colspan="8"> 1 </th>
+                                        {% else %}
+                                        <th colspan="8">{{ unanswered_count }} </th>
+                                        {% endif %}
+                    
+                                    </tr>
+                                    <tr>
+                                        <th> Enquiry ID</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>User Type</th>
+                                        <th>Enquiry Type</th>
+                                        <th>Comments</th>
+                                        <th>Reply</th>
+                                        <th colspan = "2" style="text-align:center;"> Actions</th>
+                    
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for enquiry in unanswered_enquiry_list %}
+                                    <tr>
+                                        <td>{{enquiry.get_count()}}</td>
+                                        <td>{{enquiry.get_name()}}</td>
+                                        <td>{{enquiry.get_email()}}</td>
+                                        <td>{{enquiry.get_UserType()}}</td>
+                    
+                                        {% if enquiry.get_enquiry_type() == "B" %}
+                                        <td>Question about Books</td>
+                                        {% elif enquiry.get_enquiry_type() == "F" %}
+                                        <td>Feedback</td>
+                                        {% elif enquiry.get_enquiry_type() == "R" %}
+                                        <td>Report Vulnerability</td>
+                    
+                                        {% endif %}
+                                        <td>{{enquiry.get_comments()}}</td>
+                                        <td>{{enquiry.get_reply()}}</td>
+                    
+                                        {% if enquiry.get_UserType() == "Customer" %}
+                                        <td>
+                                            <a href ="/update-enq/{{enquiry.get_count()}}" class="btn btn-warning">Reply</a>
+                                        </td>
+                                        {% elif enquiry.get_UserType() == "Guest" %}
+                                        <td>
+                                            <a href ="/mail-enq/{{enquiry.get_count()}}" class="btn btn-warning">Reply</a>
+                                        </td>
+                    
+                                        {% endif %}
+                                        <td>
+                                            <form action="{{url_for('delete_enq',id=enquiry.get_count())}}" method="POST">
+                                                <input type="submit" value="Delete" class="btn btn-danger">
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
                             </table>
+                        </div>
                     </div>
                 </div>
-              </div>
-        </div>
-
-        
-        
+            </div>
         </div>
     </div>
 </div>
         
 
-
-
-<div class="container-padding-50"></div>
 {% endblock %}
 
