@@ -672,7 +672,7 @@ def search_result(sort_this):
 
     if q:
         for book_id, book in sort_dict.copy().items():
-            if not any([s in book.get_title() for s in q.split()]):
+            if not any([s.lower() in book.get_title().lower() for s in q.split()]):
                 sort_dict.pop(book_id, None)
 
     return render_template("all_books.html", books_dict=books_dict, sort_dict=sort_dict, language_list=language_list)
