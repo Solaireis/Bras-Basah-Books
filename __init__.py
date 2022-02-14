@@ -898,7 +898,7 @@ def all_books(sort_this):
         else:
             sort_dict = books_dict
 
-    return render_template("all_books.html", books_dict=books_dict, sort_dict=sort_dict, language_list=language_list)
+    return render_template("all_books.html", books_dict=books_dict, sort_dict=sort_dict, language_list=language_list, sort_this=sort_this)
 
 def filter_language(language):
     books = {}
