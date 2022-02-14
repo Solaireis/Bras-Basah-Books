@@ -1244,6 +1244,8 @@ def checkout():
             for book in rent_cart:
                 total_price += float(books_dict[book].get_price()) * 0.1
                 total_price = float(("%.2f" % round(total_price, 2)))
+    else:
+        return redirect(url_for("home"))
     #eden integration
     before_discount = total_price
     discount_applied = total_price * discount/100
