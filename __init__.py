@@ -2186,9 +2186,9 @@ def apply_coupons():
                     return render_template("coupon/apply_coupon.html",form=apply_coupon, total_price=total_price,\
                                  buy_count=buy_count, rent_count=rent_count, buy_cart=buy_cart, rent_cart=rent_cart,\
                                 books_dict=books_dict, discount_applied = discount_applied)
-            else:
-                print('no match for coupon')
-                flash('Invalid coupon code','error')
+
+        print('no match for coupon')
+        flash('Invalid coupon code','error')
             
 
 
