@@ -1929,6 +1929,7 @@ def coupon_adm():
                 create_coupon.startdate.data,create_coupon.enddate.data)
             coupon_dict[coupon.get_coupon_code_id()] = coupon
             db['Coupon'] = coupon_dict
+            flash ("coupon created successfully")
              
             
         # print('Coupons dict empty, making new dictionary')
@@ -1937,7 +1938,6 @@ def coupon_adm():
         # coupon_dict[coupon.get_coupon_code_id()] = coupon
         # db['Coupon'] = coupon_dict
         # db.close()
-        flash ("coupon created successfully", "success")
         db.close()
     return render_template("coupon/create_coupons.html", form=create_coupon)
 
