@@ -6,7 +6,7 @@
 
 
 <link rel="stylesheet" href="/static/css/checkout.css">
-
+<link rel="stylesheet" href="/static/css/adm_dashboard.css">
 {% endblock %}
 
 {% block content %}
@@ -20,10 +20,12 @@
         <div class="form-group container-padding-20">
           {{ render_field(form.coupon_code, class="form-control") }}
         </div>
-        <input type="submit" value="Apply Coupon" class="btn btn-primary"/>
+        <input type="submit" value="Apply Coupon" class="btn btn-primary "/>
       </form>
+      <div class="container-padding-20" ></div>
       <form action="/checkout" method="POST">
-        <button type="submit" class="check-out-button btn" name="button">Check Out</button>
+        <button type="submit" class="check-out-button btn btn-primary" name="button">Check Out</button>
+
     </form>
 
     </div>
