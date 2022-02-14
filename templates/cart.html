@@ -40,9 +40,14 @@
         {% if (buy_count + rent_count) == 0 %}
                 <button type="submit" disabled class="check-out-button btn" name="button">Check Out</button>
         {% else %}
-          <form action="/checkout" method="POST">
-                <button type="submit" class="check-out-button btn" name="button">Check Out</button>
-          </form>
+          <div>
+            <form action="/checkout" method="POST">
+              <button type="submit" class="check-out-button btn" name="button">Check Out</button>
+            </form>
+            <form action="/apply-coupon" method="POST">
+              <button type="submit" class="check-out-button btn" name="button">Apply Coupon</button>
+            </form>
+          </div>
         {% endif %}
         <div class="show-payment">
           <p>Accepted Payment Method</p>
@@ -115,9 +120,14 @@
         {% if (buy_count + rent_count) == 0 %}
                 <button type="submit" disabled class="check-out-button btn" name="button">Check Out</button>
         {% else %}
-          <form action="/checkout" method="POST">
-                <button type="submit" class="check-out-button btn" name="button">Check Out</button>
-          </form>
+          <div>
+            <form action="/checkout" method="POST">
+              <button type="submit" class="check-out-button btn" name="button">Check Out</button>
+            </form>
+            <form action="/apply-coupon" method="POST">
+              <button type="submit" class="check-out-button btn" name="button">Apply Coupon</button>
+            </form>
+          </div>
         {% endif %}
         <div class="show-payment">
           <p>Accepted Payment Method</p>

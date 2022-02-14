@@ -6,7 +6,7 @@
 
 
 <link rel="stylesheet" href="/static/css/checkout.css">
-
+<link rel="stylesheet" href="/static/css/adm_dashboard.css">
 {% endblock %}
 
 {% block content %}
@@ -20,8 +20,13 @@
         <div class="form-group container-padding-20">
           {{ render_field(form.coupon_code, class="form-control") }}
         </div>
-        <input type="submit" value="Apply Coupon" class="btn btn-primary"/>
+        <input type="submit" value="Apply Coupon" class="btn btn-primary "/>
       </form>
+      <div class="container-padding-20" ></div>
+      <form action="/checkout" method="POST">
+        <button type="submit" class="check-out-button btn btn-primary" name="button">Check Out</button>
+
+    </form>
 
     </div>
     <div class="col-md-3 col-12 order_summary">
@@ -60,7 +65,7 @@
               <td colspan="4">
                   <h6>Subtotal <span class="float_right">${{ total_price }}</span></h6>
                   <h6>Shipping <span class="float_right" id="shipping_fee">$5.00</span></h6>
-                  <h6>Coupon Applied <span class="float_right">-${{discount_applied}}</span></h6>
+                  <h6>Coupon Applied <span class="float_right">-${{"%.2f"|format(discount_applied|float)}}</span></h6>
                   <h5>Total To Pay <span class="float_right" id="total_pay">${{ "%.2f"|format((total_price|float)+5) }}</span></h5>
               </td>
           </tr>
