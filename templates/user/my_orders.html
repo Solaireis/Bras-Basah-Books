@@ -88,7 +88,7 @@
 
                                 {% if (order.get_order_status() == "Ordered") or (order.get_order_status() == "Confirmed")%}
                                 <div class="bottom-right-padding" style="text-align: right;">
-                                    <a href="#" id="{{ order.get_order_id() }}" nclick="cancel_this(this)" class="btn btn-danger">Cancel Order</a>
+                                    <a href="#" id="{{ order.get_order_id() }}" onclick="cancel_this(this)" class="btn btn-danger">Cancel Order</a>
                                 </div>
                                 {% elif order.get_order_status() == "Shipped" %}
                                 <div class="bottom-right-padding" style="text-align: right;">
