@@ -1734,7 +1734,7 @@ def mail_enq(id):
         #message contents
         msg.body = "Dear " + enquiry_id.get_name() + ",\n\n" \
                     + "here are your enquiry details: " + "\n\n" \
-                    + "Enquiry Type: " + enquiry_id.get_enquiry_type() + "\n\n" \
+                    + "Enquiry Type: " + {"B":"Question about Books","F":"Feedback","R":"Report Vulnerability"}[enquiry_id.get_enquiry_type()] + "\n\n" \
                     + "Comments: " + "\n\n" + enquiry_id.get_comments() + "\n\n" \
                     + "Reply: " + "\n\n" + enquiry_id.get_reply() + "\n\n" \
                     + "Regards,\n" + "BrasBasahBooks"
