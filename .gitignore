@@ -3,8 +3,3 @@ __pycache__/
 */__pycache__/
 .venv/
 .vscode/
-
-# temp
-database.*
-static/img/books/*
-static/img/profile-pic/*
