@@ -63,7 +63,7 @@
         {% endif %}
           <tr class="bottom-sticky">
               <td colspan="4">
-                  <h6>Subtotal <span class="float_right">${{ total_price }}</span></h6>
+                  <h6>Subtotal <span class="float_right">${{ "%.2f"|format(total_price|float) }}</span></h6>
                   <h6>Shipping <span class="float_right" id="shipping_fee">$5.00</span></h6>
                   <h6>Coupon Applied <span class="float_right">-${{"%.2f"|format(discount_applied|float)}}</span></h6>
                   <h5>Total To Pay <span class="float_right" id="total_pay">${{ "%.2f"|format((total_price|float)+5) }}</span></h5>
