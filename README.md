@@ -32,22 +32,22 @@ Under this circumstance, We as creative, enthusiastic and innovative programmers
 Flask_mail functions requires tester to be log into the email address when using the function
 
 Task By each Member: <br/>
-Eden: <br/>
-- Coupons
-- Enquiry
-- Faq
-- About
-- 404 error
+### Eden: <br/>
+- Coupons Management System and Functionality
+- Enquiry Management System and Functionality
+- Frequently Asked Questions Management System and Functionality
+- About Static Page
+- Custom 404 Error page
 <br/>
 
-Jabriel: <br/>
+### Jabriel: <br/>
 - Account management
 <br/>
 
-Chee Qing: <br/>
+### Chee Qing: <br/>
 - Payment management
 <br/>
 
-Luqman: <br/>
+### Luqman: <br/>
 - Inventory Management
 <br/>
