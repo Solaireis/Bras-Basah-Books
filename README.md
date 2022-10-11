@@ -1,15 +1,15 @@
 # AY21/22 IT-1566 Team 2 App Development project
-<b> PEM Group:</b> SF2102 <br/>
-<b> Team members:</b>  <br /> 
+### PEM Group: SF2102 <br/>
+### <b> Team members:</b>  <br /> 
 
 - [201520M]  Eden Will Sng Jin Xuan <b> -(Leader)- </b>
 - [211973E]  Jabriel Seah 
 - [214442B]  Tan Chee Qing
 - [210290N]  Luqman
 
-<b> Project Name: </b> Bras Basah Books <br />
-<b> Proposed Industry:</b> Bras Basah Complex Bookstore Website <br />
-<b> Project Description: </b> <br />
+### <b> Project Name: </b> Bras Basah Books <br />
+### <b> Proposed Industry:</b> Bras Basah Complex Bookstore Web Application <br />
+## <b> Project Description: </b> <br />
 
 Bras Basah complex is located at 231 Bain Street, 180231. 
 Bras Basah Complex is known as City of Books, a mall that is well known for its huge collection of bookstores. Since the 1980s, this place has allowed many book merchants to come together to make book sales. It has since become a cultural heritage for arts and cultures. 
