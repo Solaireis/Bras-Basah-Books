@@ -19,35 +19,38 @@ Under this circumstance, We as creative, enthusiastic and innovative programmers
 
 <b>PYTHON Version:</b> 3.8 and above required. <br/>
 <br/>
-<b><i> LIBRARY needed to be installed for Virtual Environment: </i></b> <br /> <br/>
-<b> 1.flask </b> | pip install flask<br /> 
-<b> 2.flask_mail </b> | pip install flask_mail <br />
-<b> 3.wtforms </b> | pip install wtforms <br />
-<b> 4.email_validator </b> | pip install email_validator <br />
-<b> 5.argon2-cffi  </b> | pip install argon2-cffi <br />
-<b> 6.stripe </b> | pip install stripe <br />
-<b>7.pillow </b> | pip install pillow <br/>
+<b><i> LIBRARY needed to be installed for Virtual Environment: </i></b> <br /> 
+> <b> 1.flask </b> | pip install flask<br /> 
+> <b> 2.flask_mail </b> | pip install flask_mail <br />
+> <b> 3.wtforms </b> | pip install wtforms <br />
+> <b> 4.email_validator </b> | pip install email_validator <br />
+> <b> 5.argon2-cffi  </b> | pip install argon2-cffi <br />
+> <b> 6.stripe </b> | pip install stripe <br />
+> <b>7.pillow </b> | pip install pillow <br/>
 
 <b> IMPORTANT: </b>
 Flask_mail functions requires tester to be log into the email address when using the function
 
-Task By each Member: <br/>
+## Task By each Member: <br/>
 ### Eden: <br/>
 - Coupons Management System and Functionality
 - Enquiry Management System and Functionality
 - Frequently Asked Questions Management System and Functionality
 - About Static Page
 - Custom 404 Error page
-<br/>
+
 
 ### Jabriel: <br/>
 - Account management
-<br/>
+
 
 ### Chee Qing: <br/>
 - Payment management
-<br/>
+
 
 ### Luqman: <br/>
 - Inventory Management
-<br/>
+
+
+### Tech Stack 📚
+[![My Skills](https://skillicons.dev/icons?i=js,html,css,python,flask,bootstrap,&theme=light)](https://skillicons.dev)
