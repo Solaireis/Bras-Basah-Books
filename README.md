@@ -16,6 +16,13 @@ Bras Basah Complex is known as City of Books, a mall that is well known for its 
 Bras Basah Complex has a lot of bookstores. However, not all bookstores have an online presence themselves due to Covid-19. 
 
 Under this circumstance, We as creative, enthusiastic and innovative programmers do not want to see the city of books die down and become a figment left behind in Singapore history books. Therefore we have decided to help store owners transition digitally in this Covid-19 affected world as well as create solutions that meet the needs of the business as well as the customers patronising these shop owners' stores.
+---
+
+**To Install All Libraries At Once:**
+
+```
+pip install -r requirements.txt
+```
 
 <b>PYTHON Version:</b> 3.8 and above required. <br/>
 <br/>
