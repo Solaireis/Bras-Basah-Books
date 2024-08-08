@@ -18,22 +18,14 @@ Bras Basah Complex has a lot of bookstores. However, not all bookstores have an 
 Under this circumstance, We as creative, enthusiastic and innovative programmers do not want to see the city of books die down and become a figment left behind in Singapore history books. Therefore we have decided to help store owners transition digitally in this Covid-19 affected world as well as create solutions that meet the needs of the business as well as the customers patronising these shop owners' stores.
 ---
 
+<b>PYTHON Version:</b> 3.8 and above required. <br/>
 **To Install All Libraries At Once:**
 
 ```
 pip install -r requirements.txt
 ```
 
-<b>PYTHON Version:</b> 3.8 and above required. <br/>
-<br/>
-<b><i> LIBRARY needed to be installed for Virtual Environment: </i></b> <br /> 
-> <b> 1.flask </b> | pip install flask<br /> 
-> <b> 2.flask_mail </b> | pip install flask_mail <br />
-> <b> 3.wtforms </b> | pip install wtforms <br />
-> <b> 4.email_validator </b> | pip install email_validator <br />
-> <b> 5.argon2-cffi  </b> | pip install argon2-cffi <br />
-> <b> 6.stripe </b> | pip install stripe <br />
-> <b>7.pillow </b> | pip install pillow <br/>
+
 
 <b> IMPORTANT: </b>
 Flask_mail functions requires tester to be log into the email address when using the function
