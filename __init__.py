@@ -130,13 +130,9 @@ def create_guest():
     if DEBUG: print("Guest created:", guest)
     return guest
 
+def create_app():
+    app = Flask(__name__)
 
-"""    Before Request    """
-
-# Before first request
-@app.before_first_request
-def before_first_request():
-    # Check if Master admin exists
     with shelve.open("database") as db:
         admins_db = retrieve_db("Admins", db)
         username_to_user_id = retrieve_db("UsernameToUserID", db)
@@ -166,10 +162,6 @@ def before_first_request():
             db["EmailToUserID"] = email_to_user_id
             db["Admins"] = admins_db
 
-
-# Before request
-@app.before_request
-def before_request():
     # Make session permanent and set session lifetime
     session.permanent = True
     app.permanent_session_lifetime = Guest.MAX_DAYS
@@ -177,6 +169,10 @@ def before_request():
     # Run get user if user_id not in session
     if "UserID" not in session:
         create_guest()
+
+
+    return app
+
 
 
 """    Login/Sign-up Pages    """
