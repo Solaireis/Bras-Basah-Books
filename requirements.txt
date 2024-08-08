@@ -1,0 +1,8 @@
+flask
+flask_mail
+flask_wtf
+wtforms 
+email_validator
+argon2-cffi 
+stripe
+pillow
